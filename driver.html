@@ -5,15 +5,14 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>AL HASSAN - المندوب</title>
 
 <style>
 
 *{
-box-sizing:border-box
+box-sizing:border-box;
 }
 
 body{
@@ -21,15 +20,15 @@ margin:0;
 font-family:Arial,sans-serif;
 background:#f5f5f5;
 color:#222;
-padding-bottom:30px
+padding-bottom:30px;
 }
 
 button,input{
-font-family:inherit
+font-family:inherit;
 }
 
 button{
-cursor:pointer
+cursor:pointer;
 }
 
 header{
@@ -41,18 +40,18 @@ justify-content:space-between;
 align-items:center;
 position:sticky;
 top:0;
-z-index:10
+z-index:10;
 }
 
 .logo{
 font-size:22px;
-font-weight:bold
+font-weight:bold;
 }
 
 .wrap{
 max-width:700px;
 margin:auto;
-padding:16px
+padding:16px;
 }
 
 .card{
@@ -60,13 +59,13 @@ background:white;
 border-radius:16px;
 padding:16px;
 margin-bottom:14px;
-box-shadow:0 2px 8px #ddd
+box-shadow:0 2px 8px #ddd;
 }
 
 .title{
 font-size:18px;
 font-weight:bold;
-margin-bottom:12px
+margin-bottom:12px;
 }
 
 input{
@@ -76,7 +75,7 @@ border:1px solid #ddd;
 border-radius:10px;
 font-size:15px;
 outline:none;
-margin-bottom:8px
+margin-bottom:8px;
 }
 
 button{
@@ -84,25 +83,25 @@ border:0;
 border-radius:10px;
 padding:13px;
 font-size:15px;
-font-weight:bold
+font-weight:bold;
 }
 
 .primary{
 background:#e30613;
 color:white;
-width:100%
+width:100%;
 }
 
 .green{
 background:#168a35;
 color:white;
-width:100%
+width:100%;
 }
 
 .gray{
 background:#eee;
 color:#222;
-width:100%
+width:100%;
 }
 
 .order{
@@ -110,7 +109,7 @@ background:white;
 border-radius:16px;
 padding:16px;
 margin-bottom:12px;
-box-shadow:0 2px 8px #ddd
+box-shadow:0 2px 8px #ddd;
 }
 
 .order-top{
@@ -118,31 +117,31 @@ display:flex;
 justify-content:space-between;
 gap:10px;
 align-items:center;
-margin-bottom:10px
+margin-bottom:10px;
 }
 
 .category{
 color:#e30613;
-font-weight:bold
+font-weight:bold;
 }
 
 .status{
 background:#eee;
 padding:6px 10px;
 border-radius:20px;
-font-size:12px
+font-size:12px;
 }
 
 .details{
 line-height:1.9;
 font-size:14px;
-margin-bottom:12px
+margin-bottom:12px;
 }
 
 .accept{
 background:#168a35;
 color:white;
-width:100%
+width:100%;
 }
 
 .location-box{
@@ -150,36 +149,36 @@ background:#f7f7f7;
 border:1px solid #ddd;
 border-radius:12px;
 padding:13px;
-margin-top:10px
+margin-top:10px;
 }
 
 .location-status{
 font-size:13px;
 line-height:1.7;
 margin-top:8px;
-color:#666
+color:#666;
 }
 
 .success{
 color:#168a35;
-font-weight:bold
+font-weight:bold;
 }
 
 .error{
 color:#c00;
-font-weight:bold
+font-weight:bold;
 }
 
 .message{
 text-align:center;
 font-weight:bold;
-padding:10px
+padding:10px;
 }
 
 .empty{
 text-align:center;
 color:#777;
-padding:35px
+padding:35px;
 }
 
 .driver-info{
@@ -187,18 +186,18 @@ background:#fff3f3;
 padding:12px;
 border-radius:10px;
 margin-top:10px;
-font-size:14px
+font-size:14px;
 }
 
 .active-order{
-border:2px solid #168a35
+border:2px solid #168a35;
 }
 
 .stop{
 background:#555;
 color:white;
 width:100%;
-margin-top:8px
+margin-top:8px;
 }
 
 .map-link{
@@ -210,7 +209,16 @@ padding:11px;
 border-radius:10px;
 text-decoration:none;
 margin-top:8px;
-font-weight:bold
+font-weight:bold;
+}
+
+.location-coordinates{
+background:#eef7ff;
+border-radius:10px;
+padding:10px;
+margin-top:10px;
+font-size:13px;
+line-height:1.8;
 }
 
 </style>
@@ -218,7 +226,6 @@ font-weight:bold
 </head>
 
 <body>
-
 
 <header>
 
@@ -232,11 +239,9 @@ AL HASSAN 🛵
 
 </header>
 
-
 <div class="wrap">
 
-
-<!-- DRIVER LOGIN / ID -->
+<!-- DRIVER INFORMATION -->
 
 <div class="card">
 
@@ -266,6 +271,7 @@ onclick="saveDriver()">
 id="driverInfo"
 class="driver-info"
 style="display:none">
+
 </div>
 
 </div>
@@ -280,7 +286,10 @@ style="display:none">
 </div>
 
 <p style="font-size:14px;color:#666">
-لا تشارك موقعك إلا عندما تكون في توصيل فعلي.
+
+بعد استلام الطلب، اضغط على زر مشاركة الموقع.
+سيتم تحديث موقعك تلقائياً أثناء الحركة.
+
 </p>
 
 <button
@@ -297,6 +306,13 @@ id="locationStatus"
 class="location-status">
 
 الموقع غير مشارك حاليًا.
+
+</div>
+
+<div
+id="locationCoordinates"
+class="location-coordinates"
+style="display:none">
 
 </div>
 
@@ -318,6 +334,7 @@ onclick="stopLocation()">
 <div
 id="message"
 class="message">
+
 </div>
 
 
@@ -355,14 +372,15 @@ style="display:none">
 
 </div>
 
-
 </div>
 
 
 <script type="module">
 
 
-/* FIREBASE */
+/* =========================
+   FIREBASE
+========================= */
 
 import {
 initializeApp
@@ -383,10 +401,14 @@ from
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
-const firebaseConfig={
+/* =========================
+   FIREBASE CONFIG
+========================= */
+
+const firebaseConfig = {
 
 apiKey:
-"AIzaSyB5hMTyH6Y6Z_Ij4VYdVsvaWAaiLt9SRA",
+"AIzaSyB5hMTyYH6I6Z_Ij4VYdVsvaWAaiLt9SRA",
 
 authDomain:
 "al-hassan-b39d6.firebaseapp.com",
@@ -409,58 +431,71 @@ measurementId:
 };
 
 
-const app=initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-const db=getFirestore(app);
+const db = getFirestore(app);
 
 
-/* VARIABLES */
+/* =========================
+   VARIABLES
+========================= */
 
-let driverName=
+let driverName =
 localStorage.getItem("alhassan_driver_name") || "";
 
-let driverId=
+let driverId =
 localStorage.getItem("alhassan_driver_id") || "";
 
-let activeOrderId=
+let activeOrderId =
 localStorage.getItem("alhassan_active_order") || "";
 
-let locationWatcher=null;
+let locationWatcher = null;
 
 
-/* DRIVER INFO */
+/* =========================
+   SHOW DRIVER
+========================= */
 
 function showDriver(){
 
 if(driverName && driverId){
 
-document.getElementById("driverName").value=
+document.getElementById("driverName").value =
 driverName;
 
-document.getElementById("driverId").value=
+document.getElementById("driverId").value =
 driverId;
 
-document.getElementById("driverInfo").style.display=
+document.getElementById("driverInfo").style.display =
 "block";
 
-document.getElementById("driverInfo").innerHTML=
-"👤 المندوب: <b>"+driverName+
-"</b><br>🆔 الرقم: <b>"+driverId+"</b>";
+document.getElementById("driverInfo").innerHTML =
+"👤 المندوب: <b>" +
+driverName +
+"</b><br>🆔 الرقم: <b>" +
+driverId +
+"</b>";
 
 }
 
 }
 
 
-window.saveDriver=function(){
+/* =========================
+   SAVE DRIVER
+========================= */
 
-const name=
+window.saveDriver = function(){
+
+const name =
 document.getElementById("driverName")
-.value.trim();
+.value
+.trim();
 
-const id=
+const id =
 document.getElementById("driverId")
-.value.trim();
+.value
+.trim();
 
 
 if(!name || !id){
@@ -475,9 +510,9 @@ return;
 }
 
 
-driverName=name;
+driverName = name;
 
-driverId=id;
+driverId = id;
 
 
 localStorage.setItem(
@@ -501,64 +536,68 @@ showMessage(
 };
 
 
-/* MESSAGE */
+/* =========================
+   MESSAGE
+========================= */
 
 function showMessage(text,error=false){
 
-const box=
+const box =
 document.getElementById("message");
 
-box.innerText=text;
+box.innerText = text;
 
-box.style.color=
+box.style.color =
 error ? "#c00" : "#168a35";
 
 
 setTimeout(function(){
 
-box.innerText="";
+box.innerText = "";
 
-},3000);
+},4000);
 
 }
 
 
-/* LOAD ORDERS */
+/* =========================
+   LOAD ORDERS
+========================= */
 
-window.loadOrders=async function(){
+window.loadOrders = async function(){
 
-const box=
+const box =
 document.getElementById("orders");
 
-box.innerHTML=
+box.innerHTML =
 '<div class="empty">جارِ تحميل الطلبات...</div>';
 
 
 try{
 
-const snapshot=
+const snapshot =
 await getDocs(
 collection(db,"orders")
 );
 
 
-let orders=[];
+let orders = [];
 
 
 snapshot.forEach(function(item){
 
-const order=item.data();
+const order = item.data();
 
 
 /*
-نظهر فقط الطلبات التي
-لم يستلمها مندوب بعد
+نظهر فقط الطلبات
+التي لم يستلمها مندوب.
 */
 
 if(
 !order.driverId &&
 (
-order.status==="new" ||
+order.status === "new" ||
 !order.status
 )
 ){
@@ -577,7 +616,7 @@ id:item.id,
 
 if(!orders.length){
 
-box.innerHTML=
+box.innerHTML =
 '<div class="empty">لا توجد طلبات متاحة حاليًا 📦</div>';
 
 return;
@@ -585,15 +624,14 @@ return;
 }
 
 
-box.innerHTML="";
-
+box.innerHTML = "";
 
 orders.reverse();
 
 
 orders.forEach(function(order){
 
-const categoryNames={
+const categoryNames = {
 
 food:"🍔 مطعم",
 
@@ -614,12 +652,12 @@ other:"🏪 محل آخر"
 };
 
 
-const category=
+const category =
 categoryNames[order.category]
 || "🛵 طلب";
 
 
-box.innerHTML+=`
+box.innerHTML += `
 
 <div class="order">
 
@@ -655,7 +693,7 @@ ${order.phone || ""}
 ${
 order.merchant
 ?
-"<br>🏪 المحل: "+order.merchant
+"<br>🏪 المحل: " + order.merchant
 :
 ""
 }
@@ -663,7 +701,7 @@ order.merchant
 ${
 order.notes
 ?
-"<br>📝 "+order.notes
+"<br>📝 " + order.notes
 :
 ""
 }
@@ -690,7 +728,7 @@ onclick="acceptOrder('${order.id}')">
 
 console.error(error);
 
-box.innerHTML=
+box.innerHTML =
 '<div class="empty">❌ تعذر تحميل الطلبات.</div>';
 
 }
@@ -698,10 +736,11 @@ box.innerHTML=
 };
 
 
-/* ACCEPT ORDER */
+/* =========================
+   ACCEPT ORDER
+========================= */
 
-window.acceptOrder=async function(orderId){
-
+window.acceptOrder = async function(orderId){
 
 if(!driverName || !driverId){
 
@@ -715,17 +754,9 @@ return;
 }
 
 
-/*
-Transaction:
-يقرأ الطلب أولًا
-ويتأكد أنه لم يُستلم
-ثم يحجزه للمندوب.
-*/
-
 try{
 
-
-const orderRef=
+const orderRef =
 doc(db,"orders",orderId);
 
 
@@ -733,7 +764,7 @@ await runTransaction(
 db,
 async function(transaction){
 
-const orderSnap=
+const orderSnap =
 await transaction.get(orderRef);
 
 
@@ -746,7 +777,7 @@ throw new Error(
 }
 
 
-const order=
+const order =
 orderSnap.data();
 
 
@@ -765,7 +796,7 @@ throw new Error(
 
 
 /*
-حجز الطلب للمندوب الحالي.
+حجز الطلب للمندوب.
 */
 
 transaction.update(
@@ -781,17 +812,14 @@ acceptedAt:serverTimestamp(),
 status:"accepted"
 
 }
+
 );
 
 }
 );
 
 
-/*
-نجح القبول.
-*/
-
-activeOrderId=orderId;
+activeOrderId = orderId;
 
 localStorage.setItem(
 "alhassan_active_order",
@@ -814,7 +842,7 @@ loadActiveOrder();
 console.error(error);
 
 
-if(error.message==="ORDER_ALREADY_TAKEN"){
+if(error.message === "ORDER_ALREADY_TAKEN"){
 
 showMessage(
 "⚠️ هذا الطلب تم استلامه من مندوب آخر.",
@@ -835,7 +863,9 @@ true
 };
 
 
-/* LOAD ACTIVE ORDER */
+/* =========================
+   LOAD ACTIVE ORDER
+========================= */
 
 async function loadActiveOrder(){
 
@@ -848,22 +878,24 @@ return;
 
 try{
 
-const snapshot=
+const snapshot =
 await getDocs(
 collection(db,"orders")
 );
 
 
-let found=null;
+let found = null;
 
 
 snapshot.forEach(function(item){
 
-if(item.id===activeOrderId){
+if(item.id === activeOrderId){
 
-found={
+found = {
+
 id:item.id,
 ...item.data()
+
 };
 
 }
@@ -879,13 +911,13 @@ return;
 
 
 /*
-إذا لم يعد الطلب للمندوب الحالي
-نلغي الطلب النشط محليًا.
+إذا لم يعد الطلب
+تابعًا للمندوب.
 */
 
-if(found.driverId!==driverId){
+if(found.driverId !== driverId){
 
-activeOrderId="";
+activeOrderId = "";
 
 localStorage.removeItem(
 "alhassan_active_order"
@@ -898,18 +930,21 @@ return;
 
 document.getElementById(
 "activeOrderBox"
-).style.display="block";
+).style.display =
+"block";
 
 
 document.getElementById(
 "activeOrder"
-).innerHTML=`
+).innerHTML = `
 
 <div class="active-order order">
 
 <div class="details">
 
-<b>📦 ${found.item || "طلب"}</b>
+<b>
+📦 ${found.item || "طلب"}
+</b>
 
 <br><br>
 
@@ -959,10 +994,11 @@ console.error(error);
 }
 
 
-/* START LOCATION */
+/* =========================
+   START LOCATION
+========================= */
 
-window.startLocation=function(){
-
+window.startLocation = function(){
 
 if(!driverName || !driverId){
 
@@ -992,15 +1028,24 @@ if(!navigator.geolocation){
 
 document.getElementById(
 "locationStatus"
-).innerText=
-"❌ جهازك لا يدعم تحديد الموقع.";
+).innerText =
+"❌ جهازك أو المتصفح لا يدعم تحديد الموقع.";
+
+document.getElementById(
+"locationStatus"
+).className =
+"location-status error";
 
 return;
 
 }
 
 
-if(locationWatcher!==null){
+if(locationWatcher !== null){
+
+showMessage(
+"📍 موقعك تتم مشاركته حاليًا."
+);
 
 return;
 
@@ -1009,50 +1054,86 @@ return;
 
 document.getElementById(
 "locationStatus"
-).innerText=
-"📍 جارِ تحديد موقعك...";
+).innerText =
+"📍 جارِ طلب موقعك...";
+
+document.getElementById(
+"locationStatus"
+).className =
+"location-status";
 
 
-locationWatcher=
+/*
+يطلب GPS من الجهاز
+ويستمر بتحديث الموقع.
+*/
+
+locationWatcher =
 navigator.geolocation.watchPosition(
 
 async function(position){
 
-const latitude=
+const latitude =
 position.coords.latitude;
 
-const longitude=
+const longitude =
 position.coords.longitude;
 
-const accuracy=
+const accuracy =
 position.coords.accuracy;
+
+
+/*
+عرض الإحداثيات للمندوب.
+*/
+
+document.getElementById(
+"locationCoordinates"
+).style.display =
+"block";
+
+document.getElementById(
+"locationCoordinates"
+).innerHTML =
+
+"📍 خط العرض: <b>" +
+latitude.toFixed(6) +
+"</b><br>" +
+
+"📍 خط الطول: <b>" +
+longitude.toFixed(6) +
+"</b><br>" +
+
+"🎯 دقة GPS: <b>" +
+Math.round(accuracy) +
+" متر</b>";
 
 
 try{
 
 /*
-نتأكد مرة أخرى أن الطلب
-ما زال تابعًا لهذا المندوب.
+نتأكد أن الطلب ما زال
+تابعًا لهذا المندوب.
 */
 
-const snapshot=
+const snapshot =
 await getDocs(
 collection(db,"orders")
 );
 
 
-let allowed=false;
+let allowed = false;
 
 
 snapshot.forEach(function(item){
 
-if(item.id===activeOrderId){
+if(item.id === activeOrderId){
 
-const data=item.data();
+const data = item.data();
 
-if(data.driverId===driverId){
+if(data.driverId === driverId){
 
-allowed=true;
+allowed = true;
 
 }
 
@@ -1063,7 +1144,7 @@ allowed=true;
 
 if(!allowed){
 
-stopLocation();
+await stopLocation();
 
 showMessage(
 "⚠️ لم يعد هذا الطلب تابعًا لك.",
@@ -1077,17 +1158,18 @@ return;
 
 /*
 تحديث موقع المندوب
-في نفس طلبه.
+داخل الطلب.
 */
 
 await runTransaction(
 db,
 async function(transaction){
 
-const orderRef=
+const orderRef =
 doc(db,"orders",activeOrderId);
 
-const orderSnap=
+
+const orderSnap =
 await transaction.get(orderRef);
 
 
@@ -1100,11 +1182,11 @@ throw new Error(
 }
 
 
-const order=
+const order =
 orderSnap.data();
 
 
-if(order.driverId!==driverId){
+if(order.driverId !== driverId){
 
 throw new Error(
 "NOT_DRIVER"
@@ -1138,28 +1220,25 @@ driverLocationActive:true
 
 document.getElementById(
 "locationStatus"
-).innerHTML=
-"✅ موقعك يتم تحديثه الآن.<br>"+
-"دقة الموقع تقريبًا: "+
-Math.round(accuracy)+
-" متر";
+).innerHTML =
 
+"✅ موقعك تتم مشاركته الآن ويتم تحديثه تلقائيًا.";
 
 document.getElementById(
 "locationStatus"
-).className=
+).className =
 "location-status success";
 
 
 document.getElementById(
 "stopLocationButton"
-).style.display=
+).style.display =
 "block";
 
 
 document.getElementById(
 "locationButton"
-).innerText=
+).innerText =
 "📍 موقعك تتم مشاركته الآن";
 
 
@@ -1167,20 +1246,59 @@ document.getElementById(
 
 console.error(error);
 
+document.getElementById(
+"locationStatus"
+).innerText =
+"⚠️ تم تحديد موقعك لكن تعذر إرساله إلى النظام.";
+
+document.getElementById(
+"locationStatus"
+).className =
+"location-status error";
+
 }
 
 },
 
 function(error){
 
-document.getElementById(
-"locationStatus"
-).innerText=
-"❌ لم نتمكن من تحديد موقعك. تأكد من السماح للموقع.";
+console.error(error);
+
+
+let message =
+"❌ لم نتمكن من تحديد موقعك.";
+
+
+if(error.code === 1){
+
+message =
+"⚠️ تم رفض صلاحية الموقع. اسمحي للمتصفح بالوصول إلى موقعك.";
+
+}
+
+else if(error.code === 2){
+
+message =
+"❌ تعذر تحديد الموقع. تأكدي أن خدمة الموقع/GPS مفعلة.";
+
+}
+
+else if(error.code === 3){
+
+message =
+"⏱️ انتهى وقت تحديد الموقع. حاولي مرة ثانية.";
+
+}
+
 
 document.getElementById(
 "locationStatus"
-).className=
+).innerText =
+message;
+
+document.getElementById(
+"locationStatus"
+).className =
 "location-status error";
 
 },
@@ -1189,7 +1307,7 @@ document.getElementById(
 
 enableHighAccuracy:true,
 
-timeout:15000,
+timeout:20000,
 
 maximumAge:3000
 
@@ -1200,56 +1318,51 @@ maximumAge:3000
 };
 
 
-/* STOP LOCATION */
+/* =========================
+   STOP LOCATION
+========================= */
 
-window.stopLocation=async function(){
+window.stopLocation = async function(){
 
-
-if(locationWatcher!==null){
+if(locationWatcher !== null){
 
 navigator.geolocation.clearWatch(
 locationWatcher
 );
 
-locationWatcher=null;
+locationWatcher = null;
 
 }
 
 
 document.getElementById(
 "stopLocationButton"
-).style.display=
+).style.display =
 "none";
 
 
 document.getElementById(
 "locationButton"
-).innerText=
+).innerText =
 "📍 بدء مشاركة موقعي";
 
 
 document.getElementById(
 "locationStatus"
-).innerText=
+).innerText =
 "تم إيقاف مشاركة الموقع.";
-
 
 document.getElementById(
 "locationStatus"
-).className=
+).className =
 "location-status";
 
-
-/*
-نخبر Firebase أن الموقع
-لم يعد مشاركًا.
-*/
 
 if(activeOrderId && driverId){
 
 try{
 
-const orderRef=
+const orderRef =
 doc(db,"orders",activeOrderId);
 
 
@@ -1257,7 +1370,7 @@ await runTransaction(
 db,
 async function(transaction){
 
-const orderSnap=
+const orderSnap =
 await transaction.get(orderRef);
 
 
@@ -1268,11 +1381,11 @@ return;
 }
 
 
-const order=
+const order =
 orderSnap.data();
 
 
-if(order.driverId===driverId){
+if(order.driverId === driverId){
 
 transaction.update(
 orderRef,
@@ -1287,6 +1400,7 @@ driverLocationActive:false
 }
 
 }
+
 );
 
 
@@ -1301,7 +1415,9 @@ console.error(error);
 };
 
 
-/* START */
+/* =========================
+   START PAGE
+========================= */
 
 showDriver();
 
@@ -1313,4 +1429,5 @@ loadActiveOrder();
 </script>
 
 </body>
+
 </html>
