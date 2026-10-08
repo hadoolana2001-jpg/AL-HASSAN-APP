@@ -1,1923 +1,715 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>AL HASSAN - المندوب</title>
 
 <style>
-
-*{
-box-sizing:border-box;
-}
-
-body{
-margin:0;
-font-family:Arial,sans-serif;
-background:#f5f5f5;
-color:#222;
-padding-bottom:30px;
-}
-
-button,input{
-font-family:inherit;
-}
-
-button{
-cursor:pointer;
-}
-
-header{
-background:#e30613;
-color:white;
-padding:18px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-position:sticky;
-top:0;
-z-index:10;
-}
-
-.logo{
-font-size:22px;
-font-weight:bold;
-}
-
-.wrap{
-max-width:700px;
-margin:auto;
-padding:16px;
-}
-
-.card{
-background:white;
-border-radius:16px;
-padding:16px;
-margin-bottom:14px;
-box-shadow:0 2px 8px #ddd;
-}
-
-.title{
-font-size:18px;
-font-weight:bold;
-margin-bottom:12px;
-}
-
-input{
-width:100%;
-padding:13px;
-border:1px solid #ddd;
-border-radius:10px;
-font-size:15px;
-outline:none;
-margin-bottom:8px;
-}
-
-button{
-border:0;
-border-radius:10px;
-padding:13px;
-font-size:15px;
-font-weight:bold;
-}
-
-.primary{
-background:#e30613;
-color:white;
-width:100%;
-}
-
-.green{
-background:#168a35;
-color:white;
-width:100%;
-}
-
-.order{
-background:white;
-border-radius:16px;
-padding:16px;
-margin-bottom:12px;
-box-shadow:0 2px 8px #ddd;
-}
-
-.order-top{
-display:flex;
-justify-content:space-between;
-gap:10px;
-align-items:center;
-margin-bottom:10px;
-}
-
-.category{
-color:#e30613;
-font-weight:bold;
-}
-
-.status{
-background:#eee;
-padding:6px 10px;
-border-radius:20px;
-font-size:12px;
-}
-
-.details{
-line-height:1.9;
-font-size:14px;
-margin-bottom:12px;
-}
-
-.accept{
-background:#168a35;
-color:white;
-width:100%;
-}
-
-.location-status{
-font-size:14px;
-line-height:1.7;
-margin-top:10px;
-color:#666;
-}
-
-.success{
-color:#168a35;
-font-weight:bold;
-}
-
-.error{
-color:#c00;
-font-weight:bold;
-}
-
-.message{
-text-align:center;
-font-weight:bold;
-padding:10px;
-}
-
-.empty{
-text-align:center;
-color:#777;
-padding:35px;
-}
-
-.driver-info{
-background:#fff3f3;
-padding:12px;
-border-radius:10px;
-margin-top:10px;
-font-size:14px;
-}
-
-.active-order{
-border:2px solid #168a35;
-}
-
-.stop{
-background:#555;
-color:white;
-width:100%;
-margin-top:8px;
-}
-
-.map-link{
-display:block;
-text-align:center;
-background:#eee;
-color:#222;
-padding:11px;
-border-radius:10px;
-text-decoration:none;
-margin-top:8px;
-font-weight:bold;
-}
-
-.coordinates{
-background:#eef7ff;
-padding:10px;
-border-radius:10px;
-margin-top:10px;
-font-size:13px;
-line-height:1.8;
-}
-
-.notification-box{
-background:#fff8e6;
-padding:12px;
-border-radius:10px;
-margin-top:12px;
-font-size:14px;
-line-height:1.7;
-}
-
-.notification-button{
-background:#ff9800;
-color:white;
-width:100%;
-margin-top:8px;
-}
-
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f5f5f5;color:#222;padding-bottom:30px}
+button,input{font-family:inherit}
+button{cursor:pointer;border:0;border-radius:10px;padding:13px;font-size:15px;font-weight:bold}
+header{background:#e30613;color:white;padding:18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+.logo{font-size:22px;font-weight:bold}
+.wrap{max-width:700px;margin:auto;padding:16px}
+.card,.order{background:white;border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px #ddd}
+.title{font-size:18px;font-weight:bold;margin-bottom:12px}
+input{width:100%;padding:13px;border:1px solid #ddd;border-radius:10px;font-size:15px;outline:none;margin-bottom:8px}
+.primary{background:#e30613;color:white;width:100%}
+.green{background:#168a35;color:white;width:100%}
+.accept{background:#168a35;color:white;width:100%}
+.order-top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
+.category{color:#e30613;font-weight:bold}
+.status{background:#eee;padding:6px 10px;border-radius:20px;font-size:12px}
+.details{line-height:1.9;font-size:14px;margin-bottom:12px;overflow-wrap:anywhere}
+.location-status{font-size:14px;line-height:1.7;margin-top:10px;color:#666}
+.success{color:#168a35;font-weight:bold}
+.error{color:#c00;font-weight:bold}
+.message{text-align:center;font-weight:bold;padding:10px}
+.empty{text-align:center;color:#777;padding:25px}
+.driver-info{background:#fff3f3;padding:12px;border-radius:10px;margin-top:10px;font-size:14px}
+.active-order{border:2px solid #168a35}
+.stop{background:#555;color:white;width:100%;margin-top:8px}
+.map-link{display:block;text-align:center;background:#eee;color:#222;padding:11px;border-radius:10px;text-decoration:none;margin-top:8px;font-weight:bold}
+.coordinates{background:#eef7ff;padding:10px;border-radius:10px;margin-top:10px;font-size:13px;line-height:1.8;overflow-wrap:anywhere}
+.notification-box{background:#fff8e6;padding:12px;border-radius:10px;margin-top:12px;font-size:14px;line-height:1.7;overflow-wrap:anywhere}
+.notification-button{background:#ff9800;color:white;width:100%;margin-top:8px}
 </style>
-
 </head>
 
 <body>
-
 <header>
-
-<div class="logo">
-AL HASSAN 🛵
-</div>
-
-<div>
-مندوب
-</div>
-
+  <div class="logo">AL HASSAN 🛵</div>
+  <div>مندوب</div>
 </header>
-
 
 <div class="wrap">
 
+  <div class="card">
+    <div class="title">👤 معلومات المندوب</div>
+    <input id="driverName" placeholder="اسم المندوب">
+    <input id="driverId" placeholder="رقم المندوب">
+    <button class="primary" onclick="saveDriver()">حفظ بياناتي</button>
+    <div id="driverInfo" class="driver-info" style="display:none"></div>
+  </div>
 
-<!-- DRIVER -->
+  <div class="card">
+    <div class="title">🔔 إشعارات الطلبات</div>
+    <div id="notificationStatus" class="notification-box">
+      جارٍ تجهيز إشعارات الطلبات...
+    </div>
+    <button id="notificationButton" class="notification-button"
+      style="display:none" onclick="enableNotifications()">
+      🔔 تفعيل إشعارات الطلبات
+    </button>
+  </div>
 
-<div class="card">
+  <div class="card">
+    <div class="title">📍 مشاركة موقع المندوب</div>
+    <p style="font-size:14px;color:#666">
+      بعد استلام الطلب، اضغط على الزر حتى يعرف الزبون والإدارة مكانك.
+    </p>
+    <button id="locationButton" class="green" onclick="startLocation()">
+      📍 بدء مشاركة موقعي
+    </button>
+    <div id="locationStatus" class="location-status">
+      الموقع غير مشارك حاليًا.
+    </div>
+    <div id="coordinates" class="coordinates" style="display:none"></div>
+    <button id="stopLocationButton" class="stop"
+      style="display:none" onclick="stopLocation()">
+      🛑 إيقاف مشاركة الموقع
+    </button>
+  </div>
 
-<div class="title">
-👤 معلومات المندوب
-</div>
+  <div id="message" class="message"></div>
 
-<input
-id="driverName"
-placeholder="اسم المندوب"
->
+  <div class="card">
+    <div class="title">📦 الطلبات المتاحة</div>
+    <div id="orders"><div class="empty">جارٍ تحميل الطلبات...</div></div>
+    <button class="primary" onclick="loadOrders()">🔄 تحديث الطلبات</button>
+  </div>
 
-<input
-id="driverId"
-placeholder="رقم المندوب"
->
-
-<button
-class="primary"
-onclick="saveDriver()">
-
-حفظ بياناتي
-
-</button>
-
-<div
-id="driverInfo"
-class="driver-info"
-style="display:none">
-
-</div>
-
-</div>
-
-
-<!-- NOTIFICATIONS -->
-
-<div class="card">
-
-<div class="title">
-🔔 إشعارات الطلبات
-</div>
-
-<div
-id="notificationStatus"
-class="notification-box">
-
-جاري تجهيز إشعارات الطلبات...
-
-</div>
-
-<button
-id="notificationButton"
-class="notification-button"
-style="display:none"
-onclick="enableNotifications()">
-
-🔔 تفعيل إشعارات الطلبات
-
-</button>
+  <div id="activeOrderBox" class="card" style="display:none">
+    <div class="title">🛵 طلبي الحالي</div>
+    <div id="activeOrder"></div>
+  </div>
 
 </div>
-
-
-<!-- LOCATION -->
-
-<div class="card">
-
-<div class="title">
-📍 مشاركة موقع المندوب
-</div>
-
-<p style="font-size:14px;color:#666">
-
-بعد استلام الطلب، اضغط على الزر حتى يعرف الزبون والإدارة مكانك.
-
-</p>
-
-<button
-id="locationButton"
-class="green"
-onclick="startLocation()">
-
-📍 بدء مشاركة موقعي
-
-</button>
-
-<div
-id="locationStatus"
-class="location-status">
-
-الموقع غير مشارك حاليًا.
-
-</div>
-
-<div
-id="coordinates"
-class="coordinates"
-style="display:none">
-
-</div>
-
-<button
-id="stopLocationButton"
-class="stop"
-style="display:none"
-onclick="stopLocation()">
-
-🛑 إيقاف مشاركة الموقع
-
-</button>
-
-</div>
-
-
-<!-- MESSAGE -->
-
-<div
-id="message"
-class="message">
-
-</div>
-
-
-<!-- ORDERS -->
-
-<div class="card">
-
-<div class="title">
-📦 الطلبات المتاحة
-</div>
-
-<div id="orders">
-
-<div class="empty">
-جارِ تحميل الطلبات...
-</div>
-
-</div>
-
-</div>
-
-
-<!-- ACTIVE ORDER -->
-
-<div
-id="activeOrderBox"
-class="card"
-style="display:none">
-
-<div class="title">
-🛵 طلبي الحالي
-</div>
-
-<div id="activeOrder"></div>
-
-</div>
-
-
-</div>
-
 
 <script type="module">
-
-
-/* =========================
-FIREBASE
-========================= */
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
-initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
+  getFirestore, collection, getDocs, doc,
+  runTransaction, serverTimestamp, setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 import {
-getFirestore,
-collection,
-getDocs,
-doc,
-runTransaction,
-serverTimestamp,
-setDoc
-}
-from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  getMessaging, getToken, onMessage, isSupported
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
 
-
-import {
-getMessaging,
-getToken,
-onMessage
-}
-from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
-
-
+/* إعدادات Firebase */
 const firebaseConfig = {
-
-apiKey:
-"AIzaSyB5hMTyYH6I6Z_Ij4VYdVsvaWAaiLt9SRA",
-
-authDomain:
-"al-hassan-b39d6.firebaseapp.com",
-
-projectId:
-"al-hassan-b39d6",
-
-storageBucket:
-"al-hassan-b39d6.firebasestorage.app",
-
-messagingSenderId:
-"239416840375",
-
-appId:
-"1:239416840375:web:804d0308ce3d7afee97d32",
-
-measurementId:
-"G-6C86NGWQCS"
-
+  apiKey: "AIzaSyB5hMTyYH6I6Z_Ij4VYdVsvaWAaiLt9SRA",
+  authDomain: "al-hassan-b39d6.firebaseapp.com",
+  projectId: "al-hassan-b39d6",
+  storageBucket: "al-hassan-b39d6.firebasestorage.app",
+  messagingSenderId: "239416840375",
+  appId: "1:239416840375:web:804d0308ce3d7afee97d32",
+  measurementId: "G-6C86NGWQCS"
 };
 
-
-const app =
-initializeApp(firebaseConfig);
-
-const db =
-getFirestore(app);
-
-
-/* =========================
-FIREBASE MESSAGING
-========================= */
-
-let messaging = null;
-
-try{
-
-messaging =
-getMessaging(app);
-
-}catch(error){
-
-console.error(
-"❌ Firebase Messaging error:",
-error
-);
-
-}
-
-
-/* =========================
-VAPID KEY
-========================= */
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 const VAPID_KEY =
-"BCISwqcccFaenHMCg9sfcvasZJvYqULgNa9jtxnpMLjb-iZ7_bs-wdw9l0LIz7trHwNakmUrwi03z2h3D0hTeO4";
+  "BCISwqcccFaenHMCg9sfcvasZJvYqULgNa9jtxnpMLjb-iZ7_bs-wdw9l0LIz7trHwNakmUrwi03z2h3D0hTeO4";
 
-
-/* =========================
-VARIABLES
-========================= */
-
-let driverName =
-localStorage.getItem("alhassan_driver_name") || "";
-
-let driverId =
-localStorage.getItem("alhassan_driver_id") || "";
-
-let activeOrderId =
-localStorage.getItem("alhassan_active_order") || "";
-
-let locationWatcher = null;
-
-
-/* =========================
-SERVICE WORKER
-========================= */
-
+let messaging = null;
 let messagingRegistration = null;
+let locationWatcher = null;
+let locationBusy = false;
 
+let driverName = localStorage.getItem("alhassan_driver_name") || "";
+let driverId = localStorage.getItem("alhassan_driver_id") || "";
+let activeOrderId = localStorage.getItem("alhassan_active_order") || "";
 
-async function registerMessagingServiceWorker(){
+/* عرض حالة الإشعارات */
+function setNotificationStatus(text, type = "normal") {
+  const box = document.getElementById("notificationStatus");
+  box.innerText = text;
 
-if(!("serviceWorker" in navigator)){
-
-console.error(
-"❌ المتصفح لا يدعم Service Worker."
-);
-
-return null;
-
+  if (type === "success") {
+    box.style.background = "#e9f8ed";
+    box.style.color = "#168a35";
+  } else if (type === "error") {
+    box.style.background = "#fff0f0";
+    box.style.color = "#c00";
+  } else {
+    box.style.background = "#fff8e6";
+    box.style.color = "#555";
+  }
 }
 
+/* تسجيل Service Worker */
+async function registerMessagingServiceWorker() {
+  if (!("serviceWorker" in navigator)) {
+    throw new Error("SERVICE_WORKER_NOT_SUPPORTED");
+  }
 
-try{
+  messagingRegistration = await navigator.serviceWorker.register(
+    "/AL-HASSAN-APP/firebase-messaging-sw.js",
+    { scope: "/AL-HASSAN-APP/" }
+  );
 
-messagingRegistration =
-await navigator.serviceWorker.register(
-"/AL-HASSAN-APP/firebase-messaging-sw.js",
-{
-scope:"/AL-HASSAN-APP/"
-}
-);
-
-
-console.log(
-"✅ Firebase Messaging Service Worker registered."
-);
-
-
-return messagingRegistration;
-
-
-}catch(error){
-
-console.error(
-"❌ Service Worker registration failed:",
-error
-);
-
-return null;
-
+  await navigator.serviceWorker.ready;
+  return messagingRegistration;
 }
 
+/* الرسائل داخل الصفحة */
+function showMessage(text, error = false) {
+  const box = document.getElementById("message");
+  box.innerText = text;
+  box.style.color = error ? "#c00" : "#168a35";
 
-/* =========================
-NOTIFICATION STATUS
-========================= */
-
-function setNotificationStatus(
-text,
-type="normal"
-){
-
-const box =
-document.getElementById(
-"notificationStatus"
-);
-
-box.innerText = text;
-
-
-if(type === "success"){
-
-box.style.background =
-"#e9f8ed";
-
-box.style.color =
-"#168a35";
-
+  setTimeout(() => {
+    box.innerText = "";
+  }, 5000);
 }
 
-else if(type === "error"){
+/* عرض معلومات المندوب */
+function showDriver() {
+  if (!driverName || !driverId) return;
 
-box.style.background =
-"#fff0f0";
+  document.getElementById("driverName").value = driverName;
+  document.getElementById("driverId").value = driverId;
 
-box.style.color =
-"#c00";
+  const info = document.getElementById("driverInfo");
+  info.style.display = "block";
+  info.innerHTML =
+    "👤 المندوب: <b></b><br>🆔 الرقم: <b></b>";
 
+  info.children[0].textContent = driverName;
+  info.children[1].textContent = driverId;
 }
 
-else{
-
-box.style.background =
-"#fff8e6";
-
-box.style.color =
-"#555";
-
-}
-
-}
-
-
-/* =========================
-ENABLE NOTIFICATIONS
-========================= */
-
-window.enableNotifications =
-async function(){
-
-if(!driverName || !driverId){
-
-showMessage(
-"⚠️ احفظ بيانات المندوب أولًا.",
-true
-);
-
-return;
-
-}
-
-
-if(!messaging){
-
-setNotificationStatus(
-"❌ خدمة الإشعارات غير متاحة في هذا المتصفح.",
-"error"
-);
-
-return;
-
-}
-
-
-if(!("Notification" in window)){
-
-setNotificationStatus(
-"❌ جهازك لا يدعم إشعارات المتصفح.",
-"error"
-);
-
-return;
-
-}
-
-
-try{
-
-
-setNotificationStatus(
-"⏳ جارِ طلب إذن الإشعارات..."
-);
-
-
-const permission =
-await Notification.requestPermission();
-
-
-if(permission !== "granted"){
-
-setNotificationStatus(
-"⚠️ لم يتم السماح بالإشعارات. فعّل الإشعارات من إعدادات المتصفح.",
-"error"
-);
-
-return;
-
-}
-
-
-const registration =
-await registerMessagingServiceWorker();
-
-
-if(!registration){
-
-setNotificationStatus(
-"❌ تعذر تشغيل خدمة الإشعارات.",
-"error"
-);
-
-return;
-
-}
-
-
-setNotificationStatus(
-"⏳ جارِ تسجيل جهازك لاستقبال الطلبات..."
-);
-
-
-const token =
-await getToken(
-messaging,
-{
-vapidKey:VAPID_KEY,
-serviceWorkerRegistration:
-registration
-}
-);
-
-
-if(!token){
-
-setNotificationStatus(
-"❌ لم يتم الحصول على رمز الإشعارات.",
-"error"
-);
-
-return;
-
-}
-
-
-console.log(
-"FCM TOKEN:",
-token
-);
-
-
-/* =========================
-SAVE TOKEN
-========================= */
-
-await setDoc(
-doc(
-db,
-"notificationTokens",
-token
-),
-{
-
-token:token,
-
-role:"driver",
-
-driverId:driverId,
-
-driverName:driverName,
-
-active:true,
-
-updatedAt:
-serverTimestamp()
-
-}
-);
-
-
-localStorage.setItem(
-"alhassan_fcm_token",
-token
-);
-
-
-setNotificationStatus(
-"✅ إشعارات الطلبات مفعّلة. سيصلك إشعار عند وصول طلب جديد.",
-"success"
-);
-
-
-document.getElementById(
-"notificationButton"
-).style.display =
-"none";
-
-
-}catch(error){
-
-console.error(
-"❌ Notification error:",
-error
-);
-
-
-setNotificationStatus(
-"❌ حدث خطأ أثناء تفعيل الإشعارات. افتح Console لمعرفة التفاصيل.",
-"error"
-);
-
-}
-
+/* حفظ بيانات المندوب */
+window.saveDriver = async function() {
+  const name = document.getElementById("driverName").value.trim();
+  const id = document.getElementById("driverId").value.trim();
+
+  if (!name || !id) {
+    showMessage("⚠️ اكتب اسم المندوب ورقمه.", true);
+    return;
+  }
+
+  driverName = name;
+  driverId = id;
+
+  localStorage.setItem("alhassan_driver_name", driverName);
+  localStorage.setItem("alhassan_driver_id", driverId);
+
+  showDriver();
+  showMessage("✅ تم حفظ بيانات المندوب.");
+
+  const oldToken = localStorage.getItem("alhassan_fcm_token");
+  if (oldToken) {
+    try {
+      await setDoc(doc(db, "notificationTokens", oldToken), {
+        token: oldToken,
+        role: "driver",
+        driverId,
+        driverName,
+        active: true,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+    } catch (error) {
+      console.error("Token update error:", error);
+    }
+  }
+
+  checkNotificationSetup();
 };
 
+/* تهيئة الإشعارات دون تعطيل تحميل الصفحة */
+async function setupMessaging() {
+  try {
+    if (!("Notification" in window)) {
+      setNotificationStatus("هذا المتصفح لا يدعم إشعارات الويب.", "error");
+      return;
+    }
 
-/* =========================
-FOREGROUND MESSAGES
-========================= */
+    if (!("serviceWorker" in navigator)) {
+      setNotificationStatus("المتصفح لا يدعم خدمة الإشعارات المطلوبة.", "error");
+      return;
+    }
 
-if(messaging){
+    const supported = await isSupported();
+    if (!supported) {
+      setNotificationStatus(
+        "الإشعارات غير مدعومة في هذا المتصفح أو الجهاز. جرّب فتح الموقع في Safari أو Chrome.",
+        "error"
+      );
+      return;
+    }
 
-onMessage(
-messaging,
-function(payload){
+    messaging = getMessaging(app);
 
-console.log(
-"📩 Foreground notification:",
-payload
-);
+    onMessage(messaging, (payload) => {
+      const title = payload.notification?.title || "AL HASSAN";
+      const body = payload.notification?.body || "لديك تحديث جديد";
 
+      showMessage("🔔 " + title + " - " + body);
+      loadOrders();
+      loadActiveOrder();
 
-const title =
-payload.notification?.title
-||
-"AL HASSAN";
+      if (Notification.permission === "granted") {
+        try {
+          new Notification(title, { body });
+        } catch (error) {
+          console.warn("Foreground notification:", error);
+        }
+      }
+    });
 
-
-const body =
-payload.notification?.body
-||
-"لديك طلب جديد";
-
-
-showMessage(
-"🔔 " + title + " - " + body
-);
-
-
-/* محاولة إظهار إشعار عندما الصفحة مفتوحة */
-
-if(
-Notification.permission === "granted"
-){
-
-try{
-
-new Notification(
-title,
-{
-body:body,
-icon:"/AL-HASSAN-APP/icon.png"
-}
-);
-
-}catch(error){
-
-console.error(error);
-
-}
-
-}
-
-
-/* تحديث الطلبات */
-
-loadOrders();
-
+    if (Notification.permission === "granted" && driverName && driverId) {
+      await enableNotifications();
+    } else {
+      setNotificationStatus(
+        "احفظ بيانات المندوب ثم اضغط على زر تفعيل الإشعارات."
+      );
+      document.getElementById("notificationButton").style.display = "block";
+    }
+  } catch (error) {
+    console.error("Messaging setup error:", error);
+    setNotificationStatus(
+      "تعذر تجهيز الإشعارات. يمكنك استخدام صفحة المندوب والطلبات، وافحص إعدادات Firebase للإشعارات.",
+      "error"
+    );
+    document.getElementById("notificationButton").style.display = "block";
+  }
 }
 
-);
+/* تفعيل الإشعارات */
+window.enableNotifications = async function() {
+  if (!driverName || !driverId) {
+    showMessage("⚠️ احفظ بيانات المندوب أولًا.", true);
+    setNotificationStatus("احفظ اسم المندوب ورقمه أولًا.", "error");
+    return;
+  }
 
+  if (!("Notification" in window)) {
+    setNotificationStatus("هذا المتصفح لا يدعم الإشعارات.", "error");
+    return;
+  }
+
+  try {
+    setNotificationStatus("⏳ جارٍ طلب إذن الإشعارات...");
+
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") {
+      setNotificationStatus(
+        "لم تسمح بالإشعارات. فعّلها من إعدادات المتصفح.",
+        "error"
+      );
+      return;
+    }
+
+    if (!messaging) {
+      if (!(await isSupported())) {
+        throw new Error("MESSAGING_NOT_SUPPORTED");
+      }
+      messaging = getMessaging(app);
+    }
+
+    setNotificationStatus("⏳ جارٍ تسجيل جهازك لاستقبال الإشعارات...");
+
+    const registration = await registerMessagingServiceWorker();
+
+    const token = await getToken(messaging, {
+      vapidKey: VAPID_KEY,
+      serviceWorkerRegistration: registration
+    });
+
+    if (!token) {
+      throw new Error("FCM_TOKEN_EMPTY");
+    }
+
+    await setDoc(doc(db, "notificationTokens", token), {
+      token,
+      role: "driver",
+      driverId,
+      driverName,
+      active: true,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+
+    localStorage.setItem("alhassan_fcm_token", token);
+
+    setNotificationStatus(
+      "✅ تم تفعيل الإشعارات وتسجيل جهازك.",
+      "success"
+    );
+    document.getElementById("notificationButton").style.display = "none";
+  } catch (error) {
+    console.error("Notification error:", error);
+    setNotificationStatus(
+      "❌ فشل تفعيل الإشعارات: " + (error.message || "خطأ غير معروف"),
+      "error"
+    );
+    document.getElementById("notificationButton").style.display = "block";
+  }
+};
+
+/* فحص الإشعارات */
+async function checkNotificationSetup() {
+  if (!driverName || !driverId) {
+    setNotificationStatus("احفظ بيانات المندوب أولًا، ثم فعّل الإشعارات.");
+    document.getElementById("notificationButton").style.display = "block";
+    return;
+  }
+
+  if (!("Notification" in window)) {
+    setNotificationStatus("هذا المتصفح لا يدعم إشعارات الويب.", "error");
+    return;
+  }
+
+  if (Notification.permission === "granted") {
+    await enableNotifications();
+  } else {
+    setNotificationStatus("اضغط على الزر لتفعيل إشعارات الطلبات.");
+    document.getElementById("notificationButton").style.display = "block";
+  }
 }
 
+/* تحميل الطلبات المتاحة */
+window.loadOrders = async function() {
+  const box = document.getElementById("orders");
+  box.innerHTML = '<div class="empty">جارٍ تحميل الطلبات...</div>';
 
-/* =========================
-DRIVER
-========================= */
+  try {
+    const snapshot = await getDocs(collection(db, "orders"));
+    const orders = [];
 
-function showDriver(){
+    snapshot.forEach((item) => {
+      const order = item.data();
 
-if(driverName && driverId){
+      if (
+        !order.driverId &&
+        (order.status === "new" || !order.status)
+      ) {
+        orders.push({ id: item.id, ...order });
+      }
+    });
 
-document.getElementById("driverName").value =
-driverName;
+    orders.reverse();
 
-document.getElementById("driverId").value =
-driverId;
+    if (!orders.length) {
+      box.innerHTML = '<div class="empty">لا توجد طلبات متاحة حاليًا 📦</div>';
+      return;
+    }
 
-document.getElementById("driverInfo").style.display =
-"block";
+    box.innerHTML = "";
 
-document.getElementById("driverInfo").innerHTML =
-"👤 المندوب: <b>" +
-driverName +
-"</b><br>🆔 الرقم: <b>" +
-driverId +
-"</b>";
+    const categoryNames = {
+      food: "🍔 مطعم",
+      market: "🛒 سوبرماركت",
+      pharmacy: "💊 صيدلية",
+      clothes: "👗 ملابس",
+      beauty: "💄 تجميل",
+      electronics: "📱 إلكترونيات",
+      gifts: "🎁 هدايا",
+      other: "🏪 محل آخر"
+    };
 
+    orders.forEach((order) => {
+      const card = document.createElement("div");
+      card.className = "order";
+
+      const top = document.createElement("div");
+      top.className = "order-top";
+
+      const category = document.createElement("div");
+      category.className = "category";
+      category.textContent = categoryNames[order.category] || "🛵 طلب";
+
+      const status = document.createElement("div");
+      status.className = "status";
+      status.textContent = "🆕 جديد";
+
+      top.append(category, status);
+
+      const details = document.createElement("div");
+      details.className = "details";
+      details.textContent =
+        (order.item || "طلب") +
+        "\n📍 العنوان: " + (order.address || "غير محدد") +
+        "\n📞 الهاتف: " + (order.phone || "غير محدد") +
+        (order.merchant ? "\n🏪 المحل: " + order.merchant : "") +
+        (order.notes ? "\n📝 ملاحظات: " + order.notes : "");
+      details.style.whiteSpace = "pre-line";
+
+      const accept = document.createElement("button");
+      accept.className = "accept";
+      accept.textContent = "🛵 أريد توصيل هذا الطلب";
+      accept.onclick = () => window.acceptOrder(order.id);
+
+      card.append(top, details, accept);
+      box.appendChild(card);
+    });
+  } catch (error) {
+    console.error("Load orders error:", error);
+    box.innerHTML =
+      '<div class="empty">❌ تعذر تحميل الطلبات. تحقق من اتصال Firebase وصلاحيات قاعدة البيانات.</div>';
+  }
+};
+
+/* استلام الطلب */
+window.acceptOrder = async function(orderId) {
+  if (!driverName || !driverId) {
+    showMessage("⚠️ احفظ اسم المندوب ورقمه أولًا.", true);
+    return;
+  }
+
+  try {
+    const orderRef = doc(db, "orders", orderId);
+
+    await runTransaction(db, async (transaction) => {
+      const orderSnap = await transaction.get(orderRef);
+
+      if (!orderSnap.exists()) throw new Error("ORDER_NOT_FOUND");
+
+      const order = orderSnap.data();
+      if (order.driverId) throw new Error("ORDER_ALREADY_TAKEN");
+
+      transaction.update(orderRef, {
+        driverId,
+        driverName,
+        acceptedAt: serverTimestamp(),
+        status: "accepted"
+      });
+    });
+
+    activeOrderId = orderId;
+    localStorage.setItem("alhassan_active_order", activeOrderId);
+
+    showMessage("✅ تم استلام الطلب باسمك.");
+    await loadOrders();
+    await loadActiveOrder();
+  } catch (error) {
+    console.error("Accept order error:", error);
+
+    showMessage(
+      error.message === "ORDER_ALREADY_TAKEN"
+        ? "⚠️ استلم مندوب آخر هذا الطلب."
+        : "❌ تعذر استلام الطلب. تحقق من صلاحيات Firebase.",
+      true
+    );
+  }
+};
+
+/* عرض الطلب الحالي */
+async function loadActiveOrder() {
+  if (!activeOrderId || !driverId) return;
+
+  try {
+    const orderRef = doc(db, "orders", activeOrderId);
+    const snapshot = await getDocs(collection(db, "orders"));
+
+    let found = null;
+    snapshot.forEach((item) => {
+      if (item.id === activeOrderId) {
+        found = { id: item.id, ...item.data() };
+      }
+    });
+
+    if (!found || found.driverId !== driverId) {
+      activeOrderId = "";
+      localStorage.removeItem("alhassan_active_order");
+      document.getElementById("activeOrderBox").style.display = "none";
+      return;
+    }
+
+    document.getElementById("activeOrderBox").style.display = "block";
+
+    const box = document.getElementById("activeOrder");
+    box.innerHTML = "";
+
+    const details = document.createElement("div");
+    details.className = "details";
+    details.style.whiteSpace = "pre-line";
+    details.textContent =
+      "📦 " + (found.item || "طلب") +
+      "\n📍 " + (found.address || "العنوان غير محدد") +
+      "\n📞 " + (found.phone || "غير محدد");
+
+    const locationButton = document.createElement("button");
+    locationButton.className = "green";
+    locationButton.textContent = "📍 مشاركة موقعي للزبون والإدارة";
+    locationButton.onclick = window.startLocation;
+
+    const map = document.createElement("a");
+    map.className = "map-link";
+    map.target = "_blank";
+    map.rel = "noopener";
+    map.href =
+      "https://www.google.com/maps/search/?api=1&query=" +
+      encodeURIComponent(found.address || "");
+    map.textContent = "🗺️ فتح عنوان الزبون";
+
+    box.append(details, locationButton, map);
+  } catch (error) {
+    console.error("Load active order error:", error);
+  }
 }
 
-}
+/* بدء مشاركة GPS */
+window.startLocation = function() {
+  if (!driverName || !driverId) {
+    showMessage("⚠️ احفظ بيانات المندوب أولًا.", true);
+    return;
+  }
 
+  if (!activeOrderId) {
+    showMessage("⚠️ استلم طلبًا أولًا حتى تشارك موقعك.", true);
+    return;
+  }
 
-window.saveDriver = async function(){
+  if (!navigator.geolocation) {
+    document.getElementById("locationStatus").innerText =
+      "❌ جهازك لا يدعم تحديد الموقع.";
+    return;
+  }
 
-const name =
-document.getElementById("driverName")
-.value
-.trim();
+  if (locationWatcher !== null) {
+    showMessage("📍 موقعك تتم مشاركته حاليًا.");
+    return;
+  }
 
-const id =
-document.getElementById("driverId")
-.value
-.trim();
+  document.getElementById("locationStatus").innerText =
+    "📍 جارٍ طلب موقعك من الجهاز...";
 
+  locationWatcher = navigator.geolocation.watchPosition(
+    async (position) => {
+      if (locationBusy) return;
+      locationBusy = true;
 
-if(!name || !id){
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      const accuracy = position.coords.accuracy;
 
-showMessage(
-"⚠️ اكتب اسم المندوب ورقم المندوب.",
-true
-);
+      const coords = document.getElementById("coordinates");
+      coords.style.display = "block";
+      coords.innerHTML =
+        "📍 Latitude: <b>" + latitude.toFixed(6) + "</b><br>" +
+        "📍 Longitude: <b>" + longitude.toFixed(6) + "</b><br>" +
+        "🎯 دقة GPS: <b>" + Math.round(accuracy) + " متر</b>";
 
-return;
+      try {
+        const orderRef = doc(db, "orders", activeOrderId);
 
-}
+        await runTransaction(db, async (transaction) => {
+          const orderSnap = await transaction.get(orderRef);
+          if (!orderSnap.exists()) throw new Error("ORDER_NOT_FOUND");
 
+          const order = orderSnap.data();
+          if (order.driverId !== driverId) throw new Error("NOT_DRIVER");
 
-driverName = name;
+          transaction.update(orderRef, {
+            driverLatitude: latitude,
+            driverLongitude: longitude,
+            driverAccuracy: accuracy,
+            driverLocationUpdatedAt: serverTimestamp(),
+            driverLocationActive: true
+          });
+        });
 
-driverId = id;
+        const status = document.getElementById("locationStatus");
+        status.innerText = "✅ تم إرسال موقعك ويتم تحديثه الآن.";
+        status.className = "location-status success";
 
+        document.getElementById("stopLocationButton").style.display = "block";
+        document.getElementById("locationButton").innerText =
+          "📍 موقعك تتم مشاركته الآن";
+      } catch (error) {
+        console.error("GPS Firestore error:", error);
 
-localStorage.setItem(
-"alhassan_driver_name",
-driverName
-);
+        document.getElementById("locationStatus").innerText =
+          "⚠️ تم تحديد موقعك، لكن تعذر إرساله إلى Firebase. تحقق من الصلاحيات.";
+        document.getElementById("locationStatus").className =
+          "location-status error";
 
-localStorage.setItem(
-"alhassan_driver_id",
-driverId
-);
+        if (error.message === "NOT_DRIVER") {
+          window.stopLocation();
+        }
+      } finally {
+        locationBusy = false;
+      }
+    },
+    (error) => {
+      console.error("GPS error:", error);
 
+      let message = "❌ تعذر تحديد الموقع.";
+      if (error.code === 1) {
+        message = "⚠️ رفضت صلاحية الموقع. اسمح للمتصفح باستخدام موقعك.";
+      } else if (error.code === 2) {
+        message = "❌ تعذر تحديد الموقع. تأكد من تفعيل خدمات الموقع.";
+      } else if (error.code === 3) {
+        message = "⏱️ انتهى وقت تحديد الموقع. حاول مرة أخرى.";
+      }
 
+      const status = document.getElementById("locationStatus");
+      status.innerText = message;
+      status.className = "location-status error";
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 30000,
+      maximumAge: 0
+    }
+  );
+};
+
+/* إيقاف مشاركة GPS */
+window.stopLocation = async function() {
+  if (locationWatcher !== null) {
+    navigator.geolocation.clearWatch(locationWatcher);
+    locationWatcher = null;
+  }
+
+  document.getElementById("stopLocationButton").style.display = "none";
+  document.getElementById("locationButton").innerText = "📍 بدء مشاركة موقعي";
+
+  const status = document.getElementById("locationStatus");
+  status.innerText = "تم إيقاف مشاركة الموقع.";
+  status.className = "location-status";
+
+  if (activeOrderId && driverId) {
+    try {
+      const orderRef = doc(db, "orders", activeOrderId);
+
+      await runTransaction(db, async (transaction) => {
+        const snapshot = await transaction.get(orderRef);
+        if (!snapshot.exists()) return;
+
+        if (snapshot.data().driverId === driverId) {
+          transaction.update(orderRef, { driverLocationActive: false });
+        }
+      });
+    } catch (error) {
+      console.error("Stop location error:", error);
+    }
+  }
+};
+
+/* تشغيل الصفحة */
 showDriver();
-
-
-showMessage(
-"✅ تم حفظ بيانات المندوب."
-);
-
-
-/* إذا كانت الإشعارات مفعّلة سابقًا، نحدّث بيانات المندوب */
-
-const oldToken =
-localStorage.getItem(
-"alhassan_fcm_token"
-);
-
-
-if(oldToken){
-
-try{
-
-await setDoc(
-doc(
-db,
-"notificationTokens",
-oldToken
-),
-{
-
-token:oldToken,
-
-role:"driver",
-
-driverId:driverId,
-
-driverName:driverName,
-
-active:true,
-
-updatedAt:
-serverTimestamp()
-
-}
-);
-
-}catch(error){
-
-console.error(
-"Token update error:",
-error
-);
-
-}
-
-}
-
-};
-
-
-/* =========================
-MESSAGE
-========================= */
-
-function showMessage(text,error=false){
-
-const box =
-document.getElementById("message");
-
-box.innerText = text;
-
-box.style.color =
-error ? "#c00" : "#168a35";
-
-
-setTimeout(function(){
-
-box.innerText = "";
-
-},4000);
-
-}
-
-
-/* =========================
-LOAD ORDERS
-========================= */
-
-window.loadOrders = async function(){
-
-const box =
-document.getElementById("orders");
-
-box.innerHTML =
-'<div class="empty">جارِ تحميل الطلبات...</div>';
-
-
-try{
-
-const snapshot =
-await getDocs(
-collection(db,"orders")
-);
-
-
-let orders = [];
-
-
-snapshot.forEach(function(item){
-
-const order =
-item.data();
-
-
-if(
-!order.driverId &&
-(
-order.status === "new" ||
-!order.status
-)
-){
-
-orders.push({
-
-id:item.id,
-...order
-
-});
-
-}
-
-});
-
-
-if(!orders.length){
-
-box.innerHTML =
-'<div class="empty">لا توجد طلبات متاحة حاليًا 📦</div>';
-
-return;
-
-}
-
-
-box.innerHTML = "";
-
-orders.reverse();
-
-
-orders.forEach(function(order){
-
-const categoryNames = {
-
-food:"🍔 مطعم",
-market:"🛒 سوبرماركت",
-pharmacy:"💊 صيدلية",
-clothes:"👗 ملابس",
-beauty:"💄 تجميل",
-electronics:"📱 إلكترونيات",
-gifts:"🎁 هدايا",
-other:"🏪 محل آخر"
-
-};
-
-
-const category =
-categoryNames[order.category]
-|| "🛵 طلب";
-
-
-box.innerHTML += `
-
-<div class="order">
-
-<div class="order-top">
-
-<div class="category">
-${category}
-</div>
-
-<div class="status">
-🆕 جديد
-</div>
-
-</div>
-
-<div class="details">
-
-<b>
-${order.item || "طلب"}
-</b>
-
-<br>
-
-📍 العنوان:
-${order.address || ""}
-
-<br>
-
-📞 الهاتف:
-${order.phone || ""}
-
-${
-order.merchant
-?
-"<br>🏪 المحل: " + order.merchant
-:
-""
-}
-
-${
-order.notes
-?
-"<br>📝 " + order.notes
-:
-""
-}
-
-</div>
-
-<button
-class="accept"
-onclick="acceptOrder('${order.id}')">
-
-🛵 أريد توصيل هذا الطلب
-
-</button>
-
-</div>
-
-`;
-
-});
-
-
-}catch(error){
-
-console.error(error);
-
-box.innerHTML =
-'<div class="empty">❌ تعذر تحميل الطلبات.</div>';
-
-}
-
-};
-
-
-/* =========================
-ACCEPT ORDER
-========================= */
-
-window.acceptOrder = async function(orderId){
-
-if(!driverName || !driverId){
-
-showMessage(
-"⚠️ لازم تحفظ اسم ورقم المندوب أولاً.",
-true
-);
-
-return;
-
-}
-
-
-try{
-
-const orderRef =
-doc(db,"orders",orderId);
-
-
-await runTransaction(
-db,
-async function(transaction){
-
-const orderSnap =
-await transaction.get(orderRef);
-
-
-if(!orderSnap.exists()){
-
-throw new Error(
-"ORDER_NOT_FOUND"
-);
-
-}
-
-
-const order =
-orderSnap.data();
-
-
-if(order.driverId){
-
-throw new Error(
-"ORDER_ALREADY_TAKEN"
-);
-
-}
-
-
-transaction.update(
-orderRef,
-{
-
-driverId:driverId,
-
-driverName:driverName,
-
-acceptedAt:serverTimestamp(),
-
-status:"accepted"
-
-}
-
-);
-
-}
-);
-
-
-activeOrderId =
-orderId;
-
-
-localStorage.setItem(
-"alhassan_active_order",
-activeOrderId
-);
-
-
-showMessage(
-"✅ تم استلام الطلب باسمك."
-);
-
-
 loadOrders();
-
 loadActiveOrder();
-
-
-}catch(error){
-
-console.error(error);
-
-
-if(error.message === "ORDER_ALREADY_TAKEN"){
-
-showMessage(
-"⚠️ هذا الطلب تم استلامه من مندوب آخر.",
-true
-);
-
-}else{
-
-showMessage(
-"❌ تعذر استلام الطلب.",
-true
-);
-
-}
-
-}
-
-};
-
-
-/* =========================
-ACTIVE ORDER
-========================= */
-
-async function loadActiveOrder(){
-
-if(!activeOrderId){
-
-return;
-
-}
-
-
-try{
-
-const snapshot =
-await getDocs(
-collection(db,"orders")
-);
-
-
-let found = null;
-
-
-snapshot.forEach(function(item){
-
-if(item.id === activeOrderId){
-
-found = {
-
-id:item.id,
-...item.data()
-
-};
-
-}
-
-});
-
-
-if(!found){
-
-return;
-
-}
-
-
-if(found.driverId !== driverId){
-
-activeOrderId = "";
-
-localStorage.removeItem(
-"alhassan_active_order"
-);
-
-return;
-
-}
-
-
-document.getElementById(
-"activeOrderBox"
-).style.display =
-"block";
-
-
-document.getElementById(
-"activeOrder"
-).innerHTML = `
-
-<div class="active-order order">
-
-<div class="details">
-
-<b>
-📦 ${found.item || "طلب"}
-</b>
-
-<br><br>
-
-📍 ${found.address || ""}
-
-<br>
-
-📞 ${found.phone || ""}
-
-</div>
-
-
-<button
-class="green"
-onclick="startLocation()">
-
-📍 مشاركة موقعي للزبون والإدارة
-
-</button>
-
-
-<a
-class="map-link"
-target="_blank"
-href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(found.address || "")}">
-
-🗺️ فتح عنوان الزبون
-
-</a>
-
-</div>
-
-`;
-
-}catch(error){
-
-console.error(error);
-
-}
-
-}
-
-
-/* =========================
-START LOCATION
-========================= */
-
-window.startLocation = function(){
-
-if(!driverName || !driverId){
-
-showMessage(
-"⚠️ احفظ بيانات المندوب أولًا.",
-true
-);
-
-return;
-
-}
-
-
-if(!activeOrderId){
-
-showMessage(
-"⚠️ أولًا استلم طلبًا حتى نشارك موقعك.",
-true
-);
-
-return;
-
-}
-
-
-if(!navigator.geolocation){
-
-document.getElementById(
-"locationStatus"
-).innerText =
-"❌ جهازك لا يدعم تحديد الموقع.";
-
-return;
-
-}
-
-
-if(locationWatcher !== null){
-
-showMessage(
-"📍 موقعك تتم مشاركته حاليًا."
-);
-
-return;
-
-}
-
-
-document.getElementById(
-"locationStatus"
-).innerText =
-"📍 جارِ طلب موقعك من الجهاز...";
-
-
-locationWatcher =
-navigator.geolocation.watchPosition(
-
-async function(position){
-
-const latitude =
-position.coords.latitude;
-
-const longitude =
-position.coords.longitude;
-
-const accuracy =
-position.coords.accuracy;
-
-
-/* عرض الموقع */
-
-document.getElementById(
-"coordinates"
-).style.display =
-"block";
-
-document.getElementById(
-"coordinates"
-).innerHTML =
-
-"📍 Latitude: <b>" +
-latitude.toFixed(6) +
-"</b><br>" +
-
-"📍 Longitude: <b>" +
-longitude.toFixed(6) +
-"</b><br>" +
-
-"🎯 دقة GPS: <b>" +
-Math.round(accuracy) +
-" متر</b>";
-
-
-try{
-
-const snapshot =
-await getDocs(
-collection(db,"orders")
-);
-
-
-let allowed = false;
-
-
-snapshot.forEach(function(item){
-
-if(item.id === activeOrderId){
-
-const data =
-item.data();
-
-if(data.driverId === driverId){
-
-allowed = true;
-
-}
-
-}
-
-});
-
-
-if(!allowed){
-
-await stopLocation();
-
-showMessage(
-"⚠️ هذا الطلب لم يعد تابعًا لك.",
-true
-);
-
-return;
-
-}
-
-
-await runTransaction(
-db,
-async function(transaction){
-
-const orderRef =
-doc(db,"orders",activeOrderId);
-
-
-const orderSnap =
-await transaction.get(orderRef);
-
-
-if(!orderSnap.exists()){
-
-throw new Error(
-"ORDER_NOT_FOUND"
-);
-
-}
-
-
-const order =
-orderSnap.data();
-
-
-if(order.driverId !== driverId){
-
-throw new Error(
-"NOT_DRIVER"
-);
-
-}
-
-
-transaction.update(
-orderRef,
-{
-
-driverLatitude:latitude,
-
-driverLongitude:longitude,
-
-driverAccuracy:accuracy,
-
-driverLocationUpdatedAt:
-serverTimestamp(),
-
-driverLocationActive:true
-
-}
-
-);
-
-}
-);
-
-
-document.getElementById(
-"locationStatus"
-).innerHTML =
-"✅ تم تحديد موقعك ويتم تحديثه الآن.";
-
-
-document.getElementById(
-"locationStatus"
-).className =
-"location-status success";
-
-
-document.getElementById(
-"stopLocationButton"
-).style.display =
-"block";
-
-
-document.getElementById(
-"locationButton"
-).innerText =
-"📍 موقعك تتم مشاركته الآن";
-
-
-}catch(error){
-
-console.error(error);
-
-document.getElementById(
-"locationStatus"
-).innerText =
-"⚠️ تم تحديد GPS لكن حدث خطأ عند إرسال الموقع.";
-
-document.getElementById(
-"locationStatus"
-).className =
-"location-status error";
-
-}
-
-},
-
-
-/* =========================
-GPS ERROR
-========================= */
-
-function(error){
-
-console.error(
-"GPS ERROR:",
-error
-);
-
-
-let message =
-"❌ خطأ في تحديد الموقع. رمز الخطأ: " +
-error.code;
-
-
-if(error.code === 1){
-
-message =
-"⚠️ تم رفض صلاحية الموقع (الخطأ 1). اسمحي للمتصفح باستخدام موقعك.";
-
-}
-
-
-else if(error.code === 2){
-
-message =
-"❌ تعذر تحديد الموقع (الخطأ 2). تأكدي أن GPS وخدمة الموقع مفعلة.";
-
-}
-
-
-else if(error.code === 3){
-
-message =
-"⏱️ انتهى وقت تحديد الموقع (الخطأ 3). حاولي مرة ثانية.";
-
-}
-
-
-document.getElementById(
-"locationStatus"
-).innerText =
-message;
-
-
-document.getElementById(
-"locationStatus"
-).className =
-"location-status error";
-
-},
-
-
-/* =========================
-GPS OPTIONS
-========================= */
-
-{
-
-enableHighAccuracy:true,
-
-timeout:30000,
-
-maximumAge:0
-
-}
-
-);
-
-};
-
-
-/* =========================
-STOP LOCATION
-========================= */
-
-window.stopLocation = async function(){
-
-if(locationWatcher !== null){
-
-navigator.geolocation.clearWatch(
-locationWatcher
-);
-
-locationWatcher = null;
-
-}
-
-
-document.getElementById(
-"stopLocationButton"
-).style.display =
-"none";
-
-
-document.getElementById(
-"locationButton"
-).innerText =
-"📍 بدء مشاركة موقعي";
-
-
-document.getElementById(
-"locationStatus"
-).innerText =
-"تم إيقاف مشاركة الموقع.";
-
-document.getElementById(
-"locationStatus"
-).className =
-"location-status";
-
-
-if(activeOrderId && driverId){
-
-try{
-
-const orderRef =
-doc(db,"orders",activeOrderId);
-
-
-await runTransaction(
-db,
-async function(transaction){
-
-const orderSnap =
-await transaction.get(orderRef);
-
-
-if(!orderSnap.exists()){
-
-return;
-
-}
-
-
-const order =
-orderSnap.data();
-
-
-if(order.driverId === driverId){
-
-transaction.update(
-orderRef,
-{
-
-driverLocationActive:false
-
-}
-
-);
-
-}
-
-}
-
-);
-
-}catch(error){
-
-console.error(error);
-
-}
-
-}
-
-};
-
-
-/* =========================
-START
-========================= */
-
-showDriver();
-
-loadOrders();
-
-loadActiveOrder();
-
-
-/* =========================
-CHECK NOTIFICATIONS
-========================= */
-
-async function checkNotificationSetup(){
-
-if(!driverName || !driverId){
-
-setNotificationStatus(
-"احفظ بيانات المندوب أولًا، ثم فعّل إشعارات الطلبات."
-);
-
-document.getElementById(
-"notificationButton"
-).style.display =
-"block";
-
-return;
-
-}
-
-
-if(!("Notification" in window)){
-
-setNotificationStatus(
-"❌ هذا المتصفح لا يدعم إشعارات الويب.",
-"error"
-);
-
-return;
-
-}
-
-
-if(Notification.permission === "granted"){
-
-try{
-
-await enableNotifications();
-
-}catch(error){
-
-console.error(error);
-
-}
-
-}
-
-else{
-
-setNotificationStatus(
-"فعّل الإشعارات حتى يصلك تنبيه عند وصول طلب جديد."
-);
-
-document.getElementById(
-"notificationButton"
-).style.display =
-"block";
-
-}
-
-}
-
-
-checkNotificationSetup();
-
-
+setupMessaging();
 </script>
-
 </body>
-
 </html>
