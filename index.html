@@ -428,7 +428,6 @@ placeholder="ابحث..."
 
 </div>
 
-
 <!-- SEARCH -->
 <div id="searchPage" class="page">
 
@@ -451,7 +450,6 @@ onclick="openOrder()">
 
 </div>
 
-
 <!-- ORDERS -->
 <div id="ordersPage" class="page">
 
@@ -468,7 +466,6 @@ onclick="openOrder()">
 </section>
 
 </div>
-
 
 <!-- ACCOUNT -->
 <div id="accountPage" class="page">
@@ -496,7 +493,6 @@ onclick="openOrder()">
 </div>
 
 </main>
-
 
 <!-- ORDER MODAL -->
 <div id="orderModal" class="modal">
@@ -561,7 +557,6 @@ onclick="openOrder()">
 
 </div>
 
-
 <div id="stepForm" style="display:none">
 
 <div id="selectedTypeTitle" class="form-title"></div>
@@ -609,7 +604,6 @@ onclick="closeOrder()">
 </div>
 </div>
 
-
 <!-- BOTTOM NAV -->
 <nav class="bottom">
 
@@ -650,7 +644,6 @@ onclick="showPage('account')">
 
 </nav>
 
-
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -662,7 +655,6 @@ addDoc,
 getDocs,
 serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 
 /* FIREBASE */
 
@@ -687,7 +679,6 @@ measurementId:"G-6C86NGWQCS"
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
-
 
 /* ORDER TYPES */
 
@@ -766,11 +757,9 @@ fields:`
 
 };
 
-
 /* VARIABLES */
 
 let selectedOrderType = "";
-
 
 /* OPEN ORDER */
 
@@ -782,7 +771,6 @@ backToTypes();
 
 };
 
-
 /* OPEN WITH CATEGORY */
 
 window.openOrderWithCategory = function(type){
@@ -793,7 +781,6 @@ selectOrderType(type);
 
 };
 
-
 /* CLOSE */
 
 window.closeOrder = function(){
@@ -803,7 +790,6 @@ document.getElementById("orderModal").style.display="none";
 document.getElementById("orderMessage").innerText="";
 
 };
-
 
 /* SELECT TYPE */
 
@@ -829,7 +815,6 @@ document.getElementById("orderMessage").innerText="";
 
 };
 
-
 /* BACK */
 
 window.backToTypes = function(){
@@ -841,7 +826,6 @@ document.getElementById("stepForm").style.display="none";
 selectedOrderType="";
 
 };
-
 
 /* SEND ORDER */
 
@@ -877,7 +861,6 @@ const phone=document.getElementById("orderPhone").value.trim();
 
 const notes=document.getElementById("orderNotes").value.trim();
 
-
 if(!item || !address || !phone){
 
 document.getElementById("orderMessage").innerText=
@@ -886,7 +869,6 @@ document.getElementById("orderMessage").innerText=
 return;
 
 }
-
 
 /* CREATE READABLE ORDER */
 
@@ -916,7 +898,6 @@ if(details){
 fullDetails+=" | التفاصيل: "+details;
 }
 
-
 try{
 
 await addDoc(collection(db,"orders"),{
@@ -941,14 +922,12 @@ createdAt:serverTimestamp()
 
 });
 
-
 document.getElementById("orderMessage").innerText=
 "✅ تم إرسال طلبك بنجاح!";
 
 document.getElementById("orderAddress").value="";
 document.getElementById("orderPhone").value="";
 document.getElementById("orderNotes").value="";
-
 
 setTimeout(function(){
 
@@ -957,7 +936,6 @@ closeOrder();
 showPage("orders");
 
 },1200);
-
 
 }catch(error){
 
@@ -969,7 +947,6 @@ document.getElementById("orderMessage").innerText=
 }
 
 };
-
 
 /* SHOW PAGES */
 
@@ -985,7 +962,6 @@ document.querySelectorAll(".bottom button")
 x.classList.remove("active");
 });
 
-
 if(page==="home"){
 
 document.getElementById("homePage")
@@ -996,7 +972,6 @@ document.getElementById("navHome")
 
 }
 
-
 if(page==="search"){
 
 document.getElementById("searchPage")
@@ -1006,7 +981,6 @@ document.getElementById("navSearch")
 .classList.add("active");
 
 }
-
 
 if(page==="orders"){
 
@@ -1020,7 +994,6 @@ loadOrders();
 
 }
 
-
 if(page==="account"){
 
 document.getElementById("accountPage")
@@ -1031,11 +1004,9 @@ document.getElementById("navAccount")
 
 }
 
-
 window.scrollTo(0,0);
 
 };
-
 
 /* LOAD ORDERS */
 
