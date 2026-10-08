@@ -370,16 +370,13 @@ grid-template-columns:repeat(3,1fr)
 <div id="homePage" class="page active">
 
 <div class="hero">
-
 <h1>شو بدك نجيبلك اليوم؟</h1>
-
 <p>من أي محل أو مكان في عتمان ودرعا 🛵</p>
 
 <div class="search">
 🔎
 <input id="searchInput" placeholder="ابحث...">
 </div>
-
 </div>
 
 <section>
@@ -448,36 +445,27 @@ grid-template-columns:repeat(3,1fr)
 <h2>خدمات AL HASSAN</h2>
 
 <div class="service">
-
 <div class="service-icon">🛍️</div>
-
 <div>
 <b>شراء من المحلات</b>
 <p>اطلب أي غرض من أي محل.</p>
 </div>
-
 </div>
 
 <div class="service">
-
 <div class="service-icon">📦</div>
-
 <div>
 <b>توصيل أغراض</b>
 <p>إرسال واستلام الأغراض داخل المنطقة.</p>
 </div>
-
 </div>
 
 <div class="service">
-
 <div class="service-icon">🛵</div>
-
 <div>
 <b>توصيل سريع</b>
 <p>مندوب يوصل طلبك لباب بيتك.</p>
 </div>
-
 </div>
 
 </section>
@@ -486,7 +474,6 @@ grid-template-columns:repeat(3,1fr)
 
 
 <!-- SEARCH -->
-
 <div id="searchPage" class="page">
 
 <section>
@@ -501,9 +488,7 @@ grid-template-columns:repeat(3,1fr)
 class="primary"
 style="width:100%;padding:14px;border:0;border-radius:10px"
 onclick="openOrder()">
-
 🛵 اطلب أي شيء
-
 </button>
 
 </section>
@@ -512,7 +497,6 @@ onclick="openOrder()">
 
 
 <!-- ORDERS -->
-
 <div id="ordersPage" class="page">
 
 <section>
@@ -520,11 +504,9 @@ onclick="openOrder()">
 <h2>📦 طلباتي</h2>
 
 <div id="ordersList">
-
 <div class="empty">
 سجّل الدخول أولاً لرؤية طلباتك 📦
 </div>
-
 </div>
 
 </section>
@@ -533,7 +515,6 @@ onclick="openOrder()">
 
 
 <!-- ACCOUNT -->
-
 <div id="accountPage" class="page">
 
 <section>
@@ -547,23 +528,14 @@ onclick="openOrder()">
 <div class="service-icon">🛵</div>
 
 <div>
-
 <b>AL HASSAN</b>
-
-<p>
-سجّل الدخول حتى تقدر تطلب وتتابع طلباتك.
-</p>
-
+<p>سجّل الدخول حتى تقدر تطلب وتتابع طلباتك.</p>
 </div>
 
 </div>
 
-<button
-class="primary auth-button"
-onclick="openAuth()">
-
+<button class="primary auth-button" onclick="openAuth()">
 🔐 تسجيل الدخول
-
 </button>
 
 </div>
@@ -576,7 +548,6 @@ onclick="openAuth()">
 
 
 <!-- ORDER MODAL -->
-
 <div id="orderModal" class="modal">
 
 <div class="modal-box">
@@ -638,28 +609,22 @@ onclick="openAuth()">
 
 <div id="dynamicFields"></div>
 
-<input
-id="orderAddress"
-placeholder="📍 عنوان التوصيل"
->
+<input id="orderAddress" placeholder="📍 عنوان التوصيل">
 
+<!-- CUSTOMER GPS -->
 <div class="location-box">
 
 <b>📍 موقعك على الخريطة</b>
 
 <p style="font-size:13px;color:#666;margin:7px 0">
-
 اختياري — يمكنك مشاركة موقعك الحالي ليساعد المندوب في الوصول إليك.
-
 </p>
 
 <button
 type="button"
 class="location-button"
 onclick="getCustomerLocation()">
-
 📍 تحديد موقعي الحالي
-
 </button>
 
 <p id="locationMessage" class="location-message">
@@ -682,25 +647,19 @@ placeholder="📝 ملاحظات إضافية (اختياري)"
 <button
 class="primary"
 onclick="sendOrder()">
-
 إرسال الطلب 🛵
-
 </button>
 
 <button
 class="back-button"
 onclick="backToTypes()">
-
 رجوع
-
 </button>
 
 <button
 class="secondary"
 onclick="closeOrder()">
-
 إلغاء
-
 </button>
 
 <p id="orderMessage"></p>
@@ -708,12 +667,10 @@ onclick="closeOrder()">
 </div>
 
 </div>
-
 </div>
 
 
 <!-- AUTH MODAL -->
-
 <div id="authModal" class="modal">
 
 <div class="modal-box">
@@ -727,9 +684,7 @@ onclick="closeOrder()">
 <button
 class="auth-button google"
 onclick="googleLogin()">
-
 🔵 الدخول باستخدام Google
-
 </button>
 
 <hr>
@@ -749,17 +704,13 @@ placeholder="🔒 كلمة المرور"
 <button
 class="auth-button primary"
 onclick="emailLogin()">
-
 📧 تسجيل الدخول / إنشاء حساب
-
 </button>
 
 <button
 class="auth-button phone"
 onclick="showPhoneLogin()">
-
 📱 الدخول برقم الهاتف
-
 </button>
 
 <div id="phoneArea" style="display:none">
@@ -767,7 +718,7 @@ onclick="showPhoneLogin()">
 <input
 id="phoneInput"
 type="tel"
-placeholder="📱 رقم الهاتف، مثال +961 71 123 456"
+placeholder="📱 رقم الهاتف مع رمز الدولة، مثال +963..."
 >
 
 <div id="recaptcha-container"></div>
@@ -775,9 +726,7 @@ placeholder="📱 رقم الهاتف، مثال +961 71 123 456"
 <button
 class="auth-button primary"
 onclick="sendPhoneCode()">
-
 إرسال رمز SMS
-
 </button>
 
 <input
@@ -792,9 +741,7 @@ id="verifyCodeButton"
 class="auth-button primary"
 onclick="verifyPhoneCode()"
 style="display:none">
-
 تأكيد الرمز
-
 </button>
 
 </div>
@@ -804,9 +751,7 @@ style="display:none">
 <button
 class="secondary"
 onclick="closeAuth()">
-
 إغلاق
-
 </button>
 
 </div>
@@ -815,121 +760,88 @@ onclick="closeAuth()">
 
 
 <!-- BOTTOM NAV -->
-
 <nav class="bottom">
 
 <button
 id="navHome"
 class="active"
 onclick="showPage('home')">
-
 🏠
 <small>الرئيسية</small>
-
 </button>
 
 <button
 id="navSearch"
 onclick="showPage('search')">
-
 🔎
 <small>بحث</small>
-
 </button>
 
 <button
 onclick="openOrder()">
-
 🛵
 <small>اطلب</small>
-
 </button>
 
 <button
 id="navOrders"
 onclick="showPage('orders')">
-
 📦
 <small>طلباتي</small>
-
 </button>
 
 <button
 id="navAccount"
 onclick="showPage('account')">
-
 👤
 <small>حسابي</small>
-
 </button>
 
 </nav>
 
 
-<!-- FIREBASE -->
-
+<!-- FIREBASE COMPAT -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
 
 <script>
 
-/* =========================
-   FIREBASE
-========================= */
+/* FIREBASE */
 
 const firebaseConfig = {
-
-apiKey:"AIzaSyB5hMTyH6I6Z_Ij4VYdVsvaWAaiLt9SRA",
-
-authDomain:"al-hassan-b39d6.firebaseapp.com",
-
-projectId:"al-hassan-b39d6",
-
-storageBucket:"al-hassan-b39d6.firebasestorage.app",
-
-messagingSenderId:"239416840375",
-
-appId:"1:239416840375:web:804d0308ce3d7afee97d32",
-
-measurementId:"G-6C86NGWQCS"
-
+  apiKey: "AIzaSyB5hMTyYH6I6Z_Ij4VYdVsvaWAaiLt9SRA",
+  authDomain: "al-hassan-b39d6.firebaseapp.com",
+  projectId: "al-hassan-b39d6",
+  storageBucket: "al-hassan-b39d6.firebasestorage.app",
+  messagingSenderId: "239416840375",
+  appId: "1:239416840375:web:804d0308ce3d7afee97d32",
+  measurementId: "G-6C86NGWQCS"
 };
 
 firebase.initializeApp(firebaseConfig);
 
-const db=firebase.firestore();
-
-const auth=firebase.auth();
-
-
-/* =========================
-   VARIABLES
-========================= */
-
-let currentUser=null;
-
-let confirmationResult=null;
-
-let recaptchaVerifier=null;
-
-let customerLatitude=null;
-
-let customerLongitude=null;
-
-let customerAccuracy=null;
-
-let selectedOrderType="";
+const db = firebase.firestore();
+const auth = firebase.auth();
 
 
-/* =========================
-   ORDER TYPES
-========================= */
+/* VARIABLES */
 
-const orderTypes={
+let currentUser = null;
+let confirmationResult = null;
+let recaptchaVerifier = null;
+
+let customerLatitude = null;
+let customerLongitude = null;
+let customerAccuracy = null;
+
+let selectedOrderType = "";
+
+
+/* ORDER TYPES */
+
+const orderTypes = {
 
 food:{
 title:"🍔 طلب من مطعم",
@@ -1005,50 +917,43 @@ fields:`
 };
 
 
-/* =========================
-   AUTH STATE
-========================= */
+/* AUTH STATE */
 
 auth.onAuthStateChanged(function(user){
 
-currentUser=user;
+currentUser = user;
 
 updateAccount();
 
 });
 
 
-/* =========================
-   CUSTOMER GPS
-========================= */
+/* CUSTOMER GPS */
 
 function getCustomerLocation(){
 
-const message=document.getElementById("locationMessage");
+const message = document.getElementById("locationMessage");
 
 if(!navigator.geolocation){
 
-message.innerText=
+message.innerText =
 "❌ جهازك أو المتصفح لا يدعم تحديد الموقع.";
 
 return;
-
 }
 
-message.innerText=
+message.innerText =
 "📍 جارٍ تحديد موقعك الحالي...";
 
 navigator.geolocation.getCurrentPosition(
 
 function(position){
 
-customerLatitude=position.coords.latitude;
+customerLatitude = position.coords.latitude;
+customerLongitude = position.coords.longitude;
+customerAccuracy = position.coords.accuracy;
 
-customerLongitude=position.coords.longitude;
-
-customerAccuracy=position.coords.accuracy;
-
-message.innerText=
+message.innerText =
 "✅ تم تحديد موقعك الحالي بنجاح.";
 
 },
@@ -1057,30 +962,28 @@ function(error){
 
 console.error(error);
 
-customerLatitude=null;
+customerLatitude = null;
+customerLongitude = null;
+customerAccuracy = null;
 
-customerLongitude=null;
+if(error.code === 1){
 
-customerAccuracy=null;
-
-if(error.code===1){
-
-message.innerText=
+message.innerText =
 "❌ تم رفض صلاحية الموقع. اسمح للمتصفح باستخدام موقعك.";
 
-}else if(error.code===2){
+}else if(error.code === 2){
 
-message.innerText=
+message.innerText =
 "❌ تعذر معرفة موقعك. تأكد من تشغيل GPS.";
 
-}else if(error.code===3){
+}else if(error.code === 3){
 
-message.innerText=
+message.innerText =
 "❌ انتهى وقت تحديد الموقع. حاول مرة ثانية.";
 
 }else{
 
-message.innerText=
+message.innerText =
 "❌ تعذر تحديد موقعك.";
 
 }
@@ -1088,13 +991,9 @@ message.innerText=
 },
 
 {
-
 enableHighAccuracy:true,
-
 timeout:15000,
-
 maximumAge:0
-
 }
 
 );
@@ -1102,43 +1001,38 @@ maximumAge:0
 }
 
 
-/* =========================
-   AUTH
-========================= */
+/* AUTH */
 
 function openAuth(){
 
-document.getElementById("authModal").style.display="block";
+document.getElementById("authModal").style.display = "block";
 
-document.getElementById("authMessage").innerText="";
+document.getElementById("authMessage").innerText = "";
 
 }
 
 function closeAuth(){
 
-document.getElementById("authModal").style.display="none";
+document.getElementById("authModal").style.display = "none";
 
 }
 
 
-/* =========================
-   GOOGLE
-========================= */
+/* GOOGLE */
 
 async function googleLogin(){
 
-const message=document.getElementById("authMessage");
+const message = document.getElementById("authMessage");
 
-message.innerText="جارِ تسجيل الدخول...";
+message.innerText = "جارِ تسجيل الدخول...";
 
 try{
 
-const provider=new firebase.auth.GoogleAuthProvider();
+const provider = new firebase.auth.GoogleAuthProvider();
 
 await auth.signInWithPopup(provider);
 
-message.innerText=
-"✅ تم تسجيل الدخول بنجاح";
+message.innerText = "✅ تم تسجيل الدخول بنجاح";
 
 setTimeout(closeAuth,800);
 
@@ -1146,33 +1040,30 @@ setTimeout(closeAuth,800);
 
 console.error(error);
 
-message.innerText=
-"❌ تعذر تسجيل الدخول بواسطة Google: "+
-(error.message || "");
+message.innerText =
+"❌ تعذر تسجيل الدخول بواسطة Google: " + error.message;
 
 }
 
 }
 
 
-/* =========================
-   EMAIL
-========================= */
+/* EMAIL */
 
 async function emailLogin(){
 
-const email=
+const email =
 document.getElementById("emailInput").value.trim();
 
-const password=
+const password =
 document.getElementById("passwordInput").value;
 
-const message=
+const message =
 document.getElementById("authMessage");
 
 if(!email || !password){
 
-message.innerText=
+message.innerText =
 "⚠️ اكتب الإيميل وكلمة المرور.";
 
 return;
@@ -1186,18 +1077,16 @@ email,
 password
 );
 
-message.innerText=
+message.innerText =
 "✅ تم تسجيل الدخول.";
 
 setTimeout(closeAuth,800);
 
 }catch(error){
 
-console.error(error);
-
 if(
-error.code==="auth/user-not-found" ||
-error.code==="auth/invalid-credential"
+error.code === "auth/user-not-found" ||
+error.code === "auth/invalid-credential"
 ){
 
 try{
@@ -1207,7 +1096,7 @@ email,
 password
 );
 
-message.innerText=
+message.innerText =
 "✅ تم إنشاء الحساب وتسجيل الدخول.";
 
 setTimeout(closeAuth,800);
@@ -1216,16 +1105,17 @@ setTimeout(closeAuth,800);
 
 console.error(createError);
 
-message.innerText=
-"❌ تعذر إنشاء الحساب. تأكد من الإيميل وكلمة المرور.";
+message.innerText =
+"❌ تعذر إنشاء الحساب: " + createError.message;
 
 }
 
 }else{
 
-message.innerText=
-"❌ تعذر تسجيل الدخول: "+
-(error.message || "");
+console.error(error);
+
+message.innerText =
+"❌ تعذر تسجيل الدخول: " + error.message;
 
 }
 
@@ -1234,41 +1124,31 @@ message.innerText=
 }
 
 
-/* =========================
-   PHONE LOGIN
-========================= */
+/* PHONE LOGIN */
 
 function showPhoneLogin(){
 
-document.getElementById("phoneArea").style.display="block";
+document.getElementById("phoneArea").style.display = "block";
 
-document.getElementById("authMessage").innerText=
+document.getElementById("authMessage").innerText =
 "اكتب رقم الهاتف مع رمز الدولة.";
 
 }
 
 
-/* =========================
-   PHONE NORMALIZATION
-========================= */
+/* PHONE NORMALIZATION */
 
 function normalizePhoneNumber(value){
 
-let phone=value.trim();
+let phone = value.trim();
 
-/* حذف المسافات والشرطات والأقواس */
-
-phone=phone.replace(/[\s\-()]/g,"");
-
-/* 00961... → +961... */
+phone = phone.replace(/[\s\-()]/g,"");
 
 if(phone.startsWith("00")){
 
-phone="+"+phone.substring(2);
+phone = "+" + phone.substring(2);
 
 }
-
-/* إذا كتب 961 بدون + */
 
 if(!phone.startsWith("+")){
 
@@ -1277,27 +1157,15 @@ phone.startsWith("961") ||
 phone.startsWith("963")
 ){
 
-phone="+"+phone;
+phone = "+" + phone;
 
-}
+}else if(phone.startsWith("0")){
 
-else if(phone.startsWith("0")){
+phone = "+961" + phone.substring(1);
 
-/*
-إذا كان رقم محلي يبدأ بـ 0
-نفترض لبنان
-مثال:
-71xxxxxx → +96171xxxxxx
-03xxxxxx → +9613xxxxxx
-*/
+}else{
 
-phone="+961"+phone.substring(1);
-
-}
-
-else{
-
-phone="+"+phone;
+phone = "+" + phone;
 
 }
 
@@ -1308,109 +1176,74 @@ return phone;
 }
 
 
-/* =========================
-   SEND SMS
-========================= */
+/* SEND SMS */
 
 async function sendPhoneCode(){
 
-const input=
-document.getElementById("phoneInput");
+let phone =
+document.getElementById("phoneInput").value.trim();
 
-const message=
+const message =
 document.getElementById("authMessage");
 
-let phone=input.value;
+if(!phone){
 
-if(!phone.trim()){
-
-message.innerText=
+message.innerText =
 "⚠️ اكتب رقم الهاتف.";
 
 return;
 
 }
 
-phone=normalizePhoneNumber(phone);
-
-input.value=phone;
-
-/* E.164 basic validation */
+phone = normalizePhoneNumber(phone);
 
 if(!/^\+[1-9]\d{7,14}$/.test(phone)){
 
-message.innerText=
+message.innerText =
 "⚠️ رقم الهاتف غير صالح. مثال: +96171123456";
 
 return;
 
 }
 
-message.innerText=
-"📱 جارٍ إرسال رمز SMS...";
-
 try{
 
 if(!recaptchaVerifier){
 
-recaptchaVerifier=
+recaptchaVerifier =
 new firebase.auth.RecaptchaVerifier(
 "recaptcha-container",
 {
 size:"normal"
-}
+},
+auth
 );
 
 await recaptchaVerifier.render();
 
 }
 
-confirmationResult=
+confirmationResult =
 await auth.signInWithPhoneNumber(
 phone,
 recaptchaVerifier
 );
 
-document.getElementById("smsCodeInput")
-.style.display="block";
+document.getElementById("smsCodeInput").style.display =
+"block";
 
-document.getElementById("verifyCodeButton")
-.style.display="block";
+document.getElementById("verifyCodeButton").style.display =
+"block";
 
-message.innerText=
-"📩 تم إرسال رمز التحقق إلى "+phone;
+message.innerText =
+"📩 تم إرسال رمز التحقق.";
 
 }catch(error){
 
-console.error("PHONE AUTH ERROR:",error);
+console.error(error);
 
-if(error.code==="auth/invalid-phone-number"){
-
-message.innerText=
-"❌ Firebase رفض رقم الهاتف. تأكد أن الرقم مكتوب بصيغة دولية صحيحة.";
-
-}else if(error.code==="auth/operation-not-allowed"){
-
-message.innerText=
-"❌ تسجيل الدخول برقم الهاتف غير مفعّل في Firebase.";
-
-}else if(error.code==="auth/quota-exceeded"){
-
-message.innerText=
-"❌ تم تجاوز حد رسائل SMS المجانية حالياً.";
-
-}else if(error.code==="auth/captcha-check-failed"){
-
-message.innerText=
-"❌ فشل التحقق الأمني. أعد تحميل الصفحة وحاول مرة ثانية.";
-
-}else{
-
-message.innerText=
-"❌ تعذر إرسال رمز SMS: "+
-(error.message || "خطأ غير معروف");
-
-}
+message.innerText =
+"❌ تعذر إرسال رمز SMS: " + error.message;
 
 if(recaptchaVerifier){
 
@@ -1420,7 +1253,7 @@ recaptchaVerifier.clear();
 
 }catch(e){}
 
-recaptchaVerifier=null;
+recaptchaVerifier = null;
 
 }
 
@@ -1429,22 +1262,19 @@ recaptchaVerifier=null;
 }
 
 
-/* =========================
-   VERIFY SMS
-========================= */
+/* VERIFY SMS */
 
 async function verifyPhoneCode(){
 
-const code=
-document.getElementById("smsCodeInput")
-.value.trim();
+const code =
+document.getElementById("smsCodeInput").value.trim();
 
-const message=
+const message =
 document.getElementById("authMessage");
 
 if(!code){
 
-message.innerText=
+message.innerText =
 "⚠️ اكتب رمز التحقق.";
 
 return;
@@ -1453,7 +1283,7 @@ return;
 
 if(!confirmationResult){
 
-message.innerText=
+message.innerText =
 "❌ أرسل رمز SMS أولاً.";
 
 return;
@@ -1464,7 +1294,7 @@ try{
 
 await confirmationResult.confirm(code);
 
-message.innerText=
+message.innerText =
 "✅ تم تسجيل الدخول بنجاح.";
 
 setTimeout(closeAuth,800);
@@ -1473,7 +1303,7 @@ setTimeout(closeAuth,800);
 
 console.error(error);
 
-message.innerText=
+message.innerText =
 "❌ رمز التحقق غير صحيح.";
 
 }
@@ -1481,33 +1311,26 @@ message.innerText=
 }
 
 
-/* =========================
-   ACCOUNT
-========================= */
+/* ACCOUNT */
 
 function updateAccount(){
 
-const box=
+const box =
 document.getElementById("accountContent");
 
 if(!box)return;
 
 if(!currentUser){
 
-box.innerHTML=`
+box.innerHTML = `
 
 <div class="service">
 
 <div class="service-icon">🛵</div>
 
 <div>
-
 <b>AL HASSAN</b>
-
-<p>
-سجّل الدخول حتى تقدر تطلب وتتابع طلباتك.
-</p>
-
+<p>سجّل الدخول حتى تقدر تطلب وتتابع طلباتك.</p>
 </div>
 
 </div>
@@ -1515,9 +1338,7 @@ box.innerHTML=`
 <button
 class="primary auth-button"
 onclick="openAuth()">
-
 🔐 تسجيل الدخول
-
 </button>
 
 `;
@@ -1526,13 +1347,13 @@ return;
 
 }
 
-const name=
+const name =
 currentUser.displayName ||
 currentUser.email ||
 currentUser.phoneNumber ||
 "مستخدم AL HASSAN";
 
-box.innerHTML=`
+box.innerHTML = `
 
 <div class="user-box">
 
@@ -1545,9 +1366,7 @@ box.innerHTML=`
 <button
 class="logout auth-button"
 onclick="logout()">
-
 🚪 تسجيل الخروج
-
 </button>
 
 `;
@@ -1555,9 +1374,7 @@ onclick="logout()">
 }
 
 
-/* =========================
-   LOGOUT
-========================= */
+/* LOGOUT */
 
 async function logout(){
 
@@ -1576,9 +1393,7 @@ console.error(error);
 }
 
 
-/* =========================
-   OPEN ORDER
-========================= */
+/* OPEN ORDER */
 
 function openOrder(){
 
@@ -1590,17 +1405,15 @@ return;
 
 }
 
-document.getElementById("orderModal")
-.style.display="block";
+document.getElementById("orderModal").style.display =
+"block";
 
 backToTypes();
 
 }
 
 
-/* =========================
-   CATEGORY
-========================= */
+/* CATEGORY */
 
 function openOrderWithCategory(type){
 
@@ -1612,206 +1425,191 @@ return;
 
 }
 
-document.getElementById("orderModal")
-.style.display="block";
+document.getElementById("orderModal").style.display =
+"block";
 
 selectOrderType(type);
 
 }
 
 
-/* =========================
-   CLOSE ORDER
-========================= */
+/* CLOSE ORDER */
 
 function closeOrder(){
 
-document.getElementById("orderModal")
-.style.display="none";
+document.getElementById("orderModal").style.display =
+"none";
 
-document.getElementById("orderMessage")
-.innerText="";
+document.getElementById("orderMessage").innerText = "";
 
 }
 
 
-/* =========================
-   SELECT TYPE
-========================= */
+/* SELECT TYPE */
 
 function selectOrderType(type){
 
-selectedOrderType=type;
+selectedOrderType = type;
 
-const data=orderTypes[type];
+const data = orderTypes[type];
 
 if(!data)return;
 
-document.getElementById("stepType")
-.style.display="none";
+document.getElementById("stepType").style.display =
+"none";
 
-document.getElementById("stepForm")
-.style.display="block";
+document.getElementById("stepForm").style.display =
+"block";
 
-document.getElementById("selectedTypeTitle")
-.innerText=data.title;
+document.getElementById("selectedTypeTitle").innerText =
+data.title;
 
-document.getElementById("dynamicFields")
-.innerHTML=data.fields;
+document.getElementById("dynamicFields").innerHTML =
+data.fields;
 
-document.getElementById("orderMessage")
-.innerText="";
+document.getElementById("orderMessage").innerText = "";
 
 }
 
 
-/* =========================
-   BACK
-========================= */
+/* BACK */
 
 function backToTypes(){
 
-document.getElementById("stepType")
-.style.display="block";
+document.getElementById("stepType").style.display =
+"block";
 
-document.getElementById("stepForm")
-.style.display="none";
+document.getElementById("stepForm").style.display =
+"none";
 
-selectedOrderType="";
+selectedOrderType = "";
 
 }
 
 
-/* =========================
-   SEND ORDER
-========================= */
+/* SEND ORDER */
 
 async function sendOrder(){
 
 if(!currentUser){
 
-document.getElementById("orderMessage")
-.innerText=
+document.getElementById("orderMessage").innerText =
 "⚠️ سجّل الدخول أولاً.";
 
 return;
 
 }
 
-const itemElement=
+const itemElement =
 document.getElementById("orderItem");
 
-const storeElement=
+const storeElement =
 document.getElementById("orderStore");
 
-const quantityElement=
+const quantityElement =
 document.getElementById("orderQuantity");
 
-const sizeElement=
+const sizeElement =
 document.getElementById("orderSize");
 
-const colorElement=
+const colorElement =
 document.getElementById("orderColor");
 
-const detailsElement=
+const detailsElement =
 document.getElementById("orderDetails");
 
-const item=
+const item =
 itemElement ? itemElement.value.trim() : "";
 
-const store=
+const store =
 storeElement ? storeElement.value.trim() : "";
 
-const quantity=
+const quantity =
 quantityElement ? quantityElement.value.trim() : "";
 
-const size=
+const size =
 sizeElement ? sizeElement.value.trim() : "";
 
-const color=
+const color =
 colorElement ? colorElement.value.trim() : "";
 
-const details=
+const details =
 detailsElement ? detailsElement.value.trim() : "";
 
-const address=
-document.getElementById("orderAddress")
-.value.trim();
+const address =
+document.getElementById("orderAddress").value.trim();
 
-const phone=
-document.getElementById("orderPhone")
-.value.trim();
+const phone =
+document.getElementById("orderPhone").value.trim();
 
-const notes=
-document.getElementById("orderNotes")
-.value.trim();
+const notes =
+document.getElementById("orderNotes").value.trim();
 
 if(!item || !address || !phone){
 
-document.getElementById("orderMessage")
-.innerText=
+document.getElementById("orderMessage").innerText =
 "⚠️ الرجاء كتابة الطلب والعنوان ورقم الهاتف.";
 
 return;
 
 }
 
-let fullDetails="";
+let fullDetails = "";
 
 if(item)
-fullDetails+="الطلب: "+item;
+fullDetails += "الطلب: " + item;
 
 if(store)
-fullDetails+=" | المحل: "+store;
+fullDetails += " | المحل: " + store;
 
 if(quantity)
-fullDetails+=" | الكمية: "+quantity;
+fullDetails += " | الكمية: " + quantity;
 
 if(size)
-fullDetails+=" | المقاس: "+size;
+fullDetails += " | المقاس: " + size;
 
 if(color)
-fullDetails+=" | اللون: "+color;
+fullDetails += " | اللون: " + color;
 
 if(details)
-fullDetails+=" | التفاصيل: "+details;
+fullDetails += " | التفاصيل: " + details;
 
 
 try{
 
 await db.collection("orders").add({
 
-item:fullDetails,
+item: fullDetails,
 
-category:selectedOrderType,
+category: selectedOrderType,
 
-address:address,
+address: address,
 
-phone:phone,
+phone: phone,
 
-notes:notes,
+notes: notes,
 
-status:"new",
+status: "new",
 
-merchant:store,
+merchant: store,
 
-driver:"",
+driver: "",
 
-driverId:"",
+driverId: "",
 
-driverName:"",
+driverName: "",
 
-userId:currentUser.uid,
+userId: currentUser.uid,
 
-userEmail:currentUser.email || "",
+userEmail: currentUser.email || "",
 
-userPhone:currentUser.phoneNumber || "",
+userPhone: currentUser.phoneNumber || "",
 
-customerLatitude:customerLatitude,
+customerLatitude: customerLatitude,
 
-customerLongitude:customerLongitude,
+customerLongitude: customerLongitude,
 
-customerLocationAccuracy:customerAccuracy,
+customerLocationAccuracy: customerAccuracy,
 
 customerLocationSelected:
 customerLatitude !== null &&
@@ -1823,28 +1621,23 @@ firebase.firestore.FieldValue.serverTimestamp()
 });
 
 
-document.getElementById("orderMessage")
-.innerText=
+document.getElementById("orderMessage").innerText =
 "✅ تم إرسال طلبك بنجاح!";
 
 
-document.getElementById("orderAddress")
-.value="";
+document.getElementById("orderAddress").value = "";
 
-document.getElementById("orderPhone")
-.value="";
+document.getElementById("orderPhone").value = "";
 
-document.getElementById("orderNotes")
-.value="";
+document.getElementById("orderNotes").value = "";
 
-customerLatitude=null;
+customerLatitude = null;
 
-customerLongitude=null;
+customerLongitude = null;
 
-customerAccuracy=null;
+customerAccuracy = null;
 
-document.getElementById("locationMessage")
-.innerText=
+document.getElementById("locationMessage").innerText =
 "لم يتم تحديد الموقع بعد";
 
 
@@ -1859,80 +1652,64 @@ showPage("orders");
 
 }catch(error){
 
-console.error("ORDER ERROR:",error);
+console.error(error);
 
-document.getElementById("orderMessage")
-.innerText=
-"❌ حدث خطأ أثناء إرسال الطلب.";
-
-}
+document.getElementById("orderMessage").innerText =
+"❌ حدث خطأ أثناء إرسال الطلب: " + error.message;
 
 }
 
+}
 
-/* =========================
-   SHOW PAGE
-========================= */
+
+/* SHOW PAGE */
 
 function showPage(page){
 
-document.querySelectorAll(".page")
-.forEach(function(x){
+document.querySelectorAll(".page").forEach(function(x){
 
 x.classList.remove("active");
 
 });
 
-document.querySelectorAll(".bottom button")
-.forEach(function(x){
+document.querySelectorAll(".bottom button").forEach(function(x){
 
 x.classList.remove("active");
 
 });
 
 
-if(page==="home"){
+if(page === "home"){
 
-document.getElementById("homePage")
-.classList.add("active");
+document.getElementById("homePage").classList.add("active");
 
-document.getElementById("navHome")
-.classList.add("active");
+document.getElementById("navHome").classList.add("active");
 
 }
 
+if(page === "search"){
 
-if(page==="search"){
+document.getElementById("searchPage").classList.add("active");
 
-document.getElementById("searchPage")
-.classList.add("active");
-
-document.getElementById("navSearch")
-.classList.add("active");
+document.getElementById("navSearch").classList.add("active");
 
 }
 
+if(page === "orders"){
 
-if(page==="orders"){
+document.getElementById("ordersPage").classList.add("active");
 
-document.getElementById("ordersPage")
-.classList.add("active");
-
-document.getElementById("navOrders")
-.classList.add("active");
+document.getElementById("navOrders").classList.add("active");
 
 loadOrders();
 
 }
 
+if(page === "account"){
 
-if(page==="account"){
+document.getElementById("accountPage").classList.add("active");
 
-document.getElementById("accountPage")
-.classList.add("active");
-
-document.getElementById("navAccount")
-.classList.add("active");
+document.getElementById("navAccount").classList.add("active");
 
 updateAccount();
 
@@ -1943,66 +1720,63 @@ window.scrollTo(0,0);
 }
 
 
-/* =========================
-   LOAD ORDERS
-========================= */
+/* LOAD ORDERS */
 
 async function loadOrders(){
 
-const box=
+const box =
 document.getElementById("ordersList");
 
 if(!currentUser){
 
-box.innerHTML=
+box.innerHTML =
 '<div class="empty">سجّل الدخول أولاً لرؤية طلباتك 📦</div>';
 
 return;
 
 }
 
-box.innerHTML=
+box.innerHTML =
 "جارِ تحميل طلباتك...";
 
 try{
 
-const snapshot=
+const snapshot =
 await db.collection("orders")
 .where("userId","==",currentUser.uid)
 .get();
 
 if(snapshot.empty){
 
-box.innerHTML=
+box.innerHTML =
 '<div class="empty">ما عندك طلبات حالياً 📦</div>';
 
 return;
 
 }
 
-box.innerHTML="";
-
+box.innerHTML = "";
 
 snapshot.forEach(function(doc){
 
-const order=doc.data();
+const order = doc.data();
 
-let status="جديد 🆕";
+let status = "جديد 🆕";
 
-if(order.status==="preparing")
-status="قيد التجهيز 🔄";
+if(order.status === "preparing")
+status = "قيد التجهيز 🔄";
 
-if(order.status==="onway")
-status="بالطريق 🛵";
+if(order.status === "onway")
+status = "بالطريق 🛵";
 
-if(order.status==="delivered")
-status="تم التوصيل ✅";
+if(order.status === "delivered")
+status = "تم التوصيل ✅";
 
-if(order.status==="purchased")
-status="تم الشراء 🛍️";
+if(order.status === "purchased")
+status = "تم الشراء 🛍️";
 
 
-const categoryNames={
+const categoryNames = {
 
 food:"🍔 مطعم",
 
@@ -2022,13 +1796,11 @@ other:"🏪 محل آخر"
 
 };
 
-const category=
-categoryNames[order.category] ||
-"🛵 طلب";
+const category =
+categoryNames[order.category] || "🛵 طلب";
 
 
-let customerLocation="";
-
+let customerLocation = "";
 
 if(
 order.customerLatitude !== null &&
@@ -2037,13 +1809,13 @@ order.customerLongitude !== null &&
 order.customerLongitude !== undefined
 ){
 
-const mapUrl=
-"https://www.google.com/maps?q="+
-order.customerLatitude+
-","+
+const mapUrl =
+"https://www.google.com/maps?q=" +
+order.customerLatitude +
+"," +
 order.customerLongitude;
 
-customerLocation=`
+customerLocation = `
 
 <p>
 📍 <b>موقعك محفوظ</b>
@@ -2053,9 +1825,7 @@ customerLocation=`
 class="map-link"
 href="${mapUrl}"
 target="_blank">
-
 🗺️ فتح موقعي على الخريطة
-
 </a>
 
 `;
@@ -2063,7 +1833,7 @@ target="_blank">
 }
 
 
-box.innerHTML+=`
+box.innerHTML += `
 
 <div class="order-card">
 
@@ -2081,9 +1851,7 @@ ${order.merchant ?
 ${customerLocation}
 
 <div class="status">
-
 ${status}
-
 </div>
 
 </div>
@@ -2094,9 +1862,9 @@ ${status}
 
 }catch(error){
 
-console.error("LOAD ORDERS ERROR:",error);
+console.error(error);
 
-box.innerHTML=
+box.innerHTML =
 '<div class="empty">تعذر تحميل الطلبات حالياً.</div>';
 
 }
@@ -2104,56 +1872,54 @@ box.innerHTML=
 }
 
 
-/* =========================
-   MAKE FUNCTIONS AVAILABLE
-========================= */
+/* MAKE FUNCTIONS AVAILABLE TO BUTTONS */
 
-window.getCustomerLocation=
+window.getCustomerLocation =
 getCustomerLocation;
 
-window.openAuth=
+window.openAuth =
 openAuth;
 
-window.closeAuth=
+window.closeAuth =
 closeAuth;
 
-window.googleLogin=
+window.googleLogin =
 googleLogin;
 
-window.emailLogin=
+window.emailLogin =
 emailLogin;
 
-window.showPhoneLogin=
+window.showPhoneLogin =
 showPhoneLogin;
 
-window.sendPhoneCode=
+window.sendPhoneCode =
 sendPhoneCode;
 
-window.verifyPhoneCode=
+window.verifyPhoneCode =
 verifyPhoneCode;
 
-window.logout=
+window.logout =
 logout;
 
-window.openOrder=
+window.openOrder =
 openOrder;
 
-window.openOrderWithCategory=
+window.openOrderWithCategory =
 openOrderWithCategory;
 
-window.closeOrder=
+window.closeOrder =
 closeOrder;
 
-window.selectOrderType=
+window.selectOrderType =
 selectOrderType;
 
-window.backToTypes=
+window.backToTypes =
 backToTypes;
 
-window.sendOrder=
+window.sendOrder =
 sendOrder;
 
-window.showPage=
+window.showPage =
 showPage;
 
 </script>
