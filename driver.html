@@ -205,6 +205,22 @@ font-size:13px;
 line-height:1.8;
 }
 
+.notification-box{
+background:#fff8e6;
+padding:12px;
+border-radius:10px;
+margin-top:12px;
+font-size:14px;
+line-height:1.7;
+}
+
+.notification-button{
+background:#ff9800;
+color:white;
+width:100%;
+margin-top:8px;
+}
+
 </style>
 
 </head>
@@ -259,6 +275,35 @@ class="driver-info"
 style="display:none">
 
 </div>
+
+</div>
+
+
+<!-- NOTIFICATIONS -->
+
+<div class="card">
+
+<div class="title">
+🔔 إشعارات الطلبات
+</div>
+
+<div
+id="notificationStatus"
+class="notification-box">
+
+جاري تجهيز إشعارات الطلبات...
+
+</div>
+
+<button
+id="notificationButton"
+class="notification-button"
+style="display:none"
+onclick="enableNotifications()">
+
+🔔 تفعيل إشعارات الطلبات
+
+</button>
 
 </div>
 
@@ -381,10 +426,20 @@ collection,
 getDocs,
 doc,
 runTransaction,
-serverTimestamp
+serverTimestamp,
+setDoc
 }
 from
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+import {
+getMessaging,
+getToken,
+onMessage
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
 
 
 const firebaseConfig = {
@@ -421,6 +476,35 @@ getFirestore(app);
 
 
 /* =========================
+FIREBASE MESSAGING
+========================= */
+
+let messaging = null;
+
+try{
+
+messaging =
+getMessaging(app);
+
+}catch(error){
+
+console.error(
+"❌ Firebase Messaging error:",
+error
+);
+
+}
+
+
+/* =========================
+VAPID KEY
+========================= */
+
+const VAPID_KEY =
+"BCISwqcccFaenHMCg9sfcvasZJvYqULgNa9jtxnpMLjb-iZ7_bs-wdw9l0LIz7trHwNakmUrwi03z2h3D0hTeO4";
+
+
+/* =========================
 VARIABLES
 ========================= */
 
@@ -434,6 +518,358 @@ let activeOrderId =
 localStorage.getItem("alhassan_active_order") || "";
 
 let locationWatcher = null;
+
+
+/* =========================
+SERVICE WORKER
+========================= */
+
+let messagingRegistration = null;
+
+
+async function registerMessagingServiceWorker(){
+
+if(!("serviceWorker" in navigator)){
+
+console.error(
+"❌ المتصفح لا يدعم Service Worker."
+);
+
+return null;
+
+}
+
+
+try{
+
+messagingRegistration =
+await navigator.serviceWorker.register(
+"/AL-HASSAN-APP/firebase-messaging-sw.js",
+{
+scope:"/AL-HASSAN-APP/"
+}
+);
+
+
+console.log(
+"✅ Firebase Messaging Service Worker registered."
+);
+
+
+return messagingRegistration;
+
+
+}catch(error){
+
+console.error(
+"❌ Service Worker registration failed:",
+error
+);
+
+return null;
+
+}
+
+
+/* =========================
+NOTIFICATION STATUS
+========================= */
+
+function setNotificationStatus(
+text,
+type="normal"
+){
+
+const box =
+document.getElementById(
+"notificationStatus"
+);
+
+box.innerText = text;
+
+
+if(type === "success"){
+
+box.style.background =
+"#e9f8ed";
+
+box.style.color =
+"#168a35";
+
+}
+
+else if(type === "error"){
+
+box.style.background =
+"#fff0f0";
+
+box.style.color =
+"#c00";
+
+}
+
+else{
+
+box.style.background =
+"#fff8e6";
+
+box.style.color =
+"#555";
+
+}
+
+}
+
+
+/* =========================
+ENABLE NOTIFICATIONS
+========================= */
+
+window.enableNotifications =
+async function(){
+
+if(!driverName || !driverId){
+
+showMessage(
+"⚠️ احفظ بيانات المندوب أولًا.",
+true
+);
+
+return;
+
+}
+
+
+if(!messaging){
+
+setNotificationStatus(
+"❌ خدمة الإشعارات غير متاحة في هذا المتصفح.",
+"error"
+);
+
+return;
+
+}
+
+
+if(!("Notification" in window)){
+
+setNotificationStatus(
+"❌ جهازك لا يدعم إشعارات المتصفح.",
+"error"
+);
+
+return;
+
+}
+
+
+try{
+
+
+setNotificationStatus(
+"⏳ جارِ طلب إذن الإشعارات..."
+);
+
+
+const permission =
+await Notification.requestPermission();
+
+
+if(permission !== "granted"){
+
+setNotificationStatus(
+"⚠️ لم يتم السماح بالإشعارات. فعّل الإشعارات من إعدادات المتصفح.",
+"error"
+);
+
+return;
+
+}
+
+
+const registration =
+await registerMessagingServiceWorker();
+
+
+if(!registration){
+
+setNotificationStatus(
+"❌ تعذر تشغيل خدمة الإشعارات.",
+"error"
+);
+
+return;
+
+}
+
+
+setNotificationStatus(
+"⏳ جارِ تسجيل جهازك لاستقبال الطلبات..."
+);
+
+
+const token =
+await getToken(
+messaging,
+{
+vapidKey:VAPID_KEY,
+serviceWorkerRegistration:
+registration
+}
+);
+
+
+if(!token){
+
+setNotificationStatus(
+"❌ لم يتم الحصول على رمز الإشعارات.",
+"error"
+);
+
+return;
+
+}
+
+
+console.log(
+"FCM TOKEN:",
+token
+);
+
+
+/* =========================
+SAVE TOKEN
+========================= */
+
+await setDoc(
+doc(
+db,
+"notificationTokens",
+token
+),
+{
+
+token:token,
+
+role:"driver",
+
+driverId:driverId,
+
+driverName:driverName,
+
+active:true,
+
+updatedAt:
+serverTimestamp()
+
+}
+);
+
+
+localStorage.setItem(
+"alhassan_fcm_token",
+token
+);
+
+
+setNotificationStatus(
+"✅ إشعارات الطلبات مفعّلة. سيصلك إشعار عند وصول طلب جديد.",
+"success"
+);
+
+
+document.getElementById(
+"notificationButton"
+).style.display =
+"none";
+
+
+}catch(error){
+
+console.error(
+"❌ Notification error:",
+error
+);
+
+
+setNotificationStatus(
+"❌ حدث خطأ أثناء تفعيل الإشعارات. افتح Console لمعرفة التفاصيل.",
+"error"
+);
+
+}
+
+};
+
+
+/* =========================
+FOREGROUND MESSAGES
+========================= */
+
+if(messaging){
+
+onMessage(
+messaging,
+function(payload){
+
+console.log(
+"📩 Foreground notification:",
+payload
+);
+
+
+const title =
+payload.notification?.title
+||
+"AL HASSAN";
+
+
+const body =
+payload.notification?.body
+||
+"لديك طلب جديد";
+
+
+showMessage(
+"🔔 " + title + " - " + body
+);
+
+
+/* محاولة إظهار إشعار عندما الصفحة مفتوحة */
+
+if(
+Notification.permission === "granted"
+){
+
+try{
+
+new Notification(
+title,
+{
+body:body,
+icon:"/AL-HASSAN-APP/icon.png"
+}
+);
+
+}catch(error){
+
+console.error(error);
+
+}
+
+}
+
+
+/* تحديث الطلبات */
+
+loadOrders();
+
+}
+
+);
+
+}
 
 
 /* =========================
@@ -465,7 +901,7 @@ driverId +
 }
 
 
-window.saveDriver = function(){
+window.saveDriver = async function(){
 
 const name =
 document.getElementById("driverName")
@@ -508,9 +944,58 @@ driverId
 
 showDriver();
 
+
 showMessage(
 "✅ تم حفظ بيانات المندوب."
 );
+
+
+/* إذا كانت الإشعارات مفعّلة سابقًا، نحدّث بيانات المندوب */
+
+const oldToken =
+localStorage.getItem(
+"alhassan_fcm_token"
+);
+
+
+if(oldToken){
+
+try{
+
+await setDoc(
+doc(
+db,
+"notificationTokens",
+oldToken
+),
+{
+
+token:oldToken,
+
+role:"driver",
+
+driverId:driverId,
+
+driverName:driverName,
+
+active:true,
+
+updatedAt:
+serverTimestamp()
+
+}
+);
+
+}catch(error){
+
+console.error(
+"Token update error:",
+error
+);
+
+}
+
+}
 
 };
 
@@ -1362,6 +1847,73 @@ showDriver();
 loadOrders();
 
 loadActiveOrder();
+
+
+/* =========================
+CHECK NOTIFICATIONS
+========================= */
+
+async function checkNotificationSetup(){
+
+if(!driverName || !driverId){
+
+setNotificationStatus(
+"احفظ بيانات المندوب أولًا، ثم فعّل إشعارات الطلبات."
+);
+
+document.getElementById(
+"notificationButton"
+).style.display =
+"block";
+
+return;
+
+}
+
+
+if(!("Notification" in window)){
+
+setNotificationStatus(
+"❌ هذا المتصفح لا يدعم إشعارات الويب.",
+"error"
+);
+
+return;
+
+}
+
+
+if(Notification.permission === "granted"){
+
+try{
+
+await enableNotifications();
+
+}catch(error){
+
+console.error(error);
+
+}
+
+}
+
+else{
+
+setNotificationStatus(
+"فعّل الإشعارات حتى يصلك تنبيه عند وصول طلب جديد."
+);
+
+document.getElementById(
+"notificationButton"
+).style.display =
+"block";
+
+}
+
+}
+
+
+checkNotificationSetup();
 
 
 </script>
