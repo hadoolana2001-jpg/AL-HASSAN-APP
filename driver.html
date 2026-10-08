@@ -2,9 +2,7 @@
 <html lang="ar" dir="rtl">
 
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>AL HASSAN - المندوب</title>
@@ -98,12 +96,6 @@ color:white;
 width:100%;
 }
 
-.gray{
-background:#eee;
-color:#222;
-width:100%;
-}
-
 .order{
 background:white;
 border-radius:16px;
@@ -144,18 +136,10 @@ color:white;
 width:100%;
 }
 
-.location-box{
-background:#f7f7f7;
-border:1px solid #ddd;
-border-radius:12px;
-padding:13px;
-margin-top:10px;
-}
-
 .location-status{
-font-size:13px;
+font-size:14px;
 line-height:1.7;
-margin-top:8px;
+margin-top:10px;
 color:#666;
 }
 
@@ -212,10 +196,10 @@ margin-top:8px;
 font-weight:bold;
 }
 
-.location-coordinates{
+.coordinates{
 background:#eef7ff;
-border-radius:10px;
 padding:10px;
+border-radius:10px;
 margin-top:10px;
 font-size:13px;
 line-height:1.8;
@@ -239,9 +223,11 @@ AL HASSAN 🛵
 
 </header>
 
+
 <div class="wrap">
 
-<!-- DRIVER INFORMATION -->
+
+<!-- DRIVER -->
 
 <div class="card">
 
@@ -287,8 +273,7 @@ style="display:none">
 
 <p style="font-size:14px;color:#666">
 
-بعد استلام الطلب، اضغط على زر مشاركة الموقع.
-سيتم تحديث موقعك تلقائياً أثناء الحركة.
+بعد استلام الطلب، اضغط على الزر حتى يعرف الزبون والإدارة مكانك.
 
 </p>
 
@@ -310,8 +295,8 @@ class="location-status">
 </div>
 
 <div
-id="locationCoordinates"
-class="location-coordinates"
+id="coordinates"
+class="coordinates"
 style="display:none">
 
 </div>
@@ -372,6 +357,7 @@ style="display:none">
 
 </div>
 
+
 </div>
 
 
@@ -379,7 +365,7 @@ style="display:none">
 
 
 /* =========================
-   FIREBASE
+FIREBASE
 ========================= */
 
 import {
@@ -400,10 +386,6 @@ serverTimestamp
 from
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-
-/* =========================
-   FIREBASE CONFIG
-========================= */
 
 const firebaseConfig = {
 
@@ -431,13 +413,15 @@ measurementId:
 };
 
 
-const app = initializeApp(firebaseConfig);
+const app =
+initializeApp(firebaseConfig);
 
-const db = getFirestore(app);
+const db =
+getFirestore(app);
 
 
 /* =========================
-   VARIABLES
+VARIABLES
 ========================= */
 
 let driverName =
@@ -453,7 +437,7 @@ let locationWatcher = null;
 
 
 /* =========================
-   SHOW DRIVER
+DRIVER
 ========================= */
 
 function showDriver(){
@@ -480,10 +464,6 @@ driverId +
 
 }
 
-
-/* =========================
-   SAVE DRIVER
-========================= */
 
 window.saveDriver = function(){
 
@@ -528,7 +508,6 @@ driverId
 
 showDriver();
 
-
 showMessage(
 "✅ تم حفظ بيانات المندوب."
 );
@@ -537,7 +516,7 @@ showMessage(
 
 
 /* =========================
-   MESSAGE
+MESSAGE
 ========================= */
 
 function showMessage(text,error=false){
@@ -561,7 +540,7 @@ box.innerText = "";
 
 
 /* =========================
-   LOAD ORDERS
+LOAD ORDERS
 ========================= */
 
 window.loadOrders = async function(){
@@ -586,13 +565,9 @@ let orders = [];
 
 snapshot.forEach(function(item){
 
-const order = item.data();
+const order =
+item.data();
 
-
-/*
-نظهر فقط الطلبات
-التي لم يستلمها مندوب.
-*/
 
 if(
 !order.driverId &&
@@ -634,19 +609,12 @@ orders.forEach(function(order){
 const categoryNames = {
 
 food:"🍔 مطعم",
-
 market:"🛒 سوبرماركت",
-
 pharmacy:"💊 صيدلية",
-
 clothes:"👗 ملابس",
-
 beauty:"💄 تجميل",
-
 electronics:"📱 إلكترونيات",
-
 gifts:"🎁 هدايا",
-
 other:"🏪 محل آخر"
 
 };
@@ -672,7 +640,6 @@ ${category}
 </div>
 
 </div>
-
 
 <div class="details">
 
@@ -708,7 +675,6 @@ order.notes
 
 </div>
 
-
 <button
 class="accept"
 onclick="acceptOrder('${order.id}')">
@@ -737,7 +703,7 @@ box.innerHTML =
 
 
 /* =========================
-   ACCEPT ORDER
+ACCEPT ORDER
 ========================= */
 
 window.acceptOrder = async function(orderId){
@@ -781,11 +747,6 @@ const order =
 orderSnap.data();
 
 
-/*
-إذا كان الطلب مستلم مسبقًا
-نوقف العملية.
-*/
-
 if(order.driverId){
 
 throw new Error(
@@ -794,10 +755,6 @@ throw new Error(
 
 }
 
-
-/*
-حجز الطلب للمندوب.
-*/
 
 transaction.update(
 orderRef,
@@ -819,7 +776,9 @@ status:"accepted"
 );
 
 
-activeOrderId = orderId;
+activeOrderId =
+orderId;
+
 
 localStorage.setItem(
 "alhassan_active_order",
@@ -852,7 +811,7 @@ true
 }else{
 
 showMessage(
-"❌ تعذر استلام الطلب. حاول مرة ثانية.",
+"❌ تعذر استلام الطلب.",
 true
 );
 
@@ -864,7 +823,7 @@ true
 
 
 /* =========================
-   LOAD ACTIVE ORDER
+ACTIVE ORDER
 ========================= */
 
 async function loadActiveOrder(){
@@ -910,11 +869,6 @@ return;
 }
 
 
-/*
-إذا لم يعد الطلب
-تابعًا للمندوب.
-*/
-
 if(found.driverId !== driverId){
 
 activeOrderId = "";
@@ -954,11 +908,6 @@ document.getElementById(
 
 📞 ${found.phone || ""}
 
-<br>
-
-🛵 المندوب:
-${found.driverName || driverName}
-
 </div>
 
 
@@ -976,14 +925,13 @@ class="map-link"
 target="_blank"
 href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(found.address || "")}">
 
-🗺️ فتح عنوان الزبون على الخريطة
+🗺️ فتح عنوان الزبون
 
 </a>
 
 </div>
 
 `;
-
 
 }catch(error){
 
@@ -995,7 +943,7 @@ console.error(error);
 
 
 /* =========================
-   START LOCATION
+START LOCATION
 ========================= */
 
 window.startLocation = function(){
@@ -1029,12 +977,7 @@ if(!navigator.geolocation){
 document.getElementById(
 "locationStatus"
 ).innerText =
-"❌ جهازك أو المتصفح لا يدعم تحديد الموقع.";
-
-document.getElementById(
-"locationStatus"
-).className =
-"location-status error";
+"❌ جهازك لا يدعم تحديد الموقع.";
 
 return;
 
@@ -1055,18 +998,8 @@ return;
 document.getElementById(
 "locationStatus"
 ).innerText =
-"📍 جارِ طلب موقعك...";
+"📍 جارِ طلب موقعك من الجهاز...";
 
-document.getElementById(
-"locationStatus"
-).className =
-"location-status";
-
-
-/*
-يطلب GPS من الجهاز
-ويستمر بتحديث الموقع.
-*/
 
 locationWatcher =
 navigator.geolocation.watchPosition(
@@ -1083,24 +1016,22 @@ const accuracy =
 position.coords.accuracy;
 
 
-/*
-عرض الإحداثيات للمندوب.
-*/
+/* عرض الموقع */
 
 document.getElementById(
-"locationCoordinates"
+"coordinates"
 ).style.display =
 "block";
 
 document.getElementById(
-"locationCoordinates"
+"coordinates"
 ).innerHTML =
 
-"📍 خط العرض: <b>" +
+"📍 Latitude: <b>" +
 latitude.toFixed(6) +
 "</b><br>" +
 
-"📍 خط الطول: <b>" +
+"📍 Longitude: <b>" +
 longitude.toFixed(6) +
 "</b><br>" +
 
@@ -1110,11 +1041,6 @@ Math.round(accuracy) +
 
 
 try{
-
-/*
-نتأكد أن الطلب ما زال
-تابعًا لهذا المندوب.
-*/
 
 const snapshot =
 await getDocs(
@@ -1129,7 +1055,8 @@ snapshot.forEach(function(item){
 
 if(item.id === activeOrderId){
 
-const data = item.data();
+const data =
+item.data();
 
 if(data.driverId === driverId){
 
@@ -1147,7 +1074,7 @@ if(!allowed){
 await stopLocation();
 
 showMessage(
-"⚠️ لم يعد هذا الطلب تابعًا لك.",
+"⚠️ هذا الطلب لم يعد تابعًا لك.",
 true
 );
 
@@ -1155,11 +1082,6 @@ return;
 
 }
 
-
-/*
-تحديث موقع المندوب
-داخل الطلب.
-*/
 
 await runTransaction(
 db,
@@ -1221,8 +1143,8 @@ driverLocationActive:true
 document.getElementById(
 "locationStatus"
 ).innerHTML =
+"✅ تم تحديد موقعك ويتم تحديثه الآن.";
 
-"✅ موقعك تتم مشاركته الآن ويتم تحديثه تلقائيًا.";
 
 document.getElementById(
 "locationStatus"
@@ -1249,7 +1171,7 @@ console.error(error);
 document.getElementById(
 "locationStatus"
 ).innerText =
-"⚠️ تم تحديد موقعك لكن تعذر إرساله إلى النظام.";
+"⚠️ تم تحديد GPS لكن حدث خطأ عند إرسال الموقع.";
 
 document.getElementById(
 "locationStatus"
@@ -1260,33 +1182,44 @@ document.getElementById(
 
 },
 
+
+/* =========================
+GPS ERROR
+========================= */
+
 function(error){
 
-console.error(error);
+console.error(
+"GPS ERROR:",
+error
+);
 
 
 let message =
-"❌ لم نتمكن من تحديد موقعك.";
+"❌ خطأ في تحديد الموقع. رمز الخطأ: " +
+error.code;
 
 
 if(error.code === 1){
 
 message =
-"⚠️ تم رفض صلاحية الموقع. اسمحي للمتصفح بالوصول إلى موقعك.";
+"⚠️ تم رفض صلاحية الموقع (الخطأ 1). اسمحي للمتصفح باستخدام موقعك.";
 
 }
+
 
 else if(error.code === 2){
 
 message =
-"❌ تعذر تحديد الموقع. تأكدي أن خدمة الموقع/GPS مفعلة.";
+"❌ تعذر تحديد الموقع (الخطأ 2). تأكدي أن GPS وخدمة الموقع مفعلة.";
 
 }
+
 
 else if(error.code === 3){
 
 message =
-"⏱️ انتهى وقت تحديد الموقع. حاولي مرة ثانية.";
+"⏱️ انتهى وقت تحديد الموقع (الخطأ 3). حاولي مرة ثانية.";
 
 }
 
@@ -1296,6 +1229,7 @@ document.getElementById(
 ).innerText =
 message;
 
+
 document.getElementById(
 "locationStatus"
 ).className =
@@ -1303,13 +1237,18 @@ document.getElementById(
 
 },
 
+
+/* =========================
+GPS OPTIONS
+========================= */
+
 {
 
 enableHighAccuracy:true,
 
-timeout:20000,
+timeout:30000,
 
-maximumAge:3000
+maximumAge:0
 
 }
 
@@ -1319,7 +1258,7 @@ maximumAge:3000
 
 
 /* =========================
-   STOP LOCATION
+STOP LOCATION
 ========================= */
 
 window.stopLocation = async function(){
@@ -1403,7 +1342,6 @@ driverLocationActive:false
 
 );
 
-
 }catch(error){
 
 console.error(error);
@@ -1416,7 +1354,7 @@ console.error(error);
 
 
 /* =========================
-   START PAGE
+START
 ========================= */
 
 showDriver();
