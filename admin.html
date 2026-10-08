@@ -1,294 +1,570 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AL HASSAN - لوحة التحكم</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      color: #222;
-    }
+<title>AL HASSAN - الإدارة</title>
 
-    header {
-      background: #111;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
+<style>
+*{
+  box-sizing:border-box;
+}
 
-    h1 {
-      margin: 0;
-      font-size: 24px;
-    }
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f5f5f5;
+  color:#222;
+  padding-bottom:30px;
+}
 
-    .container {
-      max-width: 700px;
-      margin: 20px auto;
-      padding: 15px;
-    }
+header{
+  background:#e30613;
+  color:white;
+  padding:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:5;
+}
 
-    .top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
+.logo{
+  font-size:22px;
+  font-weight:bold;
+}
 
-    button {
-      border: none;
-      border-radius: 10px;
-      padding: 10px 14px;
-      cursor: pointer;
-      font-size: 14px;
-    }
+.wrap{
+  max-width:800px;
+  margin:auto;
+  padding:16px;
+}
 
-    .refresh {
-      background: #111;
-      color: white;
-    }
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:15px;
+}
 
-    .order {
-      background: white;
-      border-radius: 15px;
-      padding: 18px;
-      margin-bottom: 15px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-    }
+.stat{
+  background:white;
+  border-radius:14px;
+  padding:15px;
+  text-align:center;
+  box-shadow:0 2px 7px #ddd;
+}
 
-    .order h3 {
-      margin-top: 0;
-    }
+.stat b{
+  display:block;
+  font-size:24px;
+  color:#e30613;
+}
 
-    .info {
-      line-height: 1.8;
-      margin-bottom: 12px;
-    }
+.filters{
+  background:white;
+  padding:12px;
+  border-radius:14px;
+  margin-bottom:15px;
+  box-shadow:0 2px 7px #ddd;
+}
 
-    .status {
-      font-weight: bold;
-      margin: 10px 0;
-    }
+.filters select{
+  width:100%;
+  padding:11px;
+  border:1px solid #ddd;
+  border-radius:10px;
+}
 
-    .status-buttons {
-      display: flex;
-      gap: 7px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
+.order{
+  background:white;
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:12px;
+  box-shadow:0 2px 7px #ddd;
+}
 
-    .status-buttons button {
-      background: #eee;
-    }
+.top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
 
-    .status-buttons button:hover {
-      background: #ddd;
-    }
+.type{
+  font-weight:bold;
+  color:#e30613;
+}
 
-    .message {
-      text-align: center;
-      padding: 30px;
-    }
+.date{
+  font-size:11px;
+  color:#777;
+}
 
-    .error {
-      color: #b00020;
-    }
-  </style>
+.detail{
+  line-height:1.8;
+  margin:10px 0;
+}
+
+.order select{
+  width:100%;
+  padding:11px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  margin-top:8px;
+}
+
+.save{
+  width:100%;
+  border:0;
+  background:#e30613;
+  color:white;
+  padding:11px;
+  border-radius:10px;
+  margin-top:8px;
+  font-weight:bold;
+}
+
+.msg{
+  text-align:center;
+  padding:10px;
+  font-weight:bold;
+}
+
+.empty{
+  text-align:center;
+  color:#777;
+  padding:35px;
+}
+
+@media(max-width:500px){
+
+  .stats{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .stat{
+    font-size:12px;
+    padding:10px;
+  }
+
+  .stat b{
+    font-size:20px;
+  }
+
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <h1>AL HASSAN</h1>
-  <div>لوحة إدارة الطلبات</div>
+
+<div class="logo">
+AL HASSAN 🛵
+</div>
+
+<div>
+لوحة الإدارة
+</div>
+
 </header>
 
-<div class="container">
+<div class="wrap">
 
-  <div class="top">
-    <h2>الطلبات</h2>
-    <button class="refresh" id="refreshBtn">🔄 تحديث</button>
-  </div>
+<div class="stats">
 
-  <div id="orders"></div>
+<div class="stat">
+<b id="newCount">0</b>
+جديد
+</div>
+
+<div class="stat">
+<b id="activeCount">0</b>
+قيد التنفيذ
+</div>
+
+<div class="stat">
+<b id="doneCount">0</b>
+تم التسليم
+</div>
 
 </div>
 
+<div class="filters">
+
+<select id="filter" onchange="loadOrders()">
+
+<option value="all">
+كل الطلبات
+</option>
+
+<option value="new">
+🆕 جديد
+</option>
+
+<option value="preparing">
+🔄 قيد التنفيذ
+</option>
+
+<option value="purchased">
+🛍️ تم الشراء
+</option>
+
+<option value="onway">
+🛵 بالطريق
+</option>
+
+<option value="delivered">
+✅ تم التسليم
+</option>
+
+</select>
+
+</div>
+
+<div id="message" class="msg"></div>
+
+<div id="orders">
+
+<div class="empty">
+جارِ تحميل الطلبات...
+</div>
+
+</div>
+
+</div>
+
+
 <script type="module">
 
-  import { initializeApp } from
-    "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-  import {
-    getFirestore,
-    collection,
-    getDocs,
-    query,
-    orderBy,
-    doc,
-    updateDoc
-  } from
-    "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+getFirestore,
+collection,
+getDocs,
+doc,
+updateDoc
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyB5hMTYH6I6Z_Ij4VYdVsvaWAaiLt9SRA",
-    authDomain: "al-hassan-b39d6.firebaseapp.com",
-    projectId: "al-hassan-b39d6",
-    storageBucket: "al-hassan-b39d6.firebasestorage.app",
-    messagingSenderId: "239416840375",
-    appId: "1:239416840375:web:804d0308ce3d7afee97d32",
-    measurementId: "G-6C86NGWQCS"
-  };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+const firebaseConfig={
 
-  const ordersDiv = document.getElementById("orders");
-  const refreshBtn = document.getElementById("refreshBtn");
+apiKey:
+"AIzaSyB5hMTyYH6I6Z_Ij4VYdVsvaWAaiLt9SRA",
 
-  function statusText(status) {
-    if (status === "new") return "🆕 جديد";
-    if (status === "preparing") return "🔄 قيد التنفيذ";
-    if (status === "on_the_way") return "🚚 بالطريق";
-    if (status === "delivered") return "✅ تم التوصيل";
-    return "🆕 جديد";
-  }
+authDomain:
+"al-hassan-b39d6.firebaseapp.com",
 
-  function formatDate(timestamp) {
-    if (!timestamp) return "الآن";
+projectId:
+"al-hassan-b39d6",
 
-    const date = timestamp.toDate();
+storageBucket:
+"al-hassan-b39d6.firebasestorage.app",
 
-    return date.toLocaleString("ar-LB", {
-      dateStyle: "medium",
-      timeStyle: "short"
-    });
-  }
+messagingSenderId:
+"239416840375",
 
-  async function changeStatus(orderId, newStatus) {
+appId:
+"1:239416840375:web:804d0308ce3d7afee97d32",
 
-    try {
+measurementId:
+"G-6C86NGWQCS"
 
-      await updateDoc(
-        doc(db, "orders", orderId),
-        {
-          status: newStatus
-        }
-      );
+};
 
-      alert("تم تحديث حالة الطلب ✅");
 
-      loadOrders();
+const app=initializeApp(firebaseConfig);
 
-    } catch (error) {
+const db=getFirestore(app);
 
-      console.error(error);
 
-      alert("حدث خطأ أثناء تحديث حالة الطلب");
+const names={
 
-    }
-  }
+food:"🍔 مطعم",
 
-  async function loadOrders() {
+market:"🛒 سوبرماركت",
 
-    ordersDiv.innerHTML = '<div class="message">جاري تحميل الطلبات...</div>';
+pharmacy:"💊 صيدلية",
 
-    try {
+clothes:"👗 ملابس",
 
-      const ordersQuery = query(
-        collection(db, "orders"),
-        orderBy("createdAt", "desc")
-      );
+beauty:"💄 تجميل",
 
-      const snapshot = await getDocs(ordersQuery);
+electronics:"📱 إلكترونيات",
 
-      if (snapshot.empty) {
-        ordersDiv.innerHTML =
-          '<div class="message">لا توجد طلبات حاليًا.</div>';
-        return;
-      }
+gifts:"🎁 هدايا",
 
-      ordersDiv.innerHTML = "";
+other:"🏪 محل آخر"
 
-      snapshot.forEach((orderDoc) => {
+};
 
-        const order = orderDoc.data();
 
-        const card = document.createElement("div");
-        card.className = "order";
+const statuses={
 
-        card.innerHTML = `
-          <h3>📦 طلب</h3>
+new:"🆕 جديد",
 
-          <div class="info">
-            <strong>الشيء:</strong> ${order.item || ""}<br>
-            <strong>العنوان:</strong> ${order.address || ""}<br>
-            <strong>الهاتف:</strong> ${order.phone || ""}<br>
-            <strong>ملاحظات:</strong> ${order.notes || "لا يوجد"}<br>
-            <strong>الوقت:</strong> ${formatDate(order.createdAt)}
-          </div>
+preparing:"🔄 قيد التنفيذ",
 
-          <div class="status">
-            الحالة الحالية:
-            ${statusText(order.status)}
-          </div>
+purchased:"🛍️ تم الشراء",
 
-          <div class="status-buttons">
+onway:"🛵 بالطريق",
 
-            <button data-status="new">
-              🆕 جديد
-            </button>
+delivered:"✅ تم التسليم"
 
-            <button data-status="preparing">
-              🔄 قيد التنفيذ
-            </button>
+};
 
-            <button data-status="on_the_way">
-              🚚 بالطريق
-            </button>
 
-            <button data-status="delivered">
-              ✅ تم التوصيل
-            </button>
+window.loadOrders=async function(){
 
-          </div>
-        `;
+const box=document.getElementById("orders");
 
-        const buttons = card.querySelectorAll("[data-status]");
+box.innerHTML=
+'<div class="empty">جارِ تحميل الطلبات...</div>';
 
-        buttons.forEach((button) => {
+try{
 
-          button.addEventListener("click", () => {
+const snap=
+await getDocs(
+collection(db,"orders")
+);
 
-            changeStatus(
-              orderDoc.id,
-              button.dataset.status
-            );
+let rows=[];
 
-          });
+let n=0;
 
-        });
+let a=0;
 
-        ordersDiv.appendChild(card);
+let d=0;
 
-      });
 
-    } catch (error) {
+snap.forEach(x=>{
 
-      console.error(error);
+const o=x.data();
 
-      ordersDiv.innerHTML =
-        '<div class="message error">حدث خطأ أثناء تحميل الطلبات</div>';
+if(o.status==="new")
+n++;
 
-    }
-  }
+if(
+["preparing","purchased","onway"]
+.includes(o.status)
+)
+a++;
 
-  refreshBtn.addEventListener("click", loadOrders);
+if(o.status==="delivered")
+d++;
 
-  loadOrders();
+rows.push({
+id:x.id,
+...o
+});
+
+});
+
+
+document.getElementById("newCount").innerText=n;
+
+document.getElementById("activeCount").innerText=a;
+
+document.getElementById("doneCount").innerText=d;
+
+
+const filter=
+document.getElementById("filter").value;
+
+
+if(filter!=="all"){
+
+rows=
+rows.filter(
+o=>o.status===filter
+);
+
+}
+
+
+rows.reverse();
+
+
+if(!rows.length){
+
+box.innerHTML=
+'<div class="empty">لا توجد طلبات بهذا التصنيف 📦</div>';
+
+return;
+
+}
+
+
+box.innerHTML="";
+
+
+rows.forEach(o=>{
+
+const type=
+names[o.category]||"🛵 طلب";
+
+const status=
+o.status||"new";
+
+
+box.innerHTML+=`
+
+<div class="order">
+
+<div class="top">
+
+<div class="type">
+${type}
+</div>
+
+<div class="date">
+${
+o.createdAt?.toDate
+?
+o.createdAt.toDate()
+.toLocaleString("ar-SY")
+:
+""
+}
+</div>
+
+</div>
+
+
+<div class="detail">
+
+<b>
+${o.item||"طلب"}
+</b>
+
+<br>
+
+📍 ${o.address||""}
+
+<br>
+
+📞 ${o.phone||""}
+
+${o.merchant
+?
+"<br>🏪 "+o.merchant
+:
+""}
+
+${o.notes
+?
+"<br>📝 "+o.notes
+:
+""}
+
+</div>
+
+
+<select id="status-${o.id}">
+
+${
+Object.entries(statuses)
+.map(
+([k,v])=>
+`
+<option
+value="${k}"
+${k===status?"selected":""}
+>
+${v}
+</option>
+`
+)
+.join("")
+}
+
+</select>
+
+
+<button
+class="save"
+onclick="saveStatus('${o.id}')"
+>
+حفظ حالة الطلب
+</button>
+
+</div>
+
+`;
+
+});
+
+
+}catch(e){
+
+console.error(e);
+
+box.innerHTML=
+'<div class="empty">تعذر تحميل الطلبات.</div>';
+
+}
+
+};
+
+
+window.saveStatus=async function(id){
+
+const value=
+document
+.getElementById("status-"+id)
+.value;
+
+
+try{
+
+await updateDoc(
+doc(db,"orders",id),
+{
+status:value
+}
+);
+
+
+document.getElementById("message")
+.innerText=
+"✅ تم تحديث حالة الطلب";
+
+
+setTimeout(
+()=>{
+document.getElementById("message")
+.innerText="";
+},
+1800
+);
+
+
+loadOrders();
+
+
+}catch(e){
+
+console.error(e);
+
+document.getElementById("message")
+.innerText=
+"❌ تعذر تحديث الطلب";
+
+}
+
+};
+
+
+loadOrders();
 
 </script>
 
