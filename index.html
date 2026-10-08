@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AL HASSAN</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f6f6f6;
+      color: #222;
+    }
+
+    header {
+      background: #e30613;
+      color: white;
+      padding: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    .location {
+      font-size: 14px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #e30613, #ff4b55);
+      color: white;
+      padding: 28px 18px;
+    }
+
+    .hero h1 {
+      margin: 0 0 18px;
+      font-size: 25px;
+    }
+
+    .search {
+      background: white;
+      border-radius: 12px;
+      padding: 13px;
+      color: #777;
+    }
+
+    .search input {
+      border: 0;
+      outline: 0;
+      width: 90%;
+      font-size: 15px;
+    }
+
+    section {
+      padding: 18px;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    .categories {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+    }
+
+    .categories button {
+      border: 0;
+      background: white;
+      padding: 13px 16px;
+      border-radius: 12px;
+      white-space: nowrap;
+      box-shadow: 0 2px 7px #ddd;
+    }
+
+    .restaurants {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .restaurant {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px #ddd;
+    }
+
+    .restaurant-image {
+      height: 120px;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 50px;
+    }
+
+    .restaurant-info {
+      padding: 12px;
+    }
+
+    .restaurant-info h3 {
+      margin: 0 0 6px;
+    }
+
+    .restaurant-info p {
+      margin: 0;
+      color: #777;
+      font-size: 13px;
+    }
+
+    .order-button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border: 0;
+      border-radius: 9px;
+      background: #e30613;
+      color: white;
+      font-weight: bold;
+    }
+
+    .bottom {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 65px;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -2px 8px #ddd;
+    }
+
+    .bottom button {
+      border: 0;
+      background: transparent;
+      font-size: 20px;
+    }
+
+    .bottom small {
+      display: block;
+      font-size: 11px;
+    }
+
+    main {
+      padding-bottom: 80px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">AL HASSAN</div>
+    <div class="location">📍 درعا</div>
+  </header>
+
+  <main>
+
+    <div class="hero">
+      <h1>شو بدك تطلب اليوم؟</h1>
+
+      <div class="search">
+        🔎
+        <input type="text" placeholder="ابحث عن مطعم أو وجبة...">
+      </div>
+    </div>
+
+    <section>
+      <h2>التصنيفات</h2>
+
+      <div class="categories">
+        <button>🍔 برغر</button>
+        <button>🍕 بيتزا</button>
+        <button>🍗 وجبات</button>
+        <button>🥤 مشروبات</button>
+        <button>🛒 بقالة</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>مطاعم قريبة منك</h2>
+
+      <div class="restaurants">
+
+        <div class="restaurant">
+          <div class="restaurant-image">🍔</div>
+          <div class="restaurant-info">
+            <h3>مطعم الشام</h3>
+            <p>⭐ 4.7 • 25-35 دقيقة</p>
+            <button class="order-button">عرض القائمة</button>
+          </div>
+        </div>
+
+        <div class="restaurant">
+          <div class="restaurant-image">🍕</div>
+          <div class="restaurant-info">
+            <h3>بيتزا درعا</h3>
+            <p>⭐ 4.8 • 30-40 دقيقة</p>
+            <button class="order-button">عرض القائمة</button>
+          </div>
+        </div>
+
+        <div class="restaurant">
+          <div class="restaurant-image">🛒</div>
+          <div class="restaurant-info">
+            <h3>سوبر ماركت الحسن</h3>
+            <p>⭐ 4.6 • 20-30 دقيقة</p>
+            <button class="order-button">عرض المنتجات</button>
+          </div>
+        </div>
+
+        <div class="restaurant">
+          <div class="restaurant-image">🍰</div>
+          <div class="restaurant-info">
+            <h3>حلويات درعا</h3>
+            <p>⭐ 4.9 • 25-35 دقيقة</p>
+            <button class="order-button">عرض المنتجات</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="bottom">
+    <button>🏠<small>الرئيسية</small></button>
+    <button>🔎<small>بحث</small></button>
+    <button>📦<small>طلباتي</small></button>
+    <button>👤<small>حسابي</small></button>
+  </nav>
+
+</body>
+</html>
