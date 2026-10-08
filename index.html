@@ -327,6 +327,37 @@ margin-bottom:15px
 margin-top:10px
 }
 
+/* GPS */
+
+.location-box{
+background:#f7f7f7;
+border:1px solid #e5e5e5;
+border-radius:12px;
+padding:12px;
+margin:8px 0
+}
+
+.location-button{
+background:#168a35!important;
+color:white;
+font-weight:bold
+}
+
+.location-message{
+text-align:center;
+font-size:13px;
+margin:8px 0 2px;
+color:#555
+}
+
+.map-link{
+display:inline-block;
+margin-top:8px;
+color:#e30613;
+font-weight:bold;
+text-decoration:none
+}
+
 @media(max-width:380px){
 .categories{
 grid-template-columns:repeat(3,1fr)
@@ -587,6 +618,30 @@ id="orderAddress"
 placeholder="📍 عنوان التوصيل"
 >
 
+<!-- GPS -->
+<div class="location-box">
+
+<b>📍 موقعك على الخريطة</b>
+
+<p style="font-size:13px;color:#666;margin:7px 0">
+اختياري — اضغط لتحديد مكانك الحالي بدقة، ليساعد المندوب في الوصول إليك.
+</p>
+
+<button
+type="button"
+class="location-button"
+onclick="getCustomerLocation()">
+📍 تحديد موقعي الحالي
+</button>
+
+<p
+id="locationMessage"
+class="location-message">
+لم يتم تحديد الموقع بعد
+</p>
+
+</div>
+
 <input
 id="orderPhone"
 type="tel"
@@ -814,6 +869,13 @@ let confirmationResult = null;
 let recaptchaVerifier = null;
 
 
+/* CUSTOMER GPS VARIABLES */
+
+let customerLatitude = null;
+let customerLongitude = null;
+let customerAccuracy = null;
+
+
 /* AUTH STATE */
 
 onAuthStateChanged(auth,function(user){
@@ -908,6 +970,82 @@ fields:`
 let selectedOrderType = "";
 
 
+/* CUSTOMER GPS */
+
+window.getCustomerLocation=function(){
+
+const message=document.getElementById("locationMessage");
+
+if(!navigator.geolocation){
+
+message.innerText=
+"❌ جهازك أو المتصفح لا يدعم تحديد الموقع.";
+
+return;
+
+}
+
+message.innerText=
+"📍 جارٍ تحديد موقعك الحالي...";
+
+navigator.geolocation.getCurrentPosition(
+
+function(position){
+
+customerLatitude=position.coords.latitude;
+
+customerLongitude=position.coords.longitude;
+
+customerAccuracy=position.coords.accuracy;
+
+message.innerText=
+"✅ تم تحديد موقعك الحالي بنجاح.";
+
+},
+
+function(error){
+
+console.error(error);
+
+customerLatitude=null;
+
+customerLongitude=null;
+
+customerAccuracy=null;
+
+if(error.code===1){
+
+message.innerText=
+"❌ تم رفض صلاحية الموقع. اسمح للمتصفح باستخدام موقعك.";
+
+}else if(error.code===2){
+
+message.innerText=
+"❌ تعذر معرفة موقعك. تأكد من تشغيل GPS.";
+
+}else if(error.code===3){
+
+message.innerText=
+"❌ انتهى وقت تحديد الموقع. حاول مرة ثانية.";
+
+}else{
+
+message.innerText=
+"❌ تعذر تحديد موقعك.";
+
+}
+
+},
+
+{
+enableHighAccuracy:true,
+timeout:15000,
+maximumAge:0
+}
+
+};
+
+
 /* AUTH MODAL */
 
 window.openAuth=function(){
@@ -947,7 +1085,8 @@ setTimeout(closeAuth,800);
 
 console.error(error);
 
-message.innerText="❌ تعذر تسجيل الدخول بواسطة Google.";
+message.innerText=
+"❌ تعذر تسجيل الدخول بواسطة Google.";
 
 }
 
@@ -966,7 +1105,8 @@ const message=document.getElementById("authMessage");
 
 if(!email || !password){
 
-message.innerText="⚠️ اكتب الإيميل وكلمة المرور.";
+message.innerText=
+"⚠️ اكتب الإيميل وكلمة المرور.";
 
 return;
 
@@ -974,9 +1114,14 @@ return;
 
 try{
 
-await signInWithEmailAndPassword(auth,email,password);
+await signInWithEmailAndPassword(
+auth,
+email,
+password
+);
 
-message.innerText="✅ تم تسجيل الدخول.";
+message.innerText=
+"✅ تم تسجيل الدخول.";
 
 setTimeout(closeAuth,800);
 
@@ -993,7 +1138,8 @@ email,
 password
 );
 
-message.innerText="✅ تم إنشاء الحساب وتسجيل الدخول.";
+message.innerText=
+"✅ تم إنشاء الحساب وتسجيل الدخول.";
 
 setTimeout(closeAuth,800);
 
@@ -1034,13 +1180,16 @@ document.getElementById("authMessage").innerText=
 
 window.sendPhoneCode=async function(){
 
-const phone=document.getElementById("phoneInput").value.trim();
+const phone=
+document.getElementById("phoneInput").value.trim();
 
-const message=document.getElementById("authMessage");
+const message=
+document.getElementById("authMessage");
 
 if(!phone){
 
-message.innerText="⚠️ اكتب رقم الهاتف.";
+message.innerText=
+"⚠️ اكتب رقم الهاتف.";
 
 return;
 
@@ -1108,7 +1257,8 @@ document.getElementById("authMessage");
 
 if(!code){
 
-message.innerText="⚠️ اكتب رمز التحقق.";
+message.innerText=
+"⚠️ اكتب رمز التحقق.";
 
 return;
 
@@ -1116,7 +1266,8 @@ return;
 
 if(!confirmationResult){
 
-message.innerText="❌ أرسل رمز SMS أولاً.";
+message.innerText=
+"❌ أرسل رمز SMS أولاً.";
 
 return;
 
@@ -1126,7 +1277,8 @@ try{
 
 await confirmationResult.confirm(code);
 
-message.innerText="✅ تم تسجيل الدخول بنجاح.";
+message.innerText=
+"✅ تم تسجيل الدخول بنجاح.";
 
 setTimeout(closeAuth,800);
 
@@ -1146,7 +1298,8 @@ message.innerText=
 
 function updateAccount(){
 
-const box=document.getElementById("accountContent");
+const box=
+document.getElementById("accountContent");
 
 if(!currentUser){
 
@@ -1320,29 +1473,41 @@ return;
 
 }
 
-const itemElement=document.getElementById("orderItem");
+const itemElement=
+document.getElementById("orderItem");
 
-const storeElement=document.getElementById("orderStore");
+const storeElement=
+document.getElementById("orderStore");
 
-const quantityElement=document.getElementById("orderQuantity");
+const quantityElement=
+document.getElementById("orderQuantity");
 
-const sizeElement=document.getElementById("orderSize");
+const sizeElement=
+document.getElementById("orderSize");
 
-const colorElement=document.getElementById("orderColor");
+const colorElement=
+document.getElementById("orderColor");
 
-const detailsElement=document.getElementById("orderDetails");
+const detailsElement=
+document.getElementById("orderDetails");
 
-const item=itemElement ? itemElement.value.trim() : "";
+const item=
+itemElement ? itemElement.value.trim() : "";
 
-const store=storeElement ? storeElement.value.trim() : "";
+const store=
+storeElement ? storeElement.value.trim() : "";
 
-const quantity=quantityElement ? quantityElement.value.trim() : "";
+const quantity=
+quantityElement ? quantityElement.value.trim() : "";
 
-const size=sizeElement ? sizeElement.value.trim() : "";
+const size=
+sizeElement ? sizeElement.value.trim() : "";
 
-const color=colorElement ? colorElement.value.trim() : "";
+const color=
+colorElement ? colorElement.value.trim() : "";
 
-const details=detailsElement ? detailsElement.value.trim() : "";
+const details=
+detailsElement ? detailsElement.value.trim() : "";
 
 const address=
 document.getElementById("orderAddress").value.trim();
@@ -1392,6 +1557,8 @@ fullDetails+=" | التفاصيل: "+details;
 }
 
 
+/* SEND ORDER TO FIREBASE */
+
 try{
 
 await addDoc(
@@ -1420,19 +1587,48 @@ userEmail:currentUser.email || "",
 
 userPhone:currentUser.phoneNumber || "",
 
+
+/* CUSTOMER GPS */
+
+customerLatitude:customerLatitude,
+
+customerLongitude:customerLongitude,
+
+customerLocationAccuracy:customerAccuracy,
+
+customerLocationSelected:
+customerLatitude !== null &&
+customerLongitude !== null,
+
 createdAt:serverTimestamp()
 
 }
 );
 
+
+/* SUCCESS */
+
 document.getElementById("orderMessage").innerText=
 "✅ تم إرسال طلبك بنجاح!";
+
+
+/* RESET FORM */
 
 document.getElementById("orderAddress").value="";
 
 document.getElementById("orderPhone").value="";
 
 document.getElementById("orderNotes").value="";
+
+customerLatitude=null;
+
+customerLongitude=null;
+
+customerAccuracy=null;
+
+document.getElementById("locationMessage").innerText=
+"لم يتم تحديد الموقع بعد";
+
 
 setTimeout(function(){
 
@@ -1521,7 +1717,8 @@ window.scrollTo(0,0);
 
 async function loadOrders(){
 
-const box=document.getElementById("ordersList");
+const box=
+document.getElementById("ordersList");
 
 if(!currentUser){
 
@@ -1532,7 +1729,8 @@ return;
 
 }
 
-box.innerHTML="جارِ تحميل طلباتك...";
+box.innerHTML=
+"جارِ تحميل طلباتك...";
 
 try{
 
@@ -1544,7 +1742,8 @@ where("userId","==",currentUser.uid)
 
 );
 
-const snapshot=await getDocs(ordersQuery);
+const snapshot=
+await getDocs(ordersQuery);
 
 if(snapshot.empty){
 
@@ -1598,6 +1797,40 @@ other:"🏪 محل آخر"
 const category=
 categoryNames[order.category] || "🛵 طلب";
 
+
+let customerLocation="";
+
+if(
+order.customerLatitude !== null &&
+order.customerLatitude !== undefined &&
+order.customerLongitude !== null &&
+order.customerLongitude !== undefined
+){
+
+const mapUrl=
+"https://www.google.com/maps?q="+
+order.customerLatitude+
+","+
+order.customerLongitude;
+
+customerLocation=`
+
+<p>
+📍 <b>موقعك محفوظ</b>
+</p>
+
+<a
+class="map-link"
+href="${mapUrl}"
+target="_blank">
+🗺️ فتح موقعي على الخريطة
+</a>
+
+`;
+
+}
+
+
 box.innerHTML+=`
 
 <div class="order-card">
@@ -1612,6 +1845,8 @@ box.innerHTML+=`
 
 ${order.merchant ?
 `<p>🏪 ${order.merchant}</p>` : ""}
+
+${customerLocation}
 
 <div class="status">
 ${status}
