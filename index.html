@@ -269,7 +269,9 @@
           اكتب لنا شو بدك، ونحن منساعدك بتوصيله من المكان المناسب.
         </p>
 
-        <button>اطلب أي شيء</button>
+        <button onclick="document.getElementById('orderModal').style.display='block'">
+  اطلب أي شيء
+</button>
 
       </div>
 
@@ -352,6 +354,107 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 </script>
-  
+
+  <div id="orderModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:999; padding:20px;">
+  <div style="background:white; max-width:500px; margin:40px auto; padding:20px; border-radius:18px;">
+
+    <h2>🚚 اطلب أي شيء</h2>
+
+    <input id="item" type="text" placeholder="شو بدك نجيبلك؟"
+      style="width:100%; padding:13px; margin:8px 0; border:1px solid #ddd; border-radius:10px;">
+
+    <input id="address" type="text" placeholder="عنوان التوصيل"
+      style="width:100%; padding:13px; margin:8px 0; border:1px solid #ddd; border-radius:10px;">
+
+    <input id="phone" type="tel" placeholder="رقم الهاتف"
+      style="width:100%; padding:13px; margin:8px 0; border:1px solid #ddd; border-radius:10px;">
+
+    <textarea id="notes" placeholder="ملاحظات إضافية (اختياري)"
+      style="width:100%; padding:13px; margin:8px 0; border:1px solid #ddd; border-radius:10px;"></textarea>
+
+    <button onclick="sendOrder()"
+      style="width:100%; padding:14px; background:#e30613; color:white; border:0; border-radius:10px; font-weight:bold;">
+      إرسال الطلب
+    </button>
+
+    <button onclick="closeOrder()"
+      style="width:100%; padding:12px; margin-top:8px; background:#eee; border:0; border-radius:10px;">
+      إلغاء
+    </button>
+
+    <p id="orderMessage"></p>
+
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB5hMTyYH6I6Z_Ij4VYdVsvaWAaiLt9SRA",
+    authDomain: "al-hassan-b39d6.firebaseapp.com",
+    projectId: "al-hassan-b39d6",
+    storageBucket: "al-hassan-b39d6.firebasestorage.app",
+    messagingSenderId: "239416840375",
+    appId: "1:239416840375:web:804d0308ce3d7afee97d32",
+    measurementId: "G-6C86NGWQCS"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.sendOrder = async function() {
+
+    const item = document.getElementById("item").value.trim();
+    const address = document.getElementById("address").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const notes = document.getElementById("notes").value.trim();
+
+    if (!item || !address || !phone) {
+      document.getElementById("orderMessage").innerText =
+        "⚠️ الرجاء تعبئة الطلب والعنوان ورقم الهاتف.";
+      return;
+    }
+
+    try {
+
+      await addDoc(collection(db, "orders"), {
+        item: item,
+        address: address,
+        phone: phone,
+        notes: notes,
+        status: "new",
+        createdAt: serverTimestamp()
+      });
+
+      document.getElementById("orderMessage").innerText =
+        "✅ تم إرسال طلبك بنجاح!";
+
+      document.getElementById("item").value = "";
+      document.getElementById("address").value = "";
+      document.getElementById("phone").value = "";
+      document.getElementById("notes").value = "";
+
+    } catch (error) {
+
+      console.error(error);
+
+      document.getElementById("orderMessage").innerText =
+        "❌ حدث خطأ أثناء إرسال الطلب.";
+
+    }
+  };
+
+  window.closeOrder = function() {
+    document.getElementById("orderModal").style.display = "none";
+  };
+</script>
+
 </body>
 </html>
