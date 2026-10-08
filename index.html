@@ -370,13 +370,16 @@ grid-template-columns:repeat(3,1fr)
 <div id="homePage" class="page active">
 
 <div class="hero">
+
 <h1>شو بدك نجيبلك اليوم؟</h1>
+
 <p>من أي محل أو مكان في عتمان ودرعا 🛵</p>
 
 <div class="search">
 🔎
 <input id="searchInput" placeholder="ابحث...">
 </div>
+
 </div>
 
 <section>
@@ -445,27 +448,36 @@ grid-template-columns:repeat(3,1fr)
 <h2>خدمات AL HASSAN</h2>
 
 <div class="service">
+
 <div class="service-icon">🛍️</div>
+
 <div>
 <b>شراء من المحلات</b>
 <p>اطلب أي غرض من أي محل.</p>
 </div>
+
 </div>
 
 <div class="service">
+
 <div class="service-icon">📦</div>
+
 <div>
 <b>توصيل أغراض</b>
 <p>إرسال واستلام الأغراض داخل المنطقة.</p>
 </div>
+
 </div>
 
 <div class="service">
+
 <div class="service-icon">🛵</div>
+
 <div>
 <b>توصيل سريع</b>
 <p>مندوب يوصل طلبك لباب بيتك.</p>
 </div>
+
 </div>
 
 </section>
@@ -474,6 +486,7 @@ grid-template-columns:repeat(3,1fr)
 
 
 <!-- SEARCH -->
+
 <div id="searchPage" class="page">
 
 <section>
@@ -488,7 +501,9 @@ grid-template-columns:repeat(3,1fr)
 class="primary"
 style="width:100%;padding:14px;border:0;border-radius:10px"
 onclick="openOrder()">
+
 🛵 اطلب أي شيء
+
 </button>
 
 </section>
@@ -497,6 +512,7 @@ onclick="openOrder()">
 
 
 <!-- ORDERS -->
+
 <div id="ordersPage" class="page">
 
 <section>
@@ -504,9 +520,11 @@ onclick="openOrder()">
 <h2>📦 طلباتي</h2>
 
 <div id="ordersList">
+
 <div class="empty">
 سجّل الدخول أولاً لرؤية طلباتك 📦
 </div>
+
 </div>
 
 </section>
@@ -515,6 +533,7 @@ onclick="openOrder()">
 
 
 <!-- ACCOUNT -->
+
 <div id="accountPage" class="page">
 
 <section>
@@ -528,14 +547,23 @@ onclick="openOrder()">
 <div class="service-icon">🛵</div>
 
 <div>
+
 <b>AL HASSAN</b>
-<p>سجّل الدخول حتى تقدر تطلب وتتابع طلباتك.</p>
-</div>
+
+<p>
+سجّل الدخول حتى تقدر تطلب وتتابع طلباتك.
+</p>
 
 </div>
 
-<button class="primary auth-button" onclick="openAuth()">
+</div>
+
+<button
+class="primary auth-button"
+onclick="openAuth()">
+
 🔐 تسجيل الدخول
+
 </button>
 
 </div>
@@ -548,6 +576,7 @@ onclick="openOrder()">
 
 
 <!-- ORDER MODAL -->
+
 <div id="orderModal" class="modal">
 
 <div class="modal-box">
@@ -609,23 +638,28 @@ onclick="openOrder()">
 
 <div id="dynamicFields"></div>
 
-<input id="orderAddress" placeholder="📍 عنوان التوصيل">
+<input
+id="orderAddress"
+placeholder="📍 عنوان التوصيل"
+>
 
-
-<!-- CUSTOMER GPS -->
 <div class="location-box">
 
 <b>📍 موقعك على الخريطة</b>
 
 <p style="font-size:13px;color:#666;margin:7px 0">
+
 اختياري — يمكنك مشاركة موقعك الحالي ليساعد المندوب في الوصول إليك.
+
 </p>
 
 <button
 type="button"
 class="location-button"
 onclick="getCustomerLocation()">
+
 📍 تحديد موقعي الحالي
+
 </button>
 
 <p id="locationMessage" class="location-message">
@@ -633,7 +667,6 @@ onclick="getCustomerLocation()">
 </p>
 
 </div>
-
 
 <input
 id="orderPhone"
@@ -649,19 +682,25 @@ placeholder="📝 ملاحظات إضافية (اختياري)"
 <button
 class="primary"
 onclick="sendOrder()">
+
 إرسال الطلب 🛵
+
 </button>
 
 <button
 class="back-button"
 onclick="backToTypes()">
+
 رجوع
+
 </button>
 
 <button
 class="secondary"
 onclick="closeOrder()">
+
 إلغاء
+
 </button>
 
 <p id="orderMessage"></p>
@@ -669,10 +708,12 @@ onclick="closeOrder()">
 </div>
 
 </div>
+
 </div>
 
 
 <!-- AUTH MODAL -->
+
 <div id="authModal" class="modal">
 
 <div class="modal-box">
@@ -686,7 +727,9 @@ onclick="closeOrder()">
 <button
 class="auth-button google"
 onclick="googleLogin()">
+
 🔵 الدخول باستخدام Google
+
 </button>
 
 <hr>
@@ -706,13 +749,17 @@ placeholder="🔒 كلمة المرور"
 <button
 class="auth-button primary"
 onclick="emailLogin()">
+
 📧 تسجيل الدخول / إنشاء حساب
+
 </button>
 
 <button
 class="auth-button phone"
 onclick="showPhoneLogin()">
+
 📱 الدخول برقم الهاتف
+
 </button>
 
 <div id="phoneArea" style="display:none">
@@ -720,7 +767,7 @@ onclick="showPhoneLogin()">
 <input
 id="phoneInput"
 type="tel"
-placeholder="📱 رقم الهاتف مع رمز الدولة، مثال +963..."
+placeholder="📱 رقم الهاتف، مثال +961 71 123 456"
 >
 
 <div id="recaptcha-container"></div>
@@ -728,7 +775,9 @@ placeholder="📱 رقم الهاتف مع رمز الدولة، مثال +963..
 <button
 class="auth-button primary"
 onclick="sendPhoneCode()">
+
 إرسال رمز SMS
+
 </button>
 
 <input
@@ -743,7 +792,9 @@ id="verifyCodeButton"
 class="auth-button primary"
 onclick="verifyPhoneCode()"
 style="display:none">
+
 تأكيد الرمز
+
 </button>
 
 </div>
@@ -753,7 +804,9 @@ style="display:none">
 <button
 class="secondary"
 onclick="closeAuth()">
+
 إغلاق
+
 </button>
 
 </div>
@@ -762,55 +815,71 @@ onclick="closeAuth()">
 
 
 <!-- BOTTOM NAV -->
+
 <nav class="bottom">
 
 <button
 id="navHome"
 class="active"
 onclick="showPage('home')">
+
 🏠
 <small>الرئيسية</small>
+
 </button>
 
 <button
 id="navSearch"
 onclick="showPage('search')">
+
 🔎
 <small>بحث</small>
+
 </button>
 
 <button
 onclick="openOrder()">
+
 🛵
 <small>اطلب</small>
+
 </button>
 
 <button
 id="navOrders"
 onclick="showPage('orders')">
+
 📦
 <small>طلباتي</small>
+
 </button>
 
 <button
 id="navAccount"
 onclick="showPage('account')">
+
 👤
 <small>حسابي</small>
+
 </button>
 
 </nav>
 
 
-<!-- FIREBASE COMPAT -->
+<!-- FIREBASE -->
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
 
 <script>
 
-/* FIREBASE */
+/* =========================
+   FIREBASE
+========================= */
 
 const firebaseConfig = {
 
@@ -832,24 +901,33 @@ measurementId:"G-6C86NGWQCS"
 
 firebase.initializeApp(firebaseConfig);
 
-const db = firebase.firestore();
-const auth = firebase.auth();
+const db=firebase.firestore();
+
+const auth=firebase.auth();
 
 
-/* VARIABLES */
+/* =========================
+   VARIABLES
+========================= */
 
 let currentUser=null;
+
 let confirmationResult=null;
+
 let recaptchaVerifier=null;
 
 let customerLatitude=null;
+
 let customerLongitude=null;
+
 let customerAccuracy=null;
 
 let selectedOrderType="";
 
 
-/* ORDER TYPES */
+/* =========================
+   ORDER TYPES
+========================= */
 
 const orderTypes={
 
@@ -927,7 +1005,9 @@ fields:`
 };
 
 
-/* AUTH STATE */
+/* =========================
+   AUTH STATE
+========================= */
 
 auth.onAuthStateChanged(function(user){
 
@@ -938,7 +1018,9 @@ updateAccount();
 });
 
 
-/* CUSTOMER GPS */
+/* =========================
+   CUSTOMER GPS
+========================= */
 
 function getCustomerLocation(){
 
@@ -950,6 +1032,7 @@ message.innerText=
 "❌ جهازك أو المتصفح لا يدعم تحديد الموقع.";
 
 return;
+
 }
 
 message.innerText=
@@ -960,7 +1043,9 @@ navigator.geolocation.getCurrentPosition(
 function(position){
 
 customerLatitude=position.coords.latitude;
+
 customerLongitude=position.coords.longitude;
+
 customerAccuracy=position.coords.accuracy;
 
 message.innerText=
@@ -973,7 +1058,9 @@ function(error){
 console.error(error);
 
 customerLatitude=null;
+
 customerLongitude=null;
+
 customerAccuracy=null;
 
 if(error.code===1){
@@ -1001,15 +1088,23 @@ message.innerText=
 },
 
 {
+
 enableHighAccuracy:true,
+
 timeout:15000,
+
 maximumAge:0
+
 }
 
 );
 
+}
 
-/* AUTH */
+
+/* =========================
+   AUTH
+========================= */
 
 function openAuth(){
 
@@ -1026,7 +1121,9 @@ document.getElementById("authModal").style.display="none";
 }
 
 
-/* GOOGLE */
+/* =========================
+   GOOGLE
+========================= */
 
 async function googleLogin(){
 
@@ -1040,7 +1137,8 @@ const provider=new firebase.auth.GoogleAuthProvider();
 
 await auth.signInWithPopup(provider);
 
-message.innerText="✅ تم تسجيل الدخول بنجاح";
+message.innerText=
+"✅ تم تسجيل الدخول بنجاح";
 
 setTimeout(closeAuth,800);
 
@@ -1049,14 +1147,17 @@ setTimeout(closeAuth,800);
 console.error(error);
 
 message.innerText=
-"❌ تعذر تسجيل الدخول بواسطة Google.";
+"❌ تعذر تسجيل الدخول بواسطة Google: "+
+(error.message || "");
 
 }
 
 }
 
 
-/* EMAIL */
+/* =========================
+   EMAIL
+========================= */
 
 async function emailLogin(){
 
@@ -1085,11 +1186,14 @@ email,
 password
 );
 
-message.innerText="✅ تم تسجيل الدخول.";
+message.innerText=
+"✅ تم تسجيل الدخول.";
 
 setTimeout(closeAuth,800);
 
 }catch(error){
+
+console.error(error);
 
 if(
 error.code==="auth/user-not-found" ||
@@ -1119,10 +1223,9 @@ message.innerText=
 
 }else{
 
-console.error(error);
-
 message.innerText=
-"❌ تعذر تسجيل الدخول.";
+"❌ تعذر تسجيل الدخول: "+
+(error.message || "");
 
 }
 
@@ -1131,7 +1234,9 @@ message.innerText=
 }
 
 
-/* PHONE LOGIN */
+/* =========================
+   PHONE LOGIN
+========================= */
 
 function showPhoneLogin(){
 
@@ -1143,34 +1248,117 @@ document.getElementById("authMessage").innerText=
 }
 
 
-/* SEND SMS */
+/* =========================
+   PHONE NORMALIZATION
+========================= */
+
+function normalizePhoneNumber(value){
+
+let phone=value.trim();
+
+/* حذف المسافات والشرطات والأقواس */
+
+phone=phone.replace(/[\s\-()]/g,"");
+
+/* 00961... → +961... */
+
+if(phone.startsWith("00")){
+
+phone="+"+phone.substring(2);
+
+}
+
+/* إذا كتب 961 بدون + */
+
+if(!phone.startsWith("+")){
+
+if(
+phone.startsWith("961") ||
+phone.startsWith("963")
+){
+
+phone="+"+phone;
+
+}
+
+else if(phone.startsWith("0")){
+
+/*
+إذا كان رقم محلي يبدأ بـ 0
+نفترض لبنان
+مثال:
+71xxxxxx → +96171xxxxxx
+03xxxxxx → +9613xxxxxx
+*/
+
+phone="+961"+phone.substring(1);
+
+}
+
+else{
+
+phone="+"+phone;
+
+}
+
+}
+
+return phone;
+
+}
+
+
+/* =========================
+   SEND SMS
+========================= */
 
 async function sendPhoneCode(){
 
-const phone=
-document.getElementById("phoneInput").value.trim();
+const input=
+document.getElementById("phoneInput");
 
 const message=
 document.getElementById("authMessage");
 
-if(!phone){
+let phone=input.value;
 
-message.innerText="⚠️ اكتب رقم الهاتف.";
+if(!phone.trim()){
+
+message.innerText=
+"⚠️ اكتب رقم الهاتف.";
 
 return;
 
 }
 
+phone=normalizePhoneNumber(phone);
+
+input.value=phone;
+
+/* E.164 basic validation */
+
+if(!/^\+[1-9]\d{7,14}$/.test(phone)){
+
+message.innerText=
+"⚠️ رقم الهاتف غير صالح. مثال: +96171123456";
+
+return;
+
+}
+
+message.innerText=
+"📱 جارٍ إرسال رمز SMS...";
+
 try{
 
 if(!recaptchaVerifier){
 
-recaptchaVerifier=new firebase.auth.RecaptchaVerifier(
+recaptchaVerifier=
+new firebase.auth.RecaptchaVerifier(
 "recaptcha-container",
 {
 size:"normal"
-},
-auth
+}
 );
 
 await recaptchaVerifier.render();
@@ -1183,24 +1371,53 @@ phone,
 recaptchaVerifier
 );
 
-document.getElementById("smsCodeInput").style.display="block";
+document.getElementById("smsCodeInput")
+.style.display="block";
 
-document.getElementById("verifyCodeButton").style.display="block";
+document.getElementById("verifyCodeButton")
+.style.display="block";
 
 message.innerText=
-"📩 تم إرسال رمز التحقق.";
+"📩 تم إرسال رمز التحقق إلى "+phone;
 
 }catch(error){
 
-console.error(error);
+console.error("PHONE AUTH ERROR:",error);
+
+if(error.code==="auth/invalid-phone-number"){
 
 message.innerText=
-"❌ تعذر إرسال رمز SMS.";
+"❌ Firebase رفض رقم الهاتف. تأكد أن الرقم مكتوب بصيغة دولية صحيحة.";
+
+}else if(error.code==="auth/operation-not-allowed"){
+
+message.innerText=
+"❌ تسجيل الدخول برقم الهاتف غير مفعّل في Firebase.";
+
+}else if(error.code==="auth/quota-exceeded"){
+
+message.innerText=
+"❌ تم تجاوز حد رسائل SMS المجانية حالياً.";
+
+}else if(error.code==="auth/captcha-check-failed"){
+
+message.innerText=
+"❌ فشل التحقق الأمني. أعد تحميل الصفحة وحاول مرة ثانية.";
+
+}else{
+
+message.innerText=
+"❌ تعذر إرسال رمز SMS: "+
+(error.message || "خطأ غير معروف");
+
+}
 
 if(recaptchaVerifier){
 
 try{
+
 recaptchaVerifier.clear();
+
 }catch(e){}
 
 recaptchaVerifier=null;
@@ -1212,19 +1429,23 @@ recaptchaVerifier=null;
 }
 
 
-/* VERIFY SMS */
+/* =========================
+   VERIFY SMS
+========================= */
 
 async function verifyPhoneCode(){
 
 const code=
-document.getElementById("smsCodeInput").value.trim();
+document.getElementById("smsCodeInput")
+.value.trim();
 
 const message=
 document.getElementById("authMessage");
 
 if(!code){
 
-message.innerText="⚠️ اكتب رمز التحقق.";
+message.innerText=
+"⚠️ اكتب رمز التحقق.";
 
 return;
 
@@ -1260,7 +1481,9 @@ message.innerText=
 }
 
 
-/* ACCOUNT */
+/* =========================
+   ACCOUNT
+========================= */
 
 function updateAccount(){
 
@@ -1278,8 +1501,13 @@ box.innerHTML=`
 <div class="service-icon">🛵</div>
 
 <div>
+
 <b>AL HASSAN</b>
-<p>سجّل الدخول حتى تقدر تطلب وتتابع طلباتك.</p>
+
+<p>
+سجّل الدخول حتى تقدر تطلب وتتابع طلباتك.
+</p>
+
 </div>
 
 </div>
@@ -1287,7 +1515,9 @@ box.innerHTML=`
 <button
 class="primary auth-button"
 onclick="openAuth()">
+
 🔐 تسجيل الدخول
+
 </button>
 
 `;
@@ -1315,7 +1545,9 @@ box.innerHTML=`
 <button
 class="logout auth-button"
 onclick="logout()">
+
 🚪 تسجيل الخروج
+
 </button>
 
 `;
@@ -1323,7 +1555,9 @@ onclick="logout()">
 }
 
 
-/* LOGOUT */
+/* =========================
+   LOGOUT
+========================= */
 
 async function logout(){
 
@@ -1342,7 +1576,9 @@ console.error(error);
 }
 
 
-/* OPEN ORDER */
+/* =========================
+   OPEN ORDER
+========================= */
 
 function openOrder(){
 
@@ -1354,14 +1590,17 @@ return;
 
 }
 
-document.getElementById("orderModal").style.display="block";
+document.getElementById("orderModal")
+.style.display="block";
 
 backToTypes();
 
 }
 
 
-/* CATEGORY */
+/* =========================
+   CATEGORY
+========================= */
 
 function openOrderWithCategory(type){
 
@@ -1373,25 +1612,32 @@ return;
 
 }
 
-document.getElementById("orderModal").style.display="block";
+document.getElementById("orderModal")
+.style.display="block";
 
 selectOrderType(type);
 
 }
 
 
-/* CLOSE ORDER */
+/* =========================
+   CLOSE ORDER
+========================= */
 
 function closeOrder(){
 
-document.getElementById("orderModal").style.display="none";
+document.getElementById("orderModal")
+.style.display="none";
 
-document.getElementById("orderMessage").innerText="";
+document.getElementById("orderMessage")
+.innerText="";
 
 }
 
 
-/* SELECT TYPE */
+/* =========================
+   SELECT TYPE
+========================= */
 
 function selectOrderType(type){
 
@@ -1401,86 +1647,134 @@ const data=orderTypes[type];
 
 if(!data)return;
 
-document.getElementById("stepType").style.display="none";
+document.getElementById("stepType")
+.style.display="none";
 
-document.getElementById("stepForm").style.display="block";
+document.getElementById("stepForm")
+.style.display="block";
 
-document.getElementById("selectedTypeTitle").innerText=data.title;
+document.getElementById("selectedTypeTitle")
+.innerText=data.title;
 
-document.getElementById("dynamicFields").innerHTML=data.fields;
+document.getElementById("dynamicFields")
+.innerHTML=data.fields;
 
-document.getElementById("orderMessage").innerText="";
+document.getElementById("orderMessage")
+.innerText="";
 
 }
 
 
-/* BACK */
+/* =========================
+   BACK
+========================= */
 
 function backToTypes(){
 
-document.getElementById("stepType").style.display="block";
+document.getElementById("stepType")
+.style.display="block";
 
-document.getElementById("stepForm").style.display="none";
+document.getElementById("stepForm")
+.style.display="none";
 
 selectedOrderType="";
 
 }
 
 
-/* SEND ORDER */
+/* =========================
+   SEND ORDER
+========================= */
 
 async function sendOrder(){
 
 if(!currentUser){
 
-document.getElementById("orderMessage").innerText=
+document.getElementById("orderMessage")
+.innerText=
 "⚠️ سجّل الدخول أولاً.";
 
 return;
 
 }
 
-const itemElement=document.getElementById("orderItem");
-const storeElement=document.getElementById("orderStore");
-const quantityElement=document.getElementById("orderQuantity");
-const sizeElement=document.getElementById("orderSize");
-const colorElement=document.getElementById("orderColor");
-const detailsElement=document.getElementById("orderDetails");
+const itemElement=
+document.getElementById("orderItem");
 
-const item=itemElement ? itemElement.value.trim() : "";
-const store=storeElement ? storeElement.value.trim() : "";
-const quantity=quantityElement ? quantityElement.value.trim() : "";
-const size=sizeElement ? sizeElement.value.trim() : "";
-const color=colorElement ? colorElement.value.trim() : "";
-const details=detailsElement ? detailsElement.value.trim() : "";
+const storeElement=
+document.getElementById("orderStore");
+
+const quantityElement=
+document.getElementById("orderQuantity");
+
+const sizeElement=
+document.getElementById("orderSize");
+
+const colorElement=
+document.getElementById("orderColor");
+
+const detailsElement=
+document.getElementById("orderDetails");
+
+const item=
+itemElement ? itemElement.value.trim() : "";
+
+const store=
+storeElement ? storeElement.value.trim() : "";
+
+const quantity=
+quantityElement ? quantityElement.value.trim() : "";
+
+const size=
+sizeElement ? sizeElement.value.trim() : "";
+
+const color=
+colorElement ? colorElement.value.trim() : "";
+
+const details=
+detailsElement ? detailsElement.value.trim() : "";
 
 const address=
-document.getElementById("orderAddress").value.trim();
+document.getElementById("orderAddress")
+.value.trim();
 
 const phone=
-document.getElementById("orderPhone").value.trim();
+document.getElementById("orderPhone")
+.value.trim();
 
 const notes=
-document.getElementById("orderNotes").value.trim();
+document.getElementById("orderNotes")
+.value.trim();
 
 if(!item || !address || !phone){
 
-document.getElementById("orderMessage").innerText=
+document.getElementById("orderMessage")
+.innerText=
 "⚠️ الرجاء كتابة الطلب والعنوان ورقم الهاتف.";
 
 return;
 
 }
 
-
 let fullDetails="";
 
-if(item)fullDetails+="الطلب: "+item;
-if(store)fullDetails+=" | المحل: "+store;
-if(quantity)fullDetails+=" | الكمية: "+quantity;
-if(size)fullDetails+=" | المقاس: "+size;
-if(color)fullDetails+=" | اللون: "+color;
-if(details)fullDetails+=" | التفاصيل: "+details;
+if(item)
+fullDetails+="الطلب: "+item;
+
+if(store)
+fullDetails+=" | المحل: "+store;
+
+if(quantity)
+fullDetails+=" | الكمية: "+quantity;
+
+if(size)
+fullDetails+=" | المقاس: "+size;
+
+if(color)
+fullDetails+=" | اللون: "+color;
+
+if(details)
+fullDetails+=" | التفاصيل: "+details;
 
 
 try{
@@ -1513,9 +1807,6 @@ userEmail:currentUser.email || "",
 
 userPhone:currentUser.phoneNumber || "",
 
-
-/* CUSTOMER GPS */
-
 customerLatitude:customerLatitude,
 
 customerLongitude:customerLongitude,
@@ -1526,30 +1817,41 @@ customerLocationSelected:
 customerLatitude !== null &&
 customerLongitude !== null,
 
-createdAt:firebase.firestore.FieldValue.serverTimestamp()
+createdAt:
+firebase.firestore.FieldValue.serverTimestamp()
 
 });
 
 
-document.getElementById("orderMessage").innerText=
+document.getElementById("orderMessage")
+.innerText=
 "✅ تم إرسال طلبك بنجاح!";
 
 
-document.getElementById("orderAddress").value="";
-document.getElementById("orderPhone").value="";
-document.getElementById("orderNotes").value="";
+document.getElementById("orderAddress")
+.value="";
+
+document.getElementById("orderPhone")
+.value="";
+
+document.getElementById("orderNotes")
+.value="";
 
 customerLatitude=null;
+
 customerLongitude=null;
+
 customerAccuracy=null;
 
-document.getElementById("locationMessage").innerText=
+document.getElementById("locationMessage")
+.innerText=
 "لم يتم تحديد الموقع بعد";
 
 
 setTimeout(function(){
 
 closeOrder();
+
 showPage("orders");
 
 },1200);
@@ -1557,9 +1859,10 @@ showPage("orders");
 
 }catch(error){
 
-console.error(error);
+console.error("ORDER ERROR:",error);
 
-document.getElementById("orderMessage").innerText=
+document.getElementById("orderMessage")
+.innerText=
 "❌ حدث خطأ أثناء إرسال الطلب.";
 
 }
@@ -1567,17 +1870,21 @@ document.getElementById("orderMessage").innerText=
 }
 
 
-/* SHOW PAGE */
+/* =========================
+   SHOW PAGE
+========================= */
 
 function showPage(page){
 
-document.querySelectorAll(".page").forEach(function(x){
+document.querySelectorAll(".page")
+.forEach(function(x){
 
 x.classList.remove("active");
 
 });
 
-document.querySelectorAll(".bottom button").forEach(function(x){
+document.querySelectorAll(".bottom button")
+.forEach(function(x){
 
 x.classList.remove("active");
 
@@ -1586,35 +1893,46 @@ x.classList.remove("active");
 
 if(page==="home"){
 
-document.getElementById("homePage").classList.add("active");
+document.getElementById("homePage")
+.classList.add("active");
 
-document.getElementById("navHome").classList.add("active");
+document.getElementById("navHome")
+.classList.add("active");
 
 }
+
 
 if(page==="search"){
 
-document.getElementById("searchPage").classList.add("active");
+document.getElementById("searchPage")
+.classList.add("active");
 
-document.getElementById("navSearch").classList.add("active");
+document.getElementById("navSearch")
+.classList.add("active");
 
 }
 
+
 if(page==="orders"){
 
-document.getElementById("ordersPage").classList.add("active");
+document.getElementById("ordersPage")
+.classList.add("active");
 
-document.getElementById("navOrders").classList.add("active");
+document.getElementById("navOrders")
+.classList.add("active");
 
 loadOrders();
 
 }
 
+
 if(page==="account"){
 
-document.getElementById("accountPage").classList.add("active");
+document.getElementById("accountPage")
+.classList.add("active");
 
-document.getElementById("navAccount").classList.add("active");
+document.getElementById("navAccount")
+.classList.add("active");
 
 updateAccount();
 
@@ -1625,11 +1943,14 @@ window.scrollTo(0,0);
 }
 
 
-/* LOAD ORDERS */
+/* =========================
+   LOAD ORDERS
+========================= */
 
 async function loadOrders(){
 
-const box=document.getElementById("ordersList");
+const box=
+document.getElementById("ordersList");
 
 if(!currentUser){
 
@@ -1640,11 +1961,13 @@ return;
 
 }
 
-box.innerHTML="جارِ تحميل طلباتك...";
+box.innerHTML=
+"جارِ تحميل طلباتك...";
 
 try{
 
-const snapshot=await db.collection("orders")
+const snapshot=
+await db.collection("orders")
 .where("userId","==",currentUser.uid)
 .get();
 
@@ -1658,6 +1981,7 @@ return;
 }
 
 box.innerHTML="";
+
 
 snapshot.forEach(function(doc){
 
@@ -1681,21 +2005,30 @@ status="تم الشراء 🛍️";
 const categoryNames={
 
 food:"🍔 مطعم",
+
 market:"🛒 سوبرماركت",
+
 pharmacy:"💊 صيدلية",
+
 clothes:"👗 ملابس",
+
 beauty:"💄 تجميل",
+
 electronics:"📱 إلكترونيات",
+
 gifts:"🎁 هدايا",
+
 other:"🏪 محل آخر"
 
 };
 
 const category=
-categoryNames[order.category] || "🛵 طلب";
+categoryNames[order.category] ||
+"🛵 طلب";
 
 
 let customerLocation="";
+
 
 if(
 order.customerLatitude !== null &&
@@ -1720,7 +2053,9 @@ customerLocation=`
 class="map-link"
 href="${mapUrl}"
 target="_blank">
+
 🗺️ فتح موقعي على الخريطة
+
 </a>
 
 `;
@@ -1746,7 +2081,9 @@ ${order.merchant ?
 ${customerLocation}
 
 <div class="status">
+
 ${status}
+
 </div>
 
 </div>
@@ -1757,7 +2094,7 @@ ${status}
 
 }catch(error){
 
-console.error(error);
+console.error("LOAD ORDERS ERROR:",error);
 
 box.innerHTML=
 '<div class="empty">تعذر تحميل الطلبات حالياً.</div>';
@@ -1767,24 +2104,57 @@ box.innerHTML=
 }
 
 
-/* MAKE FUNCTIONS AVAILABLE TO BUTTONS */
+/* =========================
+   MAKE FUNCTIONS AVAILABLE
+========================= */
 
-window.getCustomerLocation=getCustomerLocation;
-window.openAuth=openAuth;
-window.closeAuth=closeAuth;
-window.googleLogin=googleLogin;
-window.emailLogin=emailLogin;
-window.showPhoneLogin=showPhoneLogin;
-window.sendPhoneCode=sendPhoneCode;
-window.verifyPhoneCode=verifyPhoneCode;
-window.logout=logout;
-window.openOrder=openOrder;
-window.openOrderWithCategory=openOrderWithCategory;
-window.closeOrder=closeOrder;
-window.selectOrderType=selectOrderType;
-window.backToTypes=backToTypes;
-window.sendOrder=sendOrder;
-window.showPage=showPage;
+window.getCustomerLocation=
+getCustomerLocation;
+
+window.openAuth=
+openAuth;
+
+window.closeAuth=
+closeAuth;
+
+window.googleLogin=
+googleLogin;
+
+window.emailLogin=
+emailLogin;
+
+window.showPhoneLogin=
+showPhoneLogin;
+
+window.sendPhoneCode=
+sendPhoneCode;
+
+window.verifyPhoneCode=
+verifyPhoneCode;
+
+window.logout=
+logout;
+
+window.openOrder=
+openOrder;
+
+window.openOrderWithCategory=
+openOrderWithCategory;
+
+window.closeOrder=
+closeOrder;
+
+window.selectOrderType=
+selectOrderType;
+
+window.backToTypes=
+backToTypes;
+
+window.sendOrder=
+sendOrder;
+
+window.showPage=
+showPage;
 
 </script>
 
