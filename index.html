@@ -335,5 +335,23 @@
 
   </nav>
 
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB5hMTyYH6I6Z_Ij4VYdVsvaWAaiLt9SRA",
+    authDomain: "al-hassan-b39d6.firebaseapp.com",
+    projectId: "al-hassan-b39d6",
+    storageBucket: "al-hassan-b39d6.firebasestorage.app",
+    messagingSenderId: "239416840375",
+    appId: "1:239416840375:web:804d0308ce3d7afee97d32",
+    measurementId: "G-6C86NGWQCS"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+</script>
+  
 </body>
 </html>
