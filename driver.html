@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>AL HASSAN - المندوب</title>
+
+<style>
+
+*{
+box-sizing:border-box
+}
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f5f5f5;
+color:#222;
+padding-bottom:30px
+}
+
+button,input{
+font-family:inherit
+}
+
+button{
+cursor:pointer
+}
+
+header{
+background:#e30613;
+color:white;
+padding:18px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+position:sticky;
+top:0;
+z-index:10
+}
+
+.logo{
+font-size:22px;
+font-weight:bold
+}
+
+.wrap{
+max-width:700px;
+margin:auto;
+padding:16px
+}
+
+.card{
+background:white;
+border-radius:16px;
+padding:16px;
+margin-bottom:14px;
+box-shadow:0 2px 8px #ddd
+}
+
+.title{
+font-size:18px;
+font-weight:bold;
+margin-bottom:12px
+}
+
+input{
+width:100%;
+padding:13px;
+border:1px solid #ddd;
+border-radius:10px;
+font-size:15px;
+outline:none;
+margin-bottom:8px
+}
+
+button{
+border:0;
+border-radius:10px;
+padding:13px;
+font-size:15px;
+font-weight:bold
+}
+
+.primary{
+background:#e30613;
+color:white;
+width:100%
+}
+
+.green{
+background:#168a35;
+color:white;
+width:100%
+}
+
+.gray{
+background:#eee;
+color:#222;
+width:100%
+}
+
+.order{
+background:white;
+border-radius:16px;
+padding:16px;
+margin-bottom:12px;
+box-shadow:0 2px 8px #ddd
+}
+
+.order-top{
+display:flex;
+justify-content:space-between;
+gap:10px;
+align-items:center;
+margin-bottom:10px
+}
+
+.category{
+color:#e30613;
+font-weight:bold
+}
+
+.status{
+background:#eee;
+padding:6px 10px;
+border-radius:20px;
+font-size:12px
+}
+
+.details{
+line-height:1.9;
+font-size:14px;
+margin-bottom:12px
+}
+
+.accept{
+background:#168a35;
+color:white;
+width:100%
+}
+
+.location-box{
+background:#f7f7f7;
+border:1px solid #ddd;
+border-radius:12px;
+padding:13px;
+margin-top:10px
+}
+
+.location-status{
+font-size:13px;
+line-height:1.7;
+margin-top:8px;
+color:#666
+}
+
+.success{
+color:#168a35;
+font-weight:bold
+}
+
+.error{
+color:#c00;
+font-weight:bold
+}
+
+.message{
+text-align:center;
+font-weight:bold;
+padding:10px
+}
+
+.empty{
+text-align:center;
+color:#777;
+padding:35px
+}
+
+.driver-info{
+background:#fff3f3;
+padding:12px;
+border-radius:10px;
+margin-top:10px;
+font-size:14px
+}
+
+.active-order{
+border:2px solid #168a35
+}
+
+.stop{
+background:#555;
+color:white;
+width:100%;
+margin-top:8px
+}
+
+.map-link{
+display:block;
+text-align:center;
+background:#eee;
+color:#222;
+padding:11px;
+border-radius:10px;
+text-decoration:none;
+margin-top:8px;
+font-weight:bold
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<header>
+
+<div class="logo">
+AL HASSAN 🛵
+</div>
+
+<div>
+مندوب
+</div>
+
+</header>
+
+
+<div class="wrap">
+
+
+<!-- DRIVER LOGIN / ID -->
+
+<div class="card">
+
+<div class="title">
+👤 معلومات المندوب
+</div>
+
+<input
+id="driverName"
+placeholder="اسم المندوب"
+>
+
+<input
+id="driverId"
+placeholder="رقم المندوب"
+>
+
+<button
+class="primary"
+onclick="saveDriver()">
+
+حفظ بياناتي
+
+</button>
+
+<div
+id="driverInfo"
+class="driver-info"
+style="display:none">
+</div>
+
+</div>
+
+
+<!-- LOCATION -->
+
+<div class="card">
+
+<div class="title">
+📍 مشاركة موقع المندوب
+</div>
+
+<p style="font-size:14px;color:#666">
+لا تشارك موقعك إلا عندما تكون في توصيل فعلي.
+</p>
+
+<button
+id="locationButton"
+class="green"
+onclick="startLocation()">
+
+📍 بدء مشاركة موقعي
+
+</button>
+
+<div
+id="locationStatus"
+class="location-status">
+
+الموقع غير مشارك حاليًا.
+
+</div>
+
+<button
+id="stopLocationButton"
+class="stop"
+style="display:none"
+onclick="stopLocation()">
+
+🛑 إيقاف مشاركة الموقع
+
+</button>
+
+</div>
+
+
+<!-- MESSAGE -->
+
+<div
+id="message"
+class="message">
+</div>
+
+
+<!-- ORDERS -->
+
+<div class="card">
+
+<div class="title">
+📦 الطلبات المتاحة
+</div>
+
+<div id="orders">
+
+<div class="empty">
+جارِ تحميل الطلبات...
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ACTIVE ORDER -->
+
+<div
+id="activeOrderBox"
+class="card"
+style="display:none">
+
+<div class="title">
+🛵 طلبي الحالي
+</div>
+
+<div id="activeOrder"></div>
+
+</div>
+
+
+</div>
+
+
+<script type="module">
+
+
+/* FIREBASE */
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+import {
+getFirestore,
+collection,
+getDocs,
+doc,
+runTransaction,
+serverTimestamp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyB5hMTyH6Y6Z_Ij4VYdVsvaWAaiLt9SRA",
+
+authDomain:
+"al-hassan-b39d6.firebaseapp.com",
+
+projectId:
+"al-hassan-b39d6",
+
+storageBucket:
+"al-hassan-b39d6.firebasestorage.app",
+
+messagingSenderId:
+"239416840375",
+
+appId:
+"1:239416840375:web:804d0308ce3d7afee97d32",
+
+measurementId:
+"G-6C86NGWQCS"
+
+};
+
+
+const app=initializeApp(firebaseConfig);
+
+const db=getFirestore(app);
+
+
+/* VARIABLES */
+
+let driverName=
+localStorage.getItem("alhassan_driver_name") || "";
+
+let driverId=
+localStorage.getItem("alhassan_driver_id") || "";
+
+let activeOrderId=
+localStorage.getItem("alhassan_active_order") || "";
+
+let locationWatcher=null;
+
+
+/* DRIVER INFO */
+
+function showDriver(){
+
+if(driverName && driverId){
+
+document.getElementById("driverName").value=
+driverName;
+
+document.getElementById("driverId").value=
+driverId;
+
+document.getElementById("driverInfo").style.display=
+"block";
+
+document.getElementById("driverInfo").innerHTML=
+"👤 المندوب: <b>"+driverName+
+"</b><br>🆔 الرقم: <b>"+driverId+"</b>";
+
+}
+
+}
+
+
+window.saveDriver=function(){
+
+const name=
+document.getElementById("driverName")
+.value.trim();
+
+const id=
+document.getElementById("driverId")
+.value.trim();
+
+
+if(!name || !id){
+
+showMessage(
+"⚠️ اكتب اسم المندوب ورقم المندوب.",
+true
+);
+
+return;
+
+}
+
+
+driverName=name;
+
+driverId=id;
+
+
+localStorage.setItem(
+"alhassan_driver_name",
+driverName
+);
+
+localStorage.setItem(
+"alhassan_driver_id",
+driverId
+);
+
+
+showDriver();
+
+
+showMessage(
+"✅ تم حفظ بيانات المندوب."
+);
+
+};
+
+
+/* MESSAGE */
+
+function showMessage(text,error=false){
+
+const box=
+document.getElementById("message");
+
+box.innerText=text;
+
+box.style.color=
+error ? "#c00" : "#168a35";
+
+
+setTimeout(function(){
+
+box.innerText="";
+
+},3000);
+
+}
+
+
+/* LOAD ORDERS */
+
+window.loadOrders=async function(){
+
+const box=
+document.getElementById("orders");
+
+box.innerHTML=
+'<div class="empty">جارِ تحميل الطلبات...</div>';
+
+
+try{
+
+const snapshot=
+await getDocs(
+collection(db,"orders")
+);
+
+
+let orders=[];
+
+
+snapshot.forEach(function(item){
+
+const order=item.data();
+
+
+/*
+نظهر فقط الطلبات التي
+لم يستلمها مندوب بعد
+*/
+
+if(
+!order.driverId &&
+(
+order.status==="new" ||
+!order.status
+)
+){
+
+orders.push({
+
+id:item.id,
+...order
+
+});
+
+}
+
+});
+
+
+if(!orders.length){
+
+box.innerHTML=
+'<div class="empty">لا توجد طلبات متاحة حاليًا 📦</div>';
+
+return;
+
+}
+
+
+box.innerHTML="";
+
+
+orders.reverse();
+
+
+orders.forEach(function(order){
+
+const categoryNames={
+
+food:"🍔 مطعم",
+
+market:"🛒 سوبرماركت",
+
+pharmacy:"💊 صيدلية",
+
+clothes:"👗 ملابس",
+
+beauty:"💄 تجميل",
+
+electronics:"📱 إلكترونيات",
+
+gifts:"🎁 هدايا",
+
+other:"🏪 محل آخر"
+
+};
+
+
+const category=
+categoryNames[order.category]
+|| "🛵 طلب";
+
+
+box.innerHTML+=`
+
+<div class="order">
+
+<div class="order-top">
+
+<div class="category">
+${category}
+</div>
+
+<div class="status">
+🆕 جديد
+</div>
+
+</div>
+
+
+<div class="details">
+
+<b>
+${order.item || "طلب"}
+</b>
+
+<br>
+
+📍 العنوان:
+${order.address || ""}
+
+<br>
+
+📞 الهاتف:
+${order.phone || ""}
+
+${
+order.merchant
+?
+"<br>🏪 المحل: "+order.merchant
+:
+""
+}
+
+${
+order.notes
+?
+"<br>📝 "+order.notes
+:
+""
+}
+
+</div>
+
+
+<button
+class="accept"
+onclick="acceptOrder('${order.id}')">
+
+🛵 أريد توصيل هذا الطلب
+
+</button>
+
+</div>
+
+`;
+
+});
+
+
+}catch(error){
+
+console.error(error);
+
+box.innerHTML=
+'<div class="empty">❌ تعذر تحميل الطلبات.</div>';
+
+}
+
+};
+
+
+/* ACCEPT ORDER */
+
+window.acceptOrder=async function(orderId){
+
+
+if(!driverName || !driverId){
+
+showMessage(
+"⚠️ لازم تحفظ اسم ورقم المندوب أولاً.",
+true
+);
+
+return;
+
+}
+
+
+/*
+Transaction:
+يقرأ الطلب أولًا
+ويتأكد أنه لم يُستلم
+ثم يحجزه للمندوب.
+*/
+
+try{
+
+
+const orderRef=
+doc(db,"orders",orderId);
+
+
+await runTransaction(
+db,
+async function(transaction){
+
+const orderSnap=
+await transaction.get(orderRef);
+
+
+if(!orderSnap.exists()){
+
+throw new Error(
+"ORDER_NOT_FOUND"
+);
+
+}
+
+
+const order=
+orderSnap.data();
+
+
+/*
+إذا كان الطلب مستلم مسبقًا
+نوقف العملية.
+*/
+
+if(order.driverId){
+
+throw new Error(
+"ORDER_ALREADY_TAKEN"
+);
+
+}
+
+
+/*
+حجز الطلب للمندوب الحالي.
+*/
+
+transaction.update(
+orderRef,
+{
+
+driverId:driverId,
+
+driverName:driverName,
+
+acceptedAt:serverTimestamp(),
+
+status:"accepted"
+
+}
+);
+
+}
+);
+
+
+/*
+نجح القبول.
+*/
+
+activeOrderId=orderId;
+
+localStorage.setItem(
+"alhassan_active_order",
+activeOrderId
+);
+
+
+showMessage(
+"✅ تم استلام الطلب باسمك."
+);
+
+
+loadOrders();
+
+loadActiveOrder();
+
+
+}catch(error){
+
+console.error(error);
+
+
+if(error.message==="ORDER_ALREADY_TAKEN"){
+
+showMessage(
+"⚠️ هذا الطلب تم استلامه من مندوب آخر.",
+true
+);
+
+}else{
+
+showMessage(
+"❌ تعذر استلام الطلب. حاول مرة ثانية.",
+true
+);
+
+}
+
+}
+
+};
+
+
+/* LOAD ACTIVE ORDER */
+
+async function loadActiveOrder(){
+
+if(!activeOrderId){
+
+return;
+
+}
+
+
+try{
+
+const snapshot=
+await getDocs(
+collection(db,"orders")
+);
+
+
+let found=null;
+
+
+snapshot.forEach(function(item){
+
+if(item.id===activeOrderId){
+
+found={
+id:item.id,
+...item.data()
+};
+
+}
+
+});
+
+
+if(!found){
+
+return;
+
+}
+
+
+/*
+إذا لم يعد الطلب للمندوب الحالي
+نلغي الطلب النشط محليًا.
+*/
+
+if(found.driverId!==driverId){
+
+activeOrderId="";
+
+localStorage.removeItem(
+"alhassan_active_order"
+);
+
+return;
+
+}
+
+
+document.getElementById(
+"activeOrderBox"
+).style.display="block";
+
+
+document.getElementById(
+"activeOrder"
+).innerHTML=`
+
+<div class="active-order order">
+
+<div class="details">
+
+<b>📦 ${found.item || "طلب"}</b>
+
+<br><br>
+
+📍 ${found.address || ""}
+
+<br>
+
+📞 ${found.phone || ""}
+
+<br>
+
+🛵 المندوب:
+${found.driverName || driverName}
+
+</div>
+
+
+<button
+class="green"
+onclick="startLocation()">
+
+📍 مشاركة موقعي للزبون والإدارة
+
+</button>
+
+
+<a
+class="map-link"
+target="_blank"
+href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(found.address || "")}">
+
+🗺️ فتح عنوان الزبون على الخريطة
+
+</a>
+
+</div>
+
+`;
+
+
+}catch(error){
+
+console.error(error);
+
+}
+
+}
+
+
+/* START LOCATION */
+
+window.startLocation=function(){
+
+
+if(!driverName || !driverId){
+
+showMessage(
+"⚠️ احفظ بيانات المندوب أولًا.",
+true
+);
+
+return;
+
+}
+
+
+if(!activeOrderId){
+
+showMessage(
+"⚠️ أولًا استلم طلبًا حتى نشارك موقعك.",
+true
+);
+
+return;
+
+}
+
+
+if(!navigator.geolocation){
+
+document.getElementById(
+"locationStatus"
+).innerText=
+"❌ جهازك لا يدعم تحديد الموقع.";
+
+return;
+
+}
+
+
+if(locationWatcher!==null){
+
+return;
+
+}
+
+
+document.getElementById(
+"locationStatus"
+).innerText=
+"📍 جارِ تحديد موقعك...";
+
+
+locationWatcher=
+navigator.geolocation.watchPosition(
+
+async function(position){
+
+const latitude=
+position.coords.latitude;
+
+const longitude=
+position.coords.longitude;
+
+const accuracy=
+position.coords.accuracy;
+
+
+try{
+
+/*
+نتأكد مرة أخرى أن الطلب
+ما زال تابعًا لهذا المندوب.
+*/
+
+const snapshot=
+await getDocs(
+collection(db,"orders")
+);
+
+
+let allowed=false;
+
+
+snapshot.forEach(function(item){
+
+if(item.id===activeOrderId){
+
+const data=item.data();
+
+if(data.driverId===driverId){
+
+allowed=true;
+
+}
+
+}
+
+});
+
+
+if(!allowed){
+
+stopLocation();
+
+showMessage(
+"⚠️ لم يعد هذا الطلب تابعًا لك.",
+true
+);
+
+return;
+
+}
+
+
+/*
+تحديث موقع المندوب
+في نفس طلبه.
+*/
+
+await runTransaction(
+db,
+async function(transaction){
+
+const orderRef=
+doc(db,"orders",activeOrderId);
+
+const orderSnap=
+await transaction.get(orderRef);
+
+
+if(!orderSnap.exists()){
+
+throw new Error(
+"ORDER_NOT_FOUND"
+);
+
+}
+
+
+const order=
+orderSnap.data();
+
+
+if(order.driverId!==driverId){
+
+throw new Error(
+"NOT_DRIVER"
+);
+
+}
+
+
+transaction.update(
+orderRef,
+{
+
+driverLatitude:latitude,
+
+driverLongitude:longitude,
+
+driverAccuracy:accuracy,
+
+driverLocationUpdatedAt:
+serverTimestamp(),
+
+driverLocationActive:true
+
+}
+
+);
+
+}
+);
+
+
+document.getElementById(
+"locationStatus"
+).innerHTML=
+"✅ موقعك يتم تحديثه الآن.<br>"+
+"دقة الموقع تقريبًا: "+
+Math.round(accuracy)+
+" متر";
+
+
+document.getElementById(
+"locationStatus"
+).className=
+"location-status success";
+
+
+document.getElementById(
+"stopLocationButton"
+).style.display=
+"block";
+
+
+document.getElementById(
+"locationButton"
+).innerText=
+"📍 موقعك تتم مشاركته الآن";
+
+
+}catch(error){
+
+console.error(error);
+
+}
+
+},
+
+function(error){
+
+document.getElementById(
+"locationStatus"
+).innerText=
+"❌ لم نتمكن من تحديد موقعك. تأكد من السماح للموقع.";
+
+document.getElementById(
+"locationStatus"
+).className=
+"location-status error";
+
+},
+
+{
+
+enableHighAccuracy:true,
+
+timeout:15000,
+
+maximumAge:3000
+
+}
+
+);
+
+};
+
+
+/* STOP LOCATION */
+
+window.stopLocation=async function(){
+
+
+if(locationWatcher!==null){
+
+navigator.geolocation.clearWatch(
+locationWatcher
+);
+
+locationWatcher=null;
+
+}
+
+
+document.getElementById(
+"stopLocationButton"
+).style.display=
+"none";
+
+
+document.getElementById(
+"locationButton"
+).innerText=
+"📍 بدء مشاركة موقعي";
+
+
+document.getElementById(
+"locationStatus"
+).innerText=
+"تم إيقاف مشاركة الموقع.";
+
+
+document.getElementById(
+"locationStatus"
+).className=
+"location-status";
+
+
+/*
+نخبر Firebase أن الموقع
+لم يعد مشاركًا.
+*/
+
+if(activeOrderId && driverId){
+
+try{
+
+const orderRef=
+doc(db,"orders",activeOrderId);
+
+
+await runTransaction(
+db,
+async function(transaction){
+
+const orderSnap=
+await transaction.get(orderRef);
+
+
+if(!orderSnap.exists()){
+
+return;
+
+}
+
+
+const order=
+orderSnap.data();
+
+
+if(order.driverId===driverId){
+
+transaction.update(
+orderRef,
+{
+
+driverLocationActive:false
+
+}
+
+);
+
+}
+
+}
+);
+
+
+}catch(error){
+
+console.error(error);
+
+}
+
+}
+
+};
+
+
+/* START */
+
+showDriver();
+
+loadOrders();
+
+loadActiveOrder();
+
+
+</script>
+
+</body>
+</html>
