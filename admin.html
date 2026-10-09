@@ -89,7 +89,7 @@ th{background:#f7f9fa}
       <button id="registerBtn">إرسال طلب التسجيل كمندوب</button>
       <button id="backLoginBtn" class="secondary">العودة لتسجيل الدخول</button>
     </div>
-    <p id="loginMessage" class="muted"></p>
+    <p id="loginMessage" class="muted" role="status" aria-live="polite"></p>
   </div>
 </div>
 
@@ -251,6 +251,7 @@ let locationWatchId = null;
 let activeOrderId = null;
 let messaging = null;
 let registerMode = false;
+let registrationInProgress = false;
 let orderFilter = "all";
 const selectedOrderIds = new Set();
 
@@ -285,18 +286,10 @@ function customerPhone(order) {
 
 function statusLabel(status) {
   const labels = {
-    new:"جديد 🆕",
-    preparing:"قيد التجهيز 🔄",
-    accepted:"تم قبول الطلب",
-    onway:"بالطريق 🛵",
-    on_the_way:"بالطريق 🛵",
-    delivered:"تم التوصيل ✅",
-    purchased:"تم الشراء 🛍️",
-    cancelled:"ملغى",
-    pending:"قيد المراجعة",
-    approved:"مقبول",
-    rejected:"مرفوض",
-    disabled:"موقوف"
+    new:"جديد 🆕", preparing:"قيد التجهيز 🔄", accepted:"تم قبول الطلب",
+    onway:"بالطريق 🛵", on_the_way:"بالطريق 🛵", delivered:"تم التوصيل ✅",
+    purchased:"تم الشراء 🛍️", cancelled:"ملغى", pending:"قيد المراجعة",
+    approved:"مقبول", rejected:"مرفوض", disabled:"موقوف"
   };
   return labels[status] || status || "غير محدد";
 }
@@ -373,8 +366,10 @@ $("loginBtn").addEventListener("click", async () => {
   const email = $("email").value.trim();
   const password = $("password").value;
   if (!email || !password) return message("أدخلي البريد الإلكتروني وكلمة المرور.", true);
+
   $("loginBtn").disabled = true;
   message("جارٍ تسجيل الدخول...");
+
   try {
     await signInWithEmailAndPassword(auth, email, password);
   } catch (error) {
@@ -384,28 +379,112 @@ $("loginBtn").addEventListener("click", async () => {
   }
 });
 
+/*
+  التسجيل:
+  - الحساب الجديد ينشأ ثم يُرسل طلب مندوب pending.
+  - الحساب الموجود يُفحص بعد تسجيل الدخول بكلمة مروره الصحيحة.
+  - لا تُمنح أي صلاحية مندوب تلقائيًا.
+*/
 $("registerBtn").addEventListener("click", async () => {
-  const email = $("email").value.trim();
+  const email = $("email").value.trim().toLowerCase();
   const password = $("password").value;
-  if (!email || !password) return message("أدخلي البريد الإلكتروني وكلمة المرور.", true);
-  if (password.length < 6) return message("كلمة المرور يجب أن تكون 6 أحرف على الأقل.", true);
+
+  if (!email || !password) {
+    return message("أدخلي البريد الإلكتروني وكلمة المرور.", true);
+  }
+
+  if (password.length < 6) {
+    return message("كلمة المرور يجب أن تكون 6 أحرف على الأقل.", true);
+  }
 
   $("registerBtn").disabled = true;
-  message("جارٍ إرسال طلب التسجيل...");
+  registrationInProgress = true;
+  message("جارٍ التحقق من الحساب وإرسال طلب التسجيل...");
+
   try {
-    const result = await createUserWithEmailAndPassword(auth, email, password);
-    await setDoc(doc(db, "driverApplications", result.user.uid), {
-      uid: result.user.uid, email, status:"pending", createdAt:serverTimestamp()
+    let user;
+
+    try {
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      user = result.user;
+    } catch (error) {
+      if (error.code !== "auth/email-already-in-use") throw error;
+
+      try {
+        const result = await signInWithEmailAndPassword(auth, email, password);
+        user = result.user;
+      } catch (loginError) {
+        if (
+          loginError.code === "auth/invalid-credential" ||
+          loginError.code === "auth/wrong-password" ||
+          loginError.code === "auth/user-not-found"
+        ) {
+          throw new Error(
+            "هذا الإيميل مسجّل من قبل. أدخلي كلمة المرور الصحيحة للحساب نفسه، أو استخدمي استعادة كلمة المرور."
+          );
+        }
+        throw loginError;
+      }
+    }
+
+    const uid = user.uid;
+
+    const adminSnap = await getDoc(doc(db, "admins", uid));
+    if (adminSnap.exists() && adminSnap.data().role === "admin") {
+      await signOut(auth);
+      message("هذا الحساب لديه صلاحية مدير بالفعل، ولا يحتاج إلى التسجيل كمندوب.");
+      return;
+    }
+
+    const driverSnap = await getDoc(doc(db, "drivers", uid));
+
+    if (driverSnap.exists() && driverSnap.data().status === "approved") {
+      await signOut(auth);
+      message("هذا الحساب مقبول كمندوب بالفعل. استخدمي تسجيل الدخول.");
+      return;
+    }
+
+    const applicationRef = doc(db, "driverApplications", uid);
+    const applicationSnap = await getDoc(applicationRef);
+
+    if (
+      applicationSnap.exists() &&
+      applicationSnap.data().status === "pending"
+    ) {
+      await signOut(auth);
+      message("✅ طلبك موجود بالفعل وبانتظار موافقة المدير. لا حاجة لإرساله مرة ثانية.");
+      return;
+    }
+
+    await setDoc(applicationRef, {
+      uid: uid,
+      email: email,
+      status: "pending",
+      createdAt: serverTimestamp()
     });
+
     await signOut(auth);
-    registerMode = false;
+
     $("loginTitle").textContent = "تسجيل الدخول";
     $("registerButtons").classList.add("hidden");
     $("loginButtons").classList.remove("hidden");
-    message("تم إرسال طلبك. انتظر موافقة المدير قبل تسجيل الدخول.");
+    registerMode = false;
+
+    message(
+      "✅ تم إرسال طلبك بنجاح! طلبك الآن بانتظار موافقة المدير. يمكنك الدخول إلى لوحة المندوب بعد الموافقة."
+    );
+
   } catch (error) {
-    message("تعذّر التسجيل: " + error.message, true);
+    console.error("Driver registration error:", error);
+    message("تعذّر إرسال الطلب: " + (error.message || "حدث خطأ غير معروف."), true);
+
+    if (auth.currentUser) {
+      try { await signOut(auth); } catch (signOutError) {
+        console.error(signOutError);
+      }
+    }
   } finally {
+    registrationInProgress = false;
     $("registerBtn").disabled = false;
   }
 });
@@ -416,7 +495,10 @@ $("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
 });
 
+/* التحقق من الصلاحيات عند تسجيل الدخول */
 onAuthStateChanged(auth, async user => {
+  if (registrationInProgress) return;
+
   stopListeners();
   stopLocationSharing();
   currentUser = user;
@@ -432,6 +514,7 @@ onAuthStateChanged(auth, async user => {
 
   try {
     const adminSnap = await getDoc(doc(db, "admins", user.uid));
+
     if (adminSnap.exists() && adminSnap.data().role === "admin") {
       currentRole = "admin";
       showApp("admin");
@@ -441,6 +524,7 @@ onAuthStateChanged(auth, async user => {
     }
 
     const driverSnap = await getDoc(doc(db, "drivers", user.uid));
+
     if (driverSnap.exists() && driverSnap.data().status === "approved") {
       currentRole = "driver";
       showApp("driver");
@@ -450,17 +534,30 @@ onAuthStateChanged(auth, async user => {
     }
 
     const applicationSnap = await getDoc(doc(db, "driverApplications", user.uid));
+    const email = user.email || "";
+
     await signOut(auth);
+
     if (applicationSnap.exists()) {
       const status = applicationSnap.data().status;
-      message(status === "rejected"
-        ? "تم رفض طلب التسجيل. تواصلي مع المدير."
-        : "طلبك قيد المراجعة. يمكنك الدخول بعد موافقة المدير.", true);
+
+      if (status === "pending") {
+        message("⏳ طلبك قيد المراجعة وبانتظار موافقة المدير. ستتمكن من الدخول بعد الموافقة.", true);
+      } else if (status === "rejected") {
+        message("تم رفض طلب التسجيل. يرجى التواصل مع المدير.", true);
+      } else {
+        message("حالة طلبك: " + statusLabel(status) + ". يرجى مراجعة المدير.", true);
+      }
     } else {
-      message("هذا الحساب ليس لديه صلاحية مدير أو مندوب مقبول.", true);
+      message(
+        "هذا الحساب ليس لديه صلاحية مدير أو مندوب مقبول. إذا كنت تريد العمل كمندوب، اختَر «التسجيل كمندوب جديد».",
+        true
+      );
     }
+
   } catch (error) {
-    await signOut(auth);
+    console.error(error);
+    try { await signOut(auth); } catch {}
     message("تعذّر التحقق من صلاحيات الحساب: " + error.message, true);
   }
 });
@@ -505,7 +602,6 @@ function renderStats() {
   $("statNew").textContent = orderCache.filter(o => o.status === "new").length;
   $("statApplications").textContent = applicationCache.filter(a => a.status === "pending").length;
   $("statDrivers").textContent = driverCache.filter(d => d.status === "approved").length;
-
   $("countNew").textContent = orderCache.filter(o => o.status === "new").length;
   $("countActive").textContent = orderCache.filter(isActiveOrder).length;
   $("countDone").textContent = orderCache.filter(isCompletedOrder).length;
@@ -514,6 +610,7 @@ function renderStats() {
 
 function renderApplications() {
   const pending = applicationCache.filter(item => item.status === "pending");
+
   if (!pending.length) {
     $("applicationsTable").innerHTML = '<tr><td colspan="3">لا توجد طلبات تسجيل معلّقة.</td></tr>';
     return;
@@ -532,6 +629,7 @@ function renderApplications() {
 
   $("applicationsTable").querySelectorAll("[data-approve]").forEach(button =>
     button.addEventListener("click", () => approveDriver(button.dataset.approve)));
+
   $("applicationsTable").querySelectorAll("[data-reject]").forEach(button =>
     button.addEventListener("click", () => rejectDriver(button.dataset.reject)));
 }
@@ -539,13 +637,20 @@ function renderApplications() {
 async function approveDriver(uid) {
   const application = applicationCache.find(item => item.id === uid);
   if (!application) return;
+
   try {
     await setDoc(doc(db, "drivers", uid), {
-      uid, email:application.email || "", status:"approved", approvedAt:serverTimestamp()
+      uid,
+      email:application.email || "",
+      status:"approved",
+      approvedAt:serverTimestamp()
     });
+
     await updateDoc(doc(db, "driverApplications", uid), {
-      status:"approved", reviewedAt:serverTimestamp()
+      status:"approved",
+      reviewedAt:serverTimestamp()
     });
+
     alert("تم قبول المندوب.");
   } catch (error) {
     alert("تعذّر قبول المندوب: " + error.message);
@@ -555,7 +660,8 @@ async function approveDriver(uid) {
 async function rejectDriver(uid) {
   try {
     await updateDoc(doc(db, "driverApplications", uid), {
-      status:"rejected", reviewedAt:serverTimestamp()
+      status:"rejected",
+      reviewedAt:serverTimestamp()
     });
     alert("تم رفض طلب المندوب.");
   } catch (error) {
@@ -565,6 +671,7 @@ async function rejectDriver(uid) {
 
 function renderDrivers() {
   const approved = driverCache.filter(item => item.status === "approved");
+
   if (!approved.length) {
     $("driversTable").innerHTML = '<tr><td colspan="3">لا يوجد مندوبون مقبولون بعد.</td></tr>';
     return;
@@ -582,6 +689,7 @@ function renderDrivers() {
     button.addEventListener("click", async () => {
       const uid = button.dataset.disable;
       if (!confirm("هل تريدين إلغاء اعتماد هذا المندوب؟")) return;
+
       try {
         await updateDoc(doc(db, "drivers", uid), {status:"disabled"});
       } catch (error) {
@@ -593,8 +701,10 @@ function renderDrivers() {
 
 function filteredOrders() {
   const search = $("orderSearch").value.trim().toLowerCase();
+
   return orderCache.filter(order => {
     let matchesFilter = true;
+
     if (orderFilter === "new") matchesFilter = order.status === "new";
     if (orderFilter === "active") matchesFilter = isActiveOrder(order);
     if (orderFilter === "done") matchesFilter = isCompletedOrder(order);
@@ -702,11 +812,14 @@ $("clearSelectionBtn").addEventListener("click", () => {
 
 $("deleteSelectedBtn").addEventListener("click", async () => {
   if (currentRole !== "admin") return alert("هذه العملية متاحة للمدير فقط.");
+
   const ids = [...selectedOrderIds];
   if (!ids.length) return alert("حددي طلبًا واحدًا على الأقل.");
+
   if (!confirm(`هل أنتِ متأكدة من حذف ${ids.length} طلب؟ لا يمكن التراجع عن الحذف.`)) return;
 
   $("deleteSelectedBtn").disabled = true;
+
   try {
     for (const id of ids) {
       await deleteDoc(doc(db, "orders", id));
@@ -751,6 +864,7 @@ function startDriverListeners() {
       $("driverStatus").textContent = "حساب المندوب غير معتمد أو تم إيقافه.";
       return;
     }
+
     $("driverStatus").textContent =
       "الحساب معتمد: " + (snapshot.data().email || currentUser.email || "");
   });
@@ -823,12 +937,14 @@ function renderDriverOrders() {
     $("currentOrder").querySelectorAll("[data-finish]").forEach(button => {
       button.addEventListener("click", async () => {
         if (!confirm("هل أنهيتِ توصيل الطلب؟")) return;
+
         try {
           await updateDoc(doc(db, "orders", button.dataset.finish), {
             status:"delivered",
             driverLocationActive:false,
             updatedAt:serverTimestamp()
           });
+
           await stopLocationSharing();
           activeOrderId = null;
           alert("تم إنهاء الطلب بنجاح.");
@@ -845,13 +961,16 @@ function renderDriverOrders() {
 
 async function acceptOrder(orderId) {
   if (!currentUser || currentRole !== "driver") return;
+
   try {
     await runTransaction(db, async transaction => {
       const orderRef = doc(db, "orders", orderId);
       const orderSnap = await transaction.get(orderRef);
+
       if (!orderSnap.exists()) throw new Error("الطلب غير موجود.");
 
       const order = orderSnap.data();
+
       if (order.status !== "new" || order.driverId) {
         throw new Error("تم قبول الطلب من مندوب آخر أو لم يعد متاحًا.");
       }
@@ -866,6 +985,7 @@ async function acceptOrder(orderId) {
         updatedAt:serverTimestamp()
       });
     });
+
     activeOrderId = orderId;
     alert("تم قبول الطلب بنجاح. ستجديه في قسم «طلبي الحالي».");
   } catch (error) {
@@ -878,17 +998,29 @@ async function enableNotifications() {
   if (!currentUser) return alert("سجّلي الدخول أولًا.");
 
   try {
-    if (!("Notification" in window)) throw new Error("هذا المتصفح لا يدعم الإشعارات.");
+    if (!("Notification" in window)) {
+      throw new Error("هذا المتصفح لا يدعم الإشعارات.");
+    }
+
     const permission = await Notification.requestPermission();
-    if (permission !== "granted") throw new Error("لم يتم السماح بالإشعارات من إعدادات المتصفح.");
-    if (!(await isSupported())) throw new Error("Firebase Messaging غير مدعوم في هذا المتصفح.");
+
+    if (permission !== "granted") {
+      throw new Error("لم يتم السماح بالإشعارات من إعدادات المتصفح.");
+    }
+
+    if (!(await isSupported())) {
+      throw new Error("Firebase Messaging غير مدعوم في هذا المتصفح.");
+    }
 
     messaging = getMessaging(app);
+
     const registration = await navigator.serviceWorker.register("./firebase-messaging-sw.js");
+
     const token = await getToken(messaging, {
       vapidKey:VAPID_KEY,
       serviceWorkerRegistration:registration
     });
+
     if (!token) throw new Error("لم يتم إنشاء رمز الإشعارات.");
 
     await setDoc(doc(db, "notificationTokens", token), {
@@ -914,20 +1046,26 @@ $("startLocationBtn").addEventListener("click", async () => {
     $("locationMessage").textContent = "المتصفح لا يدعم تحديد الموقع.";
     return;
   }
+
   if (!activeOrderId) {
     $("locationMessage").textContent = "اقبلي طلبًا أولًا حتى تتم مشاركة الموقع.";
     return;
   }
+
   if (locationWatchId !== null) {
     $("locationMessage").textContent = "مشاركة الموقع تعمل بالفعل.";
     return;
   }
 
   try {
-    await updateDoc(doc(db, "orders", activeOrderId), {driverLocationActive:true});
+    await updateDoc(doc(db, "orders", activeOrderId), {
+      driverLocationActive:true
+    });
+
     locationWatchId = navigator.geolocation.watchPosition(
       async position => {
         if (!activeOrderId || !currentUser) return;
+
         try {
           await updateDoc(doc(db, "orders", activeOrderId), {
             driverLatitude:position.coords.latitude,
@@ -936,6 +1074,7 @@ $("startLocationBtn").addEventListener("click", async () => {
             driverLocationUpdatedAt:serverTimestamp(),
             driverLocationActive:true
           });
+
           $("locationMessage").textContent = "تم تحديث موقع المندوب بنجاح.";
         } catch (error) {
           $("locationMessage").textContent = "تعذّر حفظ الموقع: " + error.message;
@@ -946,6 +1085,7 @@ $("startLocationBtn").addEventListener("click", async () => {
       },
       {enableHighAccuracy:true, maximumAge:5000, timeout:15000}
     );
+
     $("locationMessage").textContent = "جارٍ مشاركة الموقع...";
   } catch (error) {
     $("locationMessage").textContent = "تعذّر تشغيل مشاركة الموقع: " + error.message;
@@ -958,7 +1098,9 @@ async function stopLocationSharing() {
   if (locationWatchId !== null && navigator.geolocation) {
     navigator.geolocation.clearWatch(locationWatchId);
   }
+
   locationWatchId = null;
+
   if ($("locationMessage")) {
     $("locationMessage").textContent = "تم إيقاف مشاركة الموقع من هذا الجهاز.";
   }
