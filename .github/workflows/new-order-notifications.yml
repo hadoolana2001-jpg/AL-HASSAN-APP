@@ -3,7 +3,7 @@ name: AL HASSAN - New Order Notifications
 on:
   workflow_dispatch:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "* * * * *"
 
 permissions:
   contents: read
