@@ -107,20 +107,38 @@ let messaging = null;
 let locationWatcher = null;
 let locationBusy = false;
 let notificationListenerStarted = false;
+let notificationAttemptRunning = false;
 
 let driverName = localStorage.getItem("alhassan_driver_name") || "";
 let driverId = localStorage.getItem("alhassan_driver_id") || "";
 let activeOrderId = localStorage.getItem("alhassan_active_order") || "";
 
+/* منع بعض خطوات التهيئة من الانتظار إلى أجل غير محدد */
+function withTimeout(promise, milliseconds, message) {
+  let timer;
+
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(message)), milliseconds);
+    })
+  ]).finally(() => clearTimeout(timer));
+}
+
 function setNotificationStatus(text, type = "normal") {
   const box = document.getElementById("notificationStatus");
   box.textContent = text;
-  box.style.background = type === "success" ? "#e9f8ed" : type === "error" ? "#fff0f0" : "#fff8e6";
-  box.style.color = type === "success" ? "#168a35" : type === "error" ? "#c00" : "#555";
+  box.style.background =
+    type === "success" ? "#e9f8ed" :
+    type === "error" ? "#fff0f0" : "#fff8e6";
+  box.style.color =
+    type === "success" ? "#168a35" :
+    type === "error" ? "#c00" : "#555";
 }
 
 function showNotificationButton(show = true) {
-  document.getElementById("notificationButton").style.display = show ? "block" : "none";
+  document.getElementById("notificationButton").style.display =
+    show ? "block" : "none";
 }
 
 function isIOS() {
@@ -135,26 +153,32 @@ function isStandalone() {
 
 function supportMessage() {
   if (isIOS() && !isStandalone()) {
-    return "افتح الموقع في Safari، ثم مشاركة ← إضافة إلى الشاشة الرئيسية، وافتح التطبيق من الأيقونة. يلزم iOS 16.4 أو أحدث.";
+    return "على iPhone: افتح الصفحة في Safari، ثم مشاركة ← إضافة إلى الشاشة الرئيسية، وافتحها من الأيقونة. إشعارات الويب تحتاج iOS 16.4 أو أحدث.";
   }
+
   if (isIOS()) {
-    return "تأكد من أن جهازك يعمل بإصدار iOS 16.4 أو أحدث، وأن إشعارات تطبيق AL HASSAN مسموحة.";
+    return "تأكد من iOS 16.4 أو أحدث، ومن السماح بإشعارات التطبيق من إعدادات الجهاز.";
   }
-  return "المتصفح لا يدعم إشعارات الويب المطلوبة في وضع الفتح الحالي.";
+
+  return "هذا المتصفح أو وضع التصفح الحالي لا يدعم إشعارات الويب المطلوبة.";
 }
 
 function showMessage(text, error = false) {
   const box = document.getElementById("message");
   box.textContent = text;
   box.style.color = error ? "#c00" : "#168a35";
-  setTimeout(() => { box.textContent = ""; }, 5000);
+  setTimeout(() => {
+    box.textContent = "";
+  }, 5000);
 }
 
 /* بيانات المندوب */
 function showDriver() {
   if (!driverName || !driverId) return;
+
   document.getElementById("driverName").value = driverName;
   document.getElementById("driverId").value = driverId;
+
   const info = document.getElementById("driverInfo");
   info.style.display = "block";
   info.textContent = "👤 المندوب: " + driverName + " | 🆔 الرقم: " + driverId;
@@ -171,31 +195,49 @@ window.saveDriver = async function() {
 
   driverName = name;
   driverId = id;
+
   localStorage.setItem("alhassan_driver_name", name);
   localStorage.setItem("alhassan_driver_id", id);
+
   showDriver();
   showMessage("✅ تم حفظ بيانات المندوب.");
 
   const oldToken = localStorage.getItem("alhassan_fcm_token");
+
   if (oldToken) {
     try {
       await setDoc(doc(db, "notificationTokens", oldToken), {
-        token: oldToken, role: "driver", driverId, driverName,
-        active: true, updatedAt: serverTimestamp()
+        token: oldToken,
+        role: "driver",
+        driverId,
+        driverName,
+        active: true,
+        updatedAt: serverTimestamp()
       }, { merge: true });
     } catch (error) {
       console.error("Token update error:", error);
     }
   }
+
   await checkNotificationSetup();
 };
 
 /* إعداد الإشعارات */
 async function prepareMessaging() {
-  if (!("Notification" in window)) throw new Error(supportMessage());
-  if (!("serviceWorker" in navigator)) throw new Error("المتصفح لا يدعم Service Worker.");
+  if (!("Notification" in window)) {
+    throw new Error(supportMessage());
+  }
 
-  const supported = await isSupported();
+  if (!("serviceWorker" in navigator)) {
+    throw new Error("المتصفح لا يدعم Service Worker.");
+  }
+
+  const supported = await withTimeout(
+    isSupported(),
+    10000,
+    "استغرق فحص دعم الإشعارات وقتًا طويلًا."
+  );
+
   if (!supported) throw new Error(supportMessage());
 
   if (!messaging) messaging = getMessaging(app);
@@ -203,77 +245,132 @@ async function prepareMessaging() {
   if (!notificationListenerStarted) {
     onMessage(messaging, payload => {
       const title = payload.notification?.title || "AL HASSAN";
-      const body = payload.notification?.body || "لديك طلب جديد";
+      const body = payload.notification?.body || "لديك إشعار جديد";
+
       showMessage("🔔 " + title + " - " + body);
-      loadOrders();
+      window.loadOrders();
       loadActiveOrder();
     });
+
     notificationListenerStarted = true;
   }
 }
 
+/* تسجيل Service Worker بمسار نسبي ليتوافق مع مسار GitHub Pages */
 async function registerMessagingServiceWorker() {
-  const swUrl = new URL("/AL-HASSAN-APP/firebase-messaging-sw.js", location.origin);
-  const registration = await navigator.serviceWorker.register(swUrl.href, {
-    scope: "/AL-HASSAN-APP/"
-  });
-  await navigator.serviceWorker.ready;
+  const swUrl = new URL("./firebase-messaging-sw.js", import.meta.url);
+  const scopeUrl = new URL("./", import.meta.url);
+
+  const registration = await withTimeout(
+    navigator.serviceWorker.register(swUrl.href, {
+      scope: scopeUrl.pathname
+    }),
+    15000,
+    "انتهت مهلة تسجيل Service Worker. تحقق من وجود ملف firebase-messaging-sw.js بجانب Driver.html."
+  );
+
+  await withTimeout(
+    navigator.serviceWorker.ready,
+    15000,
+    "لم يصبح Service Worker جاهزًا. تحقق من مسار الملف وصحة محتواه."
+  );
+
   return registration;
 }
 
 window.enableNotifications = async function() {
-  if (!driverName || !driverId) {
-    setNotificationStatus("احفظ اسم المندوب ورقمه أولًا.", "error");
-    showMessage("⚠️ احفظ بيانات المندوب أولًا.", true);
-    return;
-  }
-
-  if (!("Notification" in window)) {
-    setNotificationStatus(supportMessage(), "error");
-    return;
-  }
+  if (notificationAttemptRunning) return;
+  notificationAttemptRunning = true;
 
   try {
+    if (!driverName || !driverId) {
+      setNotificationStatus("احفظ اسم المندوب ورقمه أولًا.", "error");
+      showMessage("⚠️ احفظ بيانات المندوب أولًا.", true);
+      return;
+    }
+
+    if (!("Notification" in window)) {
+      setNotificationStatus(supportMessage(), "error");
+      showNotificationButton(true);
+      return;
+    }
+
+    if (location.protocol !== "https:" && location.hostname !== "localhost") {
+      setNotificationStatus("يجب فتح الصفحة عبر HTTPS حتى تعمل الإشعارات والموقع.", "error");
+      showNotificationButton(true);
+      return;
+    }
+
     let permission = Notification.permission;
 
     if (permission === "denied") {
-      setNotificationStatus("النظام يمنع الإشعارات. افتح إعدادات المتصفح واسمح بها ثم أعد المحاولة.", "error");
+      setNotificationStatus("الإشعارات ممنوعة من إعدادات الجهاز أو المتصفح. اسمح بها ثم أعد المحاولة.", "error");
+      showNotificationButton(true);
       return;
     }
 
     if (permission === "default") {
-      setNotificationStatus("⏳ جارٍ طلب إذن الإشعارات...");
+      setNotificationStatus("⏳ بانتظار موافقتك على الإشعارات...");
       permission = await Notification.requestPermission();
     }
 
     if (permission !== "granted") {
-      setNotificationStatus("لم يمنح النظام إذن الإشعارات. الحالة: " + permission, "error");
+      setNotificationStatus("لم يتم السماح بالإشعارات. اضغط زر التفعيل بعد السماح بها.", "error");
+      showNotificationButton(true);
       return;
     }
 
-    setNotificationStatus("⏳ جارٍ تسجيل جهازك مع Firebase...");
+    setNotificationStatus("⏳ جارٍ فحص دعم Firebase للإشعارات...");
     await prepareMessaging();
 
+    setNotificationStatus("⏳ جارٍ تسجيل Service Worker...");
     const registration = await registerMessagingServiceWorker();
-    const token = await getToken(messaging, {
-      vapidKey: VAPID_KEY,
-      serviceWorkerRegistration: registration
-    });
 
-    if (!token) throw new Error("لم ينشئ Firebase رمز الإشعارات. تحقق من إعداد VAPID.");
+    setNotificationStatus("⏳ جارٍ طلب رمز الإشعارات من Firebase...");
+    const token = await withTimeout(
+      getToken(messaging, {
+        vapidKey: VAPID_KEY,
+        serviceWorkerRegistration: registration
+      }),
+      20000,
+      "استغرق الحصول على رمز الإشعارات وقتًا طويلًا. تحقق من إعداد VAPID وملف Service Worker."
+    );
 
-    await setDoc(doc(db, "notificationTokens", token), {
-      token, role: "driver", driverId, driverName,
-      active: true, updatedAt: serverTimestamp()
-    }, { merge: true });
+    if (!token) {
+      throw new Error("لم ينشئ Firebase رمز الإشعارات. تحقق من إعداد VAPID.");
+    }
+
+    setNotificationStatus("⏳ جارٍ حفظ إعدادات جهازك...");
+    await withTimeout(
+      setDoc(doc(db, "notificationTokens", token), {
+        token,
+        role: "driver",
+        driverId,
+        driverName,
+        active: true,
+        updatedAt: serverTimestamp()
+      }, { merge: true }),
+      15000,
+      "انتهت مهلة حفظ رمز الإشعارات في Firestore. تحقق من قواعد قاعدة البيانات."
+    );
 
     localStorage.setItem("alhassan_fcm_token", token);
-    setNotificationStatus("✅ تم تسجيل جهازك للإشعارات.", "success");
+
+    setNotificationStatus("✅ تم تسجيل جهازك للإشعارات بنجاح.", "success");
     showNotificationButton(false);
+
   } catch (error) {
     console.error("Notification registration error:", error);
-    setNotificationStatus("❌ تعذر تسجيل الإشعارات: " + (error.message || "خطأ غير معروف"), "error");
+
+    setNotificationStatus(
+      "❌ " + (error.message || "تعذر تسجيل الإشعارات. افتح أدوات المطور للتحقق من الخطأ."),
+      "error"
+    );
+
     showNotificationButton(true);
+
+  } finally {
+    notificationAttemptRunning = false;
   }
 };
 
@@ -291,7 +388,7 @@ async function checkNotificationSetup() {
   }
 
   if (Notification.permission === "denied") {
-    setNotificationStatus("إذن الإشعارات مرفوض من النظام. راجع إعدادات المتصفح.", "error");
+    setNotificationStatus("إذن الإشعارات مرفوض. راجع إعدادات المتصفح أو الجهاز.", "error");
     showNotificationButton(true);
     return;
   }
@@ -305,17 +402,23 @@ async function checkNotificationSetup() {
   showNotificationButton(true);
 }
 
-/* الطلبات المتاحة */
+/* تحميل الطلبات المتاحة */
 window.loadOrders = async function() {
   const box = document.getElementById("orders");
-  box.innerHTML = '<div class="empty">جارٍ تحميل الطلبات...</div>';
+  box.innerHTML = '<div class="empty">⏳ جارٍ تحميل الطلبات...</div>';
 
   try {
-    const snapshot = await getDocs(collection(db, "orders"));
+    const snapshot = await withTimeout(
+      getDocs(collection(db, "orders")),
+      15000,
+      "انتهت مهلة تحميل الطلبات من Firebase."
+    );
+
     const orders = [];
 
     snapshot.forEach(item => {
       const order = item.data();
+
       if (!order.driverId && (order.status === "new" || !order.status)) {
         orders.push({ id: item.id, ...order });
       }
@@ -329,11 +432,16 @@ window.loadOrders = async function() {
     }
 
     box.innerHTML = "";
+
     const categoryNames = {
-      food: "🍔 مطعم", market: "🛒 سوبرماركت",
-      pharmacy: "💊 صيدلية", clothes: "👗 ملابس",
-      beauty: "💄 تجميل", electronics: "📱 إلكترونيات",
-      gifts: "🎁 هدايا", other: "🏪 محل آخر"
+      food: "🍔 مطعم",
+      market: "🛒 سوبرماركت",
+      pharmacy: "💊 صيدلية",
+      clothes: "👗 ملابس",
+      beauty: "💄 تجميل",
+      electronics: "📱 إلكترونيات",
+      gifts: "🎁 هدايا",
+      other: "🏪 محل آخر"
     };
 
     orders.forEach(order => {
@@ -350,6 +458,7 @@ window.loadOrders = async function() {
       const status = document.createElement("div");
       status.className = "status";
       status.textContent = "🆕 جديد";
+
       top.append(category, status);
 
       const details = document.createElement("div");
@@ -369,11 +478,26 @@ window.loadOrders = async function() {
       card.append(top, details, accept);
       box.appendChild(card);
     });
+
   } catch (error) {
     console.error("Load orders error:", error);
-    box.innerHTML = '<div class="empty">❌ تعذر تحميل الطلبات. تحقق من اتصال Firebase وصلاحيات قاعدة البيانات.</div>';
+
+    box.innerHTML =
+      '<div class="empty">❌ تعذر تحميل الطلبات: ' +
+      escapeHTML(error.message || "تحقق من اتصال Firebase وصلاحيات قاعدة البيانات.") +
+      '</div>';
   }
 };
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
 
 /* استلام الطلب */
 window.acceptOrder = async function(orderId) {
@@ -387,13 +511,19 @@ window.acceptOrder = async function(orderId) {
 
     await runTransaction(db, async transaction => {
       const snap = await transaction.get(orderRef);
+
       if (!snap.exists()) throw new Error("ORDER_NOT_FOUND");
 
       const order = snap.data();
+
       if (order.driverId) throw new Error("ORDER_ALREADY_TAKEN");
+      if (order.status && order.status !== "new") {
+        throw new Error("ORDER_NOT_AVAILABLE");
+      }
 
       transaction.update(orderRef, {
-        driverId, driverName,
+        driverId,
+        driverName,
         acceptedAt: serverTimestamp(),
         status: "accepted"
       });
@@ -401,17 +531,21 @@ window.acceptOrder = async function(orderId) {
 
     activeOrderId = orderId;
     localStorage.setItem("alhassan_active_order", activeOrderId);
+
     showMessage("✅ تم استلام الطلب باسمك.");
-    await loadOrders();
+    await window.loadOrders();
     await loadActiveOrder();
+
   } catch (error) {
     console.error("Accept order error:", error);
-    showMessage(
-      error.message === "ORDER_ALREADY_TAKEN"
-        ? "⚠️ استلم مندوب آخر هذا الطلب."
-        : "❌ تعذر استلام الطلب. تحقق من صلاحيات Firebase.",
-      true
-    );
+
+    if (error.message === "ORDER_ALREADY_TAKEN") {
+      showMessage("⚠️ استلم مندوب آخر هذا الطلب.", true);
+    } else if (error.message === "ORDER_NOT_AVAILABLE") {
+      showMessage("⚠️ لم يعد الطلب متاحًا للاستلام.", true);
+    } else {
+      showMessage("❌ تعذر استلام الطلب. راجع قواعد Firestore وسجل الأخطاء.", true);
+    }
   }
 };
 
@@ -424,7 +558,9 @@ async function loadActiveOrder() {
     let found = null;
 
     snapshot.forEach(item => {
-      if (item.id === activeOrderId) found = { id: item.id, ...item.data() };
+      if (item.id === activeOrderId) {
+        found = { id: item.id, ...item.data() };
+      }
     });
 
     if (!found || found.driverId !== driverId) {
@@ -435,6 +571,7 @@ async function loadActiveOrder() {
     }
 
     document.getElementById("activeOrderBox").style.display = "block";
+
     const box = document.getElementById("activeOrder");
     box.innerHTML = "";
 
@@ -443,7 +580,8 @@ async function loadActiveOrder() {
     details.textContent =
       "📦 " + (found.item || "طلب") +
       "\n📍 " + (found.address || "العنوان غير محدد") +
-      "\n📞 " + (found.phone || "غير محدد");
+      "\n📞 " + (found.phone || "غير محدد") +
+      "\n📌 الحالة: " + (found.status || "غير محددة");
 
     const locationButton = document.createElement("button");
     locationButton.className = "green";
@@ -459,6 +597,7 @@ async function loadActiveOrder() {
     map.textContent = "🗺️ فتح عنوان الزبون";
 
     box.append(details, locationButton, map);
+
   } catch (error) {
     console.error("Load active order error:", error);
   }
@@ -470,20 +609,31 @@ window.startLocation = function() {
     showMessage("⚠️ احفظ اسم المندوب ورقمه أولًا.", true);
     return;
   }
+
   if (!activeOrderId) {
     showMessage("⚠️ استلم طلبًا أولًا حتى تشارك موقعك.", true);
     return;
   }
+
   if (!navigator.geolocation) {
-    document.getElementById("locationStatus").textContent = "❌ جهازك لا يدعم تحديد الموقع.";
+    document.getElementById("locationStatus").textContent =
+      "❌ جهازك أو متصفحك لا يدعم تحديد الموقع.";
     return;
   }
+
   if (locationWatcher !== null) {
     showMessage("📍 موقعك تتم مشاركته حاليًا.");
     return;
   }
 
-  document.getElementById("locationStatus").textContent = "📍 جارٍ طلب موقعك من الجهاز...";
+  if (location.protocol !== "https:" && location.hostname !== "localhost") {
+    document.getElementById("locationStatus").textContent =
+      "❌ يجب فتح الصفحة عبر HTTPS حتى يعمل تحديد الموقع.";
+    return;
+  }
+
+  document.getElementById("locationStatus").textContent =
+    "📍 جارٍ طلب موقعك من الجهاز...";
 
   locationWatcher = navigator.geolocation.watchPosition(
     async position => {
@@ -507,6 +657,7 @@ window.startLocation = function() {
 
         await runTransaction(db, async transaction => {
           const snap = await transaction.get(orderRef);
+
           if (!snap.exists()) throw new Error("ORDER_NOT_FOUND");
 
           const order = snap.data();
@@ -522,31 +673,54 @@ window.startLocation = function() {
         });
 
         const status = document.getElementById("locationStatus");
-        status.textContent = "✅ تم إرسال موقعك ويتم تحديثه الآن.";
+        status.textContent = "✅ تم إرسال موقعك إلى Firebase ويتم تحديثه الآن.";
         status.className = "location-status success";
         document.getElementById("stopLocationButton").style.display = "block";
-        document.getElementById("locationButton").textContent = "📍 موقعك تتم مشاركته الآن";
+        document.getElementById("locationButton").textContent =
+          "📍 موقعك تتم مشاركته الآن";
+
       } catch (error) {
         console.error("GPS Firestore error:", error);
+
         const status = document.getElementById("locationStatus");
-        status.textContent = "⚠️ تم تحديد موقعك، لكن تعذر إرساله إلى Firebase.";
+        status.textContent =
+          "⚠️ تم تحديد موقعك، لكن تعذر إرساله إلى Firebase: " +
+          (error.message || "خطأ غير معروف");
         status.className = "location-status error";
-        if (error.message === "NOT_DRIVER") window.stopLocation();
+
+        if (error.message === "NOT_DRIVER") {
+          window.stopLocation();
+        }
+
       } finally {
         locationBusy = false;
       }
     },
+
     error => {
       console.error("GPS error:", error);
+
+      /* السماح بمحاولة جديدة بعد فشل تحديد الموقع */
+      if (locationWatcher !== null) {
+        navigator.geolocation.clearWatch(locationWatcher);
+        locationWatcher = null;
+      }
+
       let message = "❌ تعذر تحديد الموقع.";
-      if (error.code === 1) message = "⚠️ صلاحية الموقع مرفوضة. اسمح للمتصفح باستخدام موقعك.";
-      else if (error.code === 2) message = "❌ تعذر تحديد الموقع. تأكد من تشغيل خدمات الموقع.";
-      else if (error.code === 3) message = "⏱️ انتهى وقت تحديد الموقع. حاول مرة أخرى.";
+
+      if (error.code === 1) {
+        message = "⚠️ صلاحية الموقع مرفوضة. اسمح للمتصفح باستخدام موقعك.";
+      } else if (error.code === 2) {
+        message = "❌ تعذر تحديد الموقع. تأكد من تشغيل خدمات الموقع.";
+      } else if (error.code === 3) {
+        message = "⏱️ انتهى وقت تحديد الموقع. اضغط بدء مشاركة موقعي للمحاولة مجددًا.";
+      }
 
       const status = document.getElementById("locationStatus");
       status.textContent = message;
       status.className = "location-status error";
     },
+
     { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 }
   );
 };
@@ -568,13 +742,16 @@ window.stopLocation = async function() {
   if (activeOrderId && driverId) {
     try {
       const orderRef = doc(db, "orders", activeOrderId);
+
       await runTransaction(db, async transaction => {
         const snap = await transaction.get(orderRef);
         if (!snap.exists()) return;
+
         if (snap.data().driverId === driverId) {
           transaction.update(orderRef, { driverLocationActive: false });
         }
       });
+
     } catch (error) {
       console.error("Stop location error:", error);
     }
@@ -583,12 +760,18 @@ window.stopLocation = async function() {
 
 /* تشغيل الصفحة */
 showDriver();
-loadOrders();
+
+window.loadOrders();
 loadActiveOrder();
 
 checkNotificationSetup().catch(error => {
   console.error("Initial notification check:", error);
-  setNotificationStatus("تعذر فحص الإشعارات: " + (error.message || "خطأ غير معروف"), "error");
+
+  setNotificationStatus(
+    "تعذر فحص الإشعارات: " + (error.message || "خطأ غير معروف"),
+    "error"
+  );
+
   showNotificationButton(true);
 });
 </script>
