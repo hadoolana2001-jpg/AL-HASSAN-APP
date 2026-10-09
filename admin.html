@@ -2,611 +2,916 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AL HASSAN</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AL HASSAN - لوحة الإدارة والمندوبين</title>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,Tahoma,sans-serif;background:#f3f6f4;color:#17251c}
-header{background:#123b2b;color:white;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
-h1{font-size:21px;margin:0}
-main{max-width:1150px;margin:auto;padding:16px}
-.panel,.card{background:white;border:1px solid #dce5df;border-radius:12px;padding:16px;margin-bottom:14px}
-button{border:0;border-radius:8px;padding:11px 14px;background:#16794b;color:white;font-weight:bold;cursor:pointer;margin:3px}
-button.secondary{background:#e6eee8;color:#183b2b}
-button.danger{background:#b42318;color:white}
-input,select{width:100%;padding:12px;border:1px solid #ccd8cf;border-radius:8px;font:inherit;margin-top:6px}
-label{display:block;margin:12px 0;font-weight:bold;font-size:14px}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f6f9;color:#222}
+button,input{font:inherit}
+button{cursor:pointer;border:0;border-radius:8px;padding:11px 15px;background:#167447;color:white}
+button:disabled{opacity:.5;cursor:not-allowed}
+input{width:100%;padding:12px;margin:7px 0 14px;border:1px solid #ddd;border-radius:8px}
+h1,h2,h3{margin-top:0}
 .hidden{display:none!important}
-.auth{max-width:500px;margin:30px auto}
-.tabs{display:flex;gap:8px}
-.tabs button{flex:1}
-.layout{display:grid;grid-template-columns:210px 1fr;gap:14px;align-items:start}
-nav{background:white;padding:12px;border-radius:12px}
-.navbtn{width:100%;display:block;text-align:right;background:#e6eee8;color:#183b2b;margin:0 0 7px}
-.navbtn.active{background:#16794b;color:white}
-.row{display:flex;gap:10px;flex-wrap:wrap}
-.row .card{flex:1;min-width:120px}
-.status{display:inline-block;padding:4px 9px;border-radius:20px;background:#e7f4eb;color:#23583c}
-.muted{color:#65736a;font-size:13px}
-#message{padding:12px;border-radius:8px;margin-bottom:12px;white-space:pre-wrap}
-.ok{background:#e4f6e9;color:#14532d}
-.err{background:#feeceb;color:#8b1c13}
-.order-meta{line-height:1.9;overflow-wrap:anywhere}
-.empty{text-align:center;padding:18px;color:#66746b}
+.muted{color:#777;font-size:13px}
+.login-wrap{max-width:430px;margin:35px auto;padding:20px}
+.login-card,.panel,.stat{background:white;border-radius:12px;padding:20px;box-shadow:0 2px 10px #0000000a}
+.logo{text-align:center;color:#167447;font-weight:bold;font-size:25px;margin-bottom:18px}
+.login-card button{width:100%;margin-top:6px}
+.secondary{background:#475569}
+.danger{background:#c62828}
+.warning{background:#b7791f}
+.success{background:#167447}
+.small{padding:7px 10px;font-size:13px;margin:3px}
+#app{min-height:100vh}
+.topbar{background:#167447;color:white;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.layout{display:flex;min-height:calc(100vh - 65px)}
+.sidebar{width:225px;background:#173b2c;color:white;padding:16px;flex-shrink:0}
+.sidebar button{display:block;width:100%;text-align:right;background:transparent;margin:5px 0}
+.sidebar button.active,.sidebar button:hover{background:#2a6249}
+.content{padding:20px;flex:1;min-width:0}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:18px}
+.stat strong{display:block;font-size:27px;color:#167447;margin-top:10px}
+.section{display:none}
+.section.active{display:block}
+.panel{margin-bottom:16px;overflow-wrap:anywhere}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:620px}
+th,td{text-align:right;padding:11px;border-bottom:1px solid #eee;vertical-align:top}
+th{background:#f7f9fa}
+.status{display:inline-block;border-radius:20px;padding:5px 9px;background:#eee;font-size:12px}
+.row-actions{display:flex;gap:5px;flex-wrap:wrap}
+.notice{padding:12px;border-radius:8px;background:#fff7e5;margin:10px 0}
+.green{color:#167447}
 @media(max-width:700px){
- .layout{grid-template-columns:1fr}
- nav{display:grid;grid-template-columns:1fr 1fr;gap:5px}
- .navbtn{margin:0}
- main{padding:9px}
+ .layout{display:block}
+ .sidebar{width:100%;display:flex;gap:5px;overflow-x:auto;padding:9px}
+ .sidebar button{white-space:nowrap;width:auto;margin:0;text-align:center;font-size:13px}
+ .content{padding:12px}
+ .login-wrap{margin:15px auto}
 }
 </style>
 </head>
+
 <body>
-<header>
-  <h1>AL HASSAN</h1>
-  <button id="logoutBtn" class="secondary hidden">تسجيل الخروج</button>
-</header>
 
-<main>
-<div id="message" class="hidden"></div>
+<div id="loginScreen" class="login-wrap">
+  <div class="logo">AL HASSAN</div>
+  <div class="login-card">
+    <h2 id="loginTitle">تسجيل الدخول</h2>
+    <p class="muted">لوحة المدير والمندوبين</p>
 
-<section id="authScreen" class="panel auth">
-  <h2>تسجيل الدخول</h2>
-  <div class="tabs">
-    <button id="adminTab">المدير</button>
-    <button id="driverTab" class="secondary">المندوب</button>
+    <label for="email">البريد الإلكتروني</label>
+    <input id="email" type="email" placeholder="أدخل البريد الإلكتروني" autocomplete="username">
+
+    <label for="password">كلمة المرور</label>
+    <input id="password" type="password" placeholder="أدخل كلمة المرور" autocomplete="current-password">
+
+    <div id="loginButtons">
+      <button id="loginBtn">تسجيل الدخول</button>
+      <button id="showRegisterBtn" class="secondary">التسجيل كمندوب جديد</button>
+    </div>
+
+    <div id="registerButtons" class="hidden">
+      <button id="registerBtn">إرسال طلب التسجيل كمندوب</button>
+      <button id="backLoginBtn" class="secondary">العودة لتسجيل الدخول</button>
+    </div>
+
+    <p id="loginMessage" class="muted"></p>
   </div>
+</div>
 
-  <form id="loginForm">
-    <label>البريد الإلكتروني
-      <input id="email" type="email" required>
-    </label>
-    <label>كلمة المرور
-      <input id="password" type="password" required>
-    </label>
-    <button type="submit">تسجيل الدخول</button>
-  </form>
+<div id="app" class="hidden">
+  <header class="topbar">
+    <div><strong>AL HASSAN</strong> — لوحة التحكم</div>
+    <div>
+      <span id="userRole">المستخدم</span>
+      <button id="logoutBtn" class="secondary small">تسجيل الخروج</button>
+    </div>
+  </header>
 
-  <div id="driverSignup" class="hidden">
-    <hr>
-    <h3>تسجيل مندوب جديد</h3>
-    <form id="signupForm">
-      <label>الاسم الكامل<input id="driverName" required></label>
-      <label>رقم الهاتف<input id="driverPhone" required></label>
-      <label>البريد الإلكتروني<input id="signupEmail" type="email" required></label>
-      <label>كلمة المرور<input id="signupPassword" type="password" minlength="6" required></label>
-      <button type="submit">إرسال طلب التسجيل</button>
-    </form>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <button data-section="dashboard" class="active">الرئيسية</button>
+      <button data-section="applications" data-admin-only>طلبات المندوبين</button>
+      <button data-section="orders" data-admin-only>طلبات الزبائن</button>
+      <button data-section="drivers" data-admin-only>المندوبون</button>
+      <button data-section="driver" data-driver-only>صفحة المندوب</button>
+    </aside>
+
+    <main class="content">
+      <section id="dashboard" class="section active">
+        <h2>الرئيسية</h2>
+        <div class="stats">
+          <div class="stat">إجمالي الطلبات<strong id="statOrders">0</strong></div>
+          <div class="stat">الطلبات الجديدة<strong id="statNew">0</strong></div>
+          <div class="stat">طلبات المندوبين<strong id="statApplications">0</strong></div>
+          <div class="stat">المندوبون المقبولون<strong id="statDrivers">0</strong></div>
+        </div>
+        <div class="panel">
+          <h3>حالة النظام</h3>
+          <p id="systemMessage">جارٍ تحميل البيانات...</p>
+          <button id="enableNotificationsBtn">تفعيل إشعارات هذا الجهاز</button>
+          <p class="muted">يتطلب التفعيل السماح بالإشعارات من المتصفح وإعداد خدمة Firebase Messaging.</p>
+        </div>
+      </section>
+
+      <section id="applications" class="section">
+        <h2>طلبات تسجيل المندوبين</h2>
+        <div class="panel table-wrap">
+          <table>
+            <thead><tr><th>البريد الإلكتروني</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
+            <tbody id="applicationsTable"><tr><td colspan="3">جارٍ التحميل...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="orders" class="section">
+        <h2>طلبات الزبائن</h2>
+        <div class="panel table-wrap">
+          <table>
+            <thead>
+              <tr><th>رقم الطلب</th><th>تفاصيل الطلب</th><th>الحالة</th><th>المندوب</th><th>الموقع</th><th>الإجراءات</th></tr>
+            </thead>
+            <tbody id="ordersTable"><tr><td colspan="6">جارٍ تحميل الطلبات...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="drivers" class="section">
+        <h2>المندوبون المقبولون</h2>
+        <div class="panel table-wrap">
+          <table>
+            <thead><tr><th>البريد الإلكتروني</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
+            <tbody id="driversTable"><tr><td colspan="3">جارٍ التحميل...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="driver" class="section">
+        <h2>صفحة المندوب</h2>
+        <div class="panel">
+          <h3>حسابي</h3>
+          <p id="driverStatus">جارٍ تحميل بيانات المندوب...</p>
+          <button id="driverNotificationsBtn">تفعيل إشعارات الطلبات</button>
+        </div>
+        <div class="panel">
+          <h3>الطلبات المتاحة</h3>
+          <div id="availableOrders">جارٍ تحميل الطلبات...</div>
+        </div>
+        <div class="panel">
+          <h3>طلبي الحالي</h3>
+          <div id="currentOrder">لا يوجد طلب حالي.</div>
+          <div class="row-actions">
+            <button id="startLocationBtn">تشغيل مشاركة الموقع</button>
+            <button id="stopLocationBtn" class="secondary">إيقاف مشاركة الموقع</button>
+          </div>
+          <p id="locationMessage" class="muted">مشاركة الموقع تتطلب السماح للموقع من المتصفح.</p>
+        </div>
+      </section>
+    </main>
   </div>
-  <p class="muted">حساب المدير يجب أن يكون مسجلًا في مجموعة admins داخل Firestore، وحقل role فيه يساوي admin.</p>
-</section>
-
-<section id="appScreen" class="hidden">
-<div class="layout">
-<nav>
-  <button class="navbtn active" data-view="dashboard">الرئيسية</button>
-  <button class="navbtn" data-view="applications">طلبات المندوبين</button>
-  <button class="navbtn" data-view="orders">طلبات الزبائن</button>
-  <button class="navbtn" data-view="drivers">المندوبون</button>
-  <button class="navbtn" data-view="driverArea">صفحة المندوب</button>
-</nav>
-
-<div>
-  <section id="view-dashboard" class="view">
-    <div class="panel">
-      <h2>لوحة المدير</h2>
-      <p>إدارة الطلبات والمندوبين من صفحة واحدة.</p>
-      <div class="row">
-        <div class="card"><h3>الطلبات الجديدة</h3><strong id="newCount">0</strong></div>
-        <div class="card"><h3>طلبات المندوبين</h3><strong id="appCount">0</strong></div>
-        <div class="card"><h3>المندوبون المعتمدون</h3><strong id="driverCount">0</strong></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="view-applications" class="view hidden">
-    <div class="panel">
-      <h2>طلبات تسجيل المندوبين</h2>
-      <div id="applicationsList">جارٍ التحميل...</div>
-    </div>
-  </section>
-
-  <section id="view-orders" class="view hidden">
-    <div class="panel">
-      <h2>طلبات الزبائن</h2>
-      <button id="refreshOrders" class="secondary">تحديث</button>
-      <div id="adminOrdersList">جارٍ التحميل...</div>
-    </div>
-  </section>
-
-  <section id="view-drivers" class="view hidden">
-    <div class="panel">
-      <h2>المندوبون المعتمدون</h2>
-      <div id="driversList">جارٍ التحميل...</div>
-    </div>
-  </section>
-
-  <section id="view-driverArea" class="view hidden">
-    <div class="panel">
-      <h2>صفحة المندوب</h2>
-      <p id="driverApprovalText">يجب الدخول بحساب مندوب معتمد.</p>
-      <button id="enableNotifications" class="secondary">تفعيل الإشعارات</button>
-      <button id="startLocation" class="secondary">بدء مشاركة الموقع</button>
-      <button id="stopLocation" class="danger">إيقاف مشاركة الموقع</button>
-      <p class="muted">الإشعارات تحتاج ملف firebase-messaging-sw.js وإعداد إرسال إشعارات من الخادم.</p>
-    </div>
-    <div class="panel">
-      <h2>الطلبات المتاحة</h2>
-      <button id="refreshDriverOrders" class="secondary">تحديث الطلبات</button>
-      <div id="driverOrdersList">جارٍ التحميل...</div>
-    </div>
-  </section>
 </div>
-</div>
-</section>
-</main>
 
 <script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
 import {
- getAuth,onAuthStateChanged,signInWithEmailAndPassword,
- createUserWithEmailAndPassword,signOut
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
 import {
- getFirestore,doc,getDoc,setDoc,updateDoc,collection,
- getDocs,query,where,serverTimestamp,runTransaction
+  getFirestore,
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  onSnapshot,
+  query,
+  orderBy,
+  serverTimestamp,
+  runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import {getMessaging,getToken,isSupported} from
- "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
 
-const firebaseConfig={
- apiKey:"AIzaSyB5hNkFX8y4jqBmmV7ZqhMYegatSKAFWk0",
- authDomain:"al-hassan-b39d6.firebaseapp.com",
- projectId:"al-hassan-b39d6",
- storageBucket:"al-hassan-b39d6.firebasestorage.app",
- messagingSenderId:"239416840375",
- appId:"1:239416840375:web:804d0308ce3d7afee97d32",
- measurementId:"G-6C86NGWQCS"
+import {
+  getMessaging,
+  getToken,
+  isSupported
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
+
+/* Firebase configuration */
+const firebaseConfig = {
+  apiKey: "AIzaSyB5QNkFX8y4jqBmmV7ZqhMYegatSKAFWk0",
+  authDomain: "al-hassan-b39d6.firebaseapp.com",
+  projectId: "al-hassan-b39d6",
+  storageBucket: "al-hassan-b39d6.firebasestorage.app",
+  messagingSenderId: "239416840375",
+  appId: "1:239416840375:web:804d0308ce3d7afee97d32",
+  measurementId: "G-6C86NGWQCS"
 };
 
-const VAPID_KEY="BCISwqcccFaenHMCg9sfcvasZJvYqULgNa9jtxnpMLjb-iZ7_bs-wdw9l0LIz7trHwNakmUrwi03z2h3D0hTeO4";
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getFirestore(app);
+/* Firebase initialization */
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-let currentRole=null;
-let currentDriver=null;
-let activeOrderId=localStorage.getItem("alHassanActiveOrderId")||null;
-let locationWatchId=null;
-const $=id=>document.getElementById(id);
+const VAPID_KEY =
+  "BCISwqcccFaenHMCg9sfcvasZJvYqULgNa9jtxnpMLjb-iZ7_bs-wdw9l0LIz7trHwNakmUrwi03z2h3D0hTeO4";
 
-function message(text,type="ok"){
- const el=$("message");
- el.textContent=text;
- el.className=type;
- el.classList.remove("hidden");
- window.scrollTo({top:0,behavior:"smooth"});
-}
-function clearMessage(){$("message").classList.add("hidden");}
-function esc(value){
- return String(value??"").replace(/[&<>"']/g,c=>({
- "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- })[c]);
-}
-function getVal(o,keys,fallback="—"){
- for(const k of keys){
-  if(o&&o[k]!==undefined&&o[k]!==null&&o[k]!=="")return o[k];
- }
- return fallback;
-}
-function dateText(v){
- try{
-  const d=v?.toDate?v.toDate():new Date(v);
-  return isNaN(d)?"—":d.toLocaleString("ar");
- }catch{return "—";}
-}
-function statusText(s){
- return ({
-  new:"جديد",accepted:"قبله مندوب",preparing:"قيد التجهيز",
-  on_the_way:"في الطريق",delivered:"تم التسليم",
-  cancelled:"ملغي",pending:"قيد الانتظار",
-  approved:"مقبول",rejected:"مرفوض"
- })[s]||s||"غير محدد";
-}
-function showAuth(){
- $("authScreen").classList.remove("hidden");
- $("appScreen").classList.add("hidden");
- $("logoutBtn").classList.add("hidden");
-}
-function showApp(role){
- currentRole=role;
- $("authScreen").classList.add("hidden");
- $("appScreen").classList.remove("hidden");
- $("logoutBtn").classList.remove("hidden");
- document.querySelectorAll(".navbtn").forEach(b=>{
-  b.classList.toggle("hidden",role==="driver"&&b.dataset.view!=="driverArea");
- });
- if(role==="admin"){
-  openView("dashboard");
-  loadAdminData();
- }else{
-  openView("driverArea");
-  loadDriverOrders();
- }
-}
-function openView(name){
- document.querySelectorAll(".view").forEach(v=>v.classList.add("hidden"));
- $("view-"+name)?.classList.remove("hidden");
- document.querySelectorAll(".navbtn").forEach(b=>{
-  b.classList.toggle("active",b.dataset.view===name);
- });
+const $ = id => document.getElementById(id);
+
+let currentUser = null;
+let currentRole = null;
+let orderCache = [];
+let applicationCache = [];
+let driverCache = [];
+let unsubscribers = [];
+let locationWatchId = null;
+let activeOrderId = null;
+let messaging = null;
+let registerMode = false;
+
+function message(text, isError = false) {
+  $("loginMessage").textContent = text;
+  $("loginMessage").style.color = isError ? "#c62828" : "#167447";
 }
 
-$("adminTab").onclick=()=>{
- $("driverSignup").classList.add("hidden");
- $("adminTab").classList.remove("secondary");
- $("driverTab").classList.add("secondary");
-};
-$("driverTab").onclick=()=>{
- $("driverSignup").classList.remove("hidden");
- $("driverTab").classList.remove("secondary");
- $("adminTab").classList.add("secondary");
-};
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[char]));
+}
 
-$("loginForm").addEventListener("submit",async e=>{
- e.preventDefault();
- clearMessage();
- try{
-  await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);
- }catch(err){
-  message("تعذّر تسجيل الدخول: "+err.message,"err");
- }
-});
+function statusLabel(status) {
+  const labels = {
+    new: "جديد",
+    accepted: "تم قبول الطلب",
+    on_the_way: "في الطريق",
+    delivered: "تم التسليم",
+    cancelled: "ملغى",
+    pending: "قيد المراجعة",
+    approved: "مقبول",
+    rejected: "مرفوض"
+  };
+  return labels[status] || status || "غير محدد";
+}
 
-$("signupForm").addEventListener("submit",async e=>{
- e.preventDefault();
- clearMessage();
- try{
-  const name=$("driverName").value.trim();
-  const phone=$("driverPhone").value.trim();
-  const email=$("signupEmail").value.trim();
-  const password=$("signupPassword").value;
-  const cred=await createUserWithEmailAndPassword(auth,email,password);
-  await setDoc(doc(db,"driverApplications",cred.user.uid),{
-   uid:cred.user.uid,name,phone,email,status:"pending",
-   createdAt:serverTimestamp()
+function stopListeners() {
+  unsubscribers.forEach(unsubscribe => {
+    try { unsubscribe(); } catch {}
   });
-  message("تم إرسال طلب التسجيل. انتظر موافقة المدير.");
- }catch(err){
-  message("تعذّر إنشاء الحساب: "+err.message,"err");
- }
+  unsubscribers = [];
+}
+
+function showApp(role) {
+  $("loginScreen").classList.add("hidden");
+  $("app").classList.remove("hidden");
+  $("userRole").textContent = role === "admin" ? "المدير" : "المندوب";
+
+  document.querySelectorAll("[data-admin-only]").forEach(el => {
+    el.classList.toggle("hidden", role !== "admin");
+  });
+  document.querySelectorAll("[data-driver-only]").forEach(el => {
+    el.classList.toggle("hidden", role !== "driver");
+  });
+
+  document.querySelectorAll("#sidebar button").forEach(button => {
+    const adminOnly = button.hasAttribute("data-admin-only");
+    const driverOnly = button.hasAttribute("data-driver-only");
+    button.classList.toggle(
+      "hidden",
+      (adminOnly && role !== "admin") ||
+      (driverOnly && role !== "driver")
+    );
+  });
+
+  activateSection(role === "admin" ? "dashboard" : "driver");
+}
+
+function activateSection(sectionId) {
+  document.querySelectorAll(".section").forEach(section => {
+    section.classList.toggle("active", section.id === sectionId);
+  });
+  document.querySelectorAll("#sidebar button").forEach(button => {
+    button.classList.toggle("active", button.dataset.section === sectionId);
+  });
+}
+
+document.querySelectorAll("#sidebar button").forEach(button => {
+  button.addEventListener("click", () => {
+    if (!button.classList.contains("hidden")) {
+      activateSection(button.dataset.section);
+    }
+  });
 });
 
-onAuthStateChanged(auth,async user=>{
- if(!user){
-  currentRole=null;
-  currentDriver=null;
-  showAuth();
-  return;
- }
- try{
-  const admin=await getDoc(doc(db,"admins",user.uid));
-  if(admin.exists()&&admin.data().role==="admin"){
-   showApp("admin");
-   return;
+$("showRegisterBtn").addEventListener("click", () => {
+  registerMode = true;
+  $("loginTitle").textContent = "التسجيل كمندوب";
+  $("loginButtons").classList.add("hidden");
+  $("registerButtons").classList.remove("hidden");
+  message("");
+});
+
+$("backLoginBtn").addEventListener("click", () => {
+  registerMode = false;
+  $("loginTitle").textContent = "تسجيل الدخول";
+  $("registerButtons").classList.add("hidden");
+  $("loginButtons").classList.remove("hidden");
+  message("");
+});
+
+$("loginBtn").addEventListener("click", async () => {
+  const email = $("email").value.trim();
+  const password = $("password").value;
+
+  if (!email || !password) {
+    message("أدخلي البريد الإلكتروني وكلمة المرور.", true);
+    return;
   }
-  const driver=await getDoc(doc(db,"drivers",user.uid));
-  if(driver.exists()&&driver.data().status==="approved"){
-   currentDriver={uid:user.uid,...driver.data()};
-   showApp("driver");
-   return;
+
+  $("loginBtn").disabled = true;
+  message("جارٍ تسجيل الدخول...");
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (error) {
+    message("تعذّر تسجيل الدخول: " + error.message, true);
+  } finally {
+    $("loginBtn").disabled = false;
   }
-  const application=await getDoc(doc(db,"driverApplications",user.uid));
+});
+
+$("registerBtn").addEventListener("click", async () => {
+  const email = $("email").value.trim();
+  const password = $("password").value;
+
+  if (!email || !password) {
+    message("أدخلي البريد الإلكتروني وكلمة المرور.", true);
+    return;
+  }
+  if (password.length < 6) {
+    message("كلمة المرور يجب أن تكون 6 أحرف على الأقل.", true);
+    return;
+  }
+
+  $("registerBtn").disabled = true;
+  message("جارٍ إرسال طلب التسجيل...");
+
+  try {
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    await setDoc(doc(db, "driverApplications", result.user.uid), {
+      uid: result.user.uid,
+      email,
+      status: "pending",
+      createdAt: serverTimestamp()
+    });
+
+    await signOut(auth);
+    registerMode = false;
+    $("loginTitle").textContent = "تسجيل الدخول";
+    $("registerButtons").classList.add("hidden");
+    $("loginButtons").classList.remove("hidden");
+    message("تم إرسال طلبك. انتظر موافقة المدير قبل تسجيل الدخول.");
+  } catch (error) {
+    message("تعذّر التسجيل: " + error.message, true);
+  } finally {
+    $("registerBtn").disabled = false;
+  }
+});
+
+$("logoutBtn").addEventListener("click", async () => {
+  stopLocationSharing();
+  stopListeners();
   await signOut(auth);
-  showAuth();
-  if(application.exists()){
-   message(application.data().status==="rejected"
-    ?"تم رفض طلب المندوب. تواصل مع الإدارة."
-    :"حسابك بانتظار موافقة المدير.","err");
-  }else{
-   message("هذا الحساب ليس مديرًا ولا مندوبًا معتمدًا.","err");
-  }
- }catch(err){
-  showAuth();
-  message("خطأ في التحقق من الحساب: "+err.message,"err");
- }
 });
 
-$("logoutBtn").onclick=async()=>{
- await stopLocation();
- await signOut(auth);
- currentDriver=null;
- currentRole=null;
- showAuth();
-};
+onAuthStateChanged(auth, async user => {
+  stopListeners();
+  stopLocationSharing();
 
-document.querySelectorAll(".navbtn").forEach(b=>{
- b.onclick=()=>{
-  if(currentRole==="driver"&&b.dataset.view!=="driverArea")return;
-  openView(b.dataset.view);
-  if(b.dataset.view==="applications")loadApplications();
-  if(b.dataset.view==="orders")loadOrders();
-  if(b.dataset.view==="drivers")loadDrivers();
-  if(b.dataset.view==="driverArea")loadDriverOrders();
- };
+  currentUser = user;
+  currentRole = null;
+  activeOrderId = null;
+
+  if (!user) {
+    $("app").classList.add("hidden");
+    $("loginScreen").classList.remove("hidden");
+    return;
+  }
+
+  try {
+    const adminSnap = await getDoc(doc(db, "admins", user.uid));
+
+    if (adminSnap.exists() && adminSnap.data().role === "admin") {
+      currentRole = "admin";
+      showApp("admin");
+      startAdminListeners();
+      $("systemMessage").textContent = "تم تسجيل الدخول كمدير.";
+      return;
+    }
+
+    const driverSnap = await getDoc(doc(db, "drivers", user.uid));
+
+    if (driverSnap.exists() && driverSnap.data().status === "approved") {
+      currentRole = "driver";
+      showApp("driver");
+      startDriverListeners();
+      $("systemMessage").textContent = "تم تسجيل الدخول كمندوب.";
+      return;
+    }
+
+    const applicationSnap = await getDoc(doc(db, "driverApplications", user.uid));
+    await signOut(auth);
+
+    if (applicationSnap.exists()) {
+      const status = applicationSnap.data().status;
+      message(
+        status === "rejected"
+          ? "تم رفض طلب التسجيل. تواصلي مع المدير."
+          : "طلبك قيد المراجعة. يمكنك الدخول بعد موافقة المدير.",
+        true
+      );
+    } else {
+      message("هذا الحساب ليس لديه صلاحية مدير أو مندوب مقبول.", true);
+    }
+  } catch (error) {
+    await signOut(auth);
+    message("تعذّر التحقق من صلاحيات الحساب: " + error.message, true);
+  }
 });
 
-async function loadAdminData(){
- await Promise.all([loadOrders(),loadApplications(),loadDrivers()]);
+/* Admin data */
+function startAdminListeners() {
+  const ordersUnsub = onSnapshot(
+    query(collection(db, "orders"), orderBy("createdAt", "desc")),
+    snapshot => {
+      orderCache = snapshot.docs.map(item => ({
+        id: item.id,
+        ...item.data()
+      }));
+      renderOrders();
+      renderStats();
+    },
+    error => {
+      $("ordersTable").innerHTML =
+        `<tr><td colspan="6">تعذّر تحميل الطلبات: ${escapeHtml(error.message)}</td></tr>`;
+    }
+  );
+  unsubscribers.push(ordersUnsub);
+
+  const applicationsUnsub = onSnapshot(
+    collection(db, "driverApplications"),
+    snapshot => {
+      applicationCache = snapshot.docs.map(item => ({
+        id: item.id,
+        ...item.data()
+      }));
+      renderApplications();
+      renderStats();
+    },
+    error => {
+      $("applicationsTable").innerHTML =
+        `<tr><td colspan="3">تعذّر تحميل الطلبات: ${escapeHtml(error.message)}</td></tr>`;
+    }
+  );
+  unsubscribers.push(applicationsUnsub);
+
+  const driversUnsub = onSnapshot(
+    collection(db, "drivers"),
+    snapshot => {
+      driverCache = snapshot.docs.map(item => ({
+        id: item.id,
+        ...item.data()
+      }));
+      renderDrivers();
+      renderStats();
+    },
+    error => {
+      $("driversTable").innerHTML =
+        `<tr><td colspan="3">تعذّر تحميل المندوبين: ${escapeHtml(error.message)}</td></tr>`;
+    }
+  );
+  unsubscribers.push(driversUnsub);
 }
 
-async function loadApplications(){
- const box=$("applicationsList");
- box.textContent="جارٍ التحميل...";
- try{
-  const snap=await getDocs(query(collection(db,"driverApplications"),where("status","==","pending")));
-  const list=snap.docs.map(d=>({id:d.id,...d.data()}));
-  $("appCount").textContent=list.length;
-  if(!list.length){
-   box.innerHTML='<div class="empty">لا توجد طلبات معلّقة.</div>';
-   return;
-  }
-  box.innerHTML=list.map(a=>`
-   <article class="card">
-    <h3>${esc(getVal(a,["name","fullName"],"مندوب"))}</h3>
-    <p>البريد: ${esc(getVal(a,["email"]))}</p>
-    <p>الهاتف: ${esc(getVal(a,["phone"]))}</p>
-    <p>التاريخ: ${esc(dateText(a.createdAt))}</p>
-    <button data-approve="${esc(a.uid||a.id)}">موافقة</button>
-    <button class="danger" data-reject="${esc(a.uid||a.id)}">رفض</button>
-   </article>`).join("");
-  box.querySelectorAll("[data-approve]").forEach(b=>b.onclick=()=>decideApplication(b.dataset.approve,"approved"));
-  box.querySelectorAll("[data-reject]").forEach(b=>b.onclick=()=>decideApplication(b.dataset.reject,"rejected"));
- }catch(err){
-  box.textContent="خطأ في تحميل الطلبات: "+err.message;
- }
+function renderStats() {
+  $("statOrders").textContent = orderCache.length;
+  $("statNew").textContent =
+    orderCache.filter(order => order.status === "new").length;
+  $("statApplications").textContent =
+    applicationCache.filter(item => item.status === "pending").length;
+  $("statDrivers").textContent =
+    driverCache.filter(item => item.status === "approved").length;
 }
 
-async function decideApplication(uid,status){
- if(!confirm(status==="approved"?"الموافقة على هذا المندوب؟":"رفض طلب هذا المندوب؟"))return;
- try{
-  const ref=doc(db,"driverApplications",uid);
-  const snap=await getDoc(ref);
-  if(!snap.exists())throw new Error("طلب المندوب غير موجود");
-  const a=snap.data();
-  if(status==="approved"){
-   await setDoc(doc(db,"drivers",uid),{
-    uid,name:a.name||a.fullName||"",phone:a.phone||"",
-    email:a.email||"",status:"approved",approvedAt:serverTimestamp()
-   },{merge:true});
+function renderApplications() {
+  const pending = applicationCache.filter(item => item.status === "pending");
+
+  if (!pending.length) {
+    $("applicationsTable").innerHTML =
+      '<tr><td colspan="3">لا توجد طلبات تسجيل معلّقة.</td></tr>';
+    return;
   }
-  await updateDoc(ref,{
-   status,reviewedAt:serverTimestamp(),reviewedBy:auth.currentUser.uid
+
+  $("applicationsTable").innerHTML = pending.map(item => `
+    <tr>
+      <td>${escapeHtml(item.email || item.id)}</td>
+      <td><span class="status">${statusLabel(item.status)}</span></td>
+      <td>
+        <div class="row-actions">
+          <button class="small" data-approve="${escapeHtml(item.id)}">قبول</button>
+          <button class="small danger" data-reject="${escapeHtml(item.id)}">رفض</button>
+        </div>
+      </td>
+    </tr>
+  `).join("");
+
+  $("applicationsTable").querySelectorAll("[data-approve]").forEach(button => {
+    button.addEventListener("click", () => approveDriver(button.dataset.approve));
   });
-  message(status==="approved"?"تمت الموافقة على المندوب.":"تم رفض الطلب.");
-  await Promise.all([loadApplications(),loadDrivers()]);
- }catch(err){
-  message("تعذّر تحديث الطلب: "+err.message,"err");
- }
-}
 
-async function loadDrivers(){
- const box=$("driversList");
- box.textContent="جارٍ التحميل...";
- try{
-  const snap=await getDocs(collection(db,"drivers"));
-  const list=snap.docs.map(d=>({id:d.id,...d.data()})).filter(d=>d.status==="approved");
-  $("driverCount").textContent=list.length;
-  box.innerHTML=list.length?list.map(d=>`
-   <article class="card">
-    <h3>${esc(getVal(d,["name"],"مندوب"))}</h3>
-    <p>البريد: ${esc(getVal(d,["email"]))}</p>
-    <p>الهاتف: ${esc(getVal(d,["phone"]))}</p>
-    <span class="status">معتمد</span>
-   </article>`).join(""):'<div class="empty">لا يوجد مندوبون معتمدون.</div>';
- }catch(err){
-  box.textContent="خطأ في تحميل المندوبين: "+err.message;
- }
-}
-
-async function loadOrders(){
- const box=$("adminOrdersList");
- box.textContent="جارٍ التحميل...";
- try{
-  const snap=await getDocs(collection(db,"orders"));
-  const list=snap.docs.map(d=>({id:d.id,...d.data()}));
-  list.sort((a,b)=>timeNumber(b.createdAt)-timeNumber(a.createdAt));
-  $("newCount").textContent=list.filter(o=>o.status==="new"||!o.status).length;
-  box.innerHTML=list.length?list.map(o=>`
-   <article class="card">
-    <h3>طلب #${esc(o.id)}</h3>
-    <div class="order-meta">
-     الزبون: ${esc(getVal(o,["customerName","name","fullName"]))}<br>
-     الهاتف: ${esc(getVal(o,["phone","customerPhone"]))}<br>
-     العنوان: ${esc(getVal(o,["address","deliveryAddress"]))}<br>
-     المبلغ: ${esc(getVal(o,["total","totalPrice","price"]))}<br>
-     التفاصيل: ${esc(typeof o.items==="object"?JSON.stringify(o.items):getVal(o,["itemsText","items","products"],""))}<br>
-     الحالة: <span class="status">${esc(statusText(o.status))}</span><br>
-     المندوب: ${esc(getVal(o,["driverName","driverId"],"لم يتم التعيين"))}<br>
-     التاريخ: ${esc(dateText(o.createdAt))}
-    </div>
-    <label>تغيير حالة الطلب
-     <select data-order-status="${esc(o.id)}">
-      ${[
-       ["new","جديد"],["accepted","قبله مندوب"],["preparing","قيد التجهيز"],
-       ["on_the_way","في الطريق"],["delivered","تم التسليم"],["cancelled","ملغي"]
-      ].map(([v,t])=>`<option value="${v}" ${o.status===v?"selected":""}>${t}</option>`).join("")}
-     </select>
-    </label>
-   </article>`).join(""):'<div class="empty">لا توجد طلبات.</div>';
-  box.querySelectorAll("[data-order-status]").forEach(s=>s.onchange=()=>setOrderStatus(s.dataset.orderStatus,s.value));
- }catch(err){
-  box.textContent="خطأ في تحميل الطلبات: "+err.message;
- }
-}
-function timeNumber(v){
- try{return (v?.toDate?v.toDate():new Date(v||0)).getTime()||0;}
- catch{return 0;}
-}
-async function setOrderStatus(id,status){
- try{
-  await updateDoc(doc(db,"orders",id),{status,updatedAt:serverTimestamp()});
-  message("تم تحديث حالة الطلب.");
-  await loadOrders();
- }catch(err){
-  message("تعذّر تحديث الطلب: "+err.message,"err");
- }
-}
-$("refreshOrders").onclick=loadOrders;
-
-async function loadDriverOrders(){
- const box=$("driverOrdersList");
- if(!currentDriver){
-  box.innerHTML='<div class="empty">سجّل الدخول بحساب مندوب معتمد.</div>';
-  return;
- }
- box.textContent="جارٍ تحميل الطلبات...";
- try{
-  const snap=await getDocs(collection(db,"orders"));
-  const all=snap.docs.map(d=>({id:d.id,...d.data()}));
-  const available=all.filter(o=>o.status==="new"&&!o.driverId);
-  const mine=all.filter(o=>o.driverId===auth.currentUser.uid&&["accepted","preparing","on_the_way"].includes(o.status));
-  const list=[...mine,...available];
-  box.innerHTML=list.length?list.map(o=>{
-   const mineOrder=o.driverId===auth.currentUser.uid;
-   return `<article class="card">
-    <h3>طلب #${esc(o.id)}</h3>
-    <div class="order-meta">
-     العنوان: ${esc(getVal(o,["address","deliveryAddress"]))}<br>
-     المبلغ: ${esc(getVal(o,["total","totalPrice","price"]))}<br>
-     الحالة: ${esc(statusText(o.status))}<br>
-     التفاصيل: ${esc(typeof o.items==="object"?JSON.stringify(o.items):getVal(o,["itemsText","items","products"],""))}
-    </div>
-    ${mineOrder
-     ?`<button data-way="${esc(o.id)}">في الطريق</button><button data-done="${esc(o.id)}">تم التسليم</button>`
-     :`<button data-accept="${esc(o.id)}">قبول الطلب</button>`}
-   </article>`;
-  }).join(""):'<div class="empty">لا توجد طلبات متاحة حاليًا.</div>';
-  box.querySelectorAll("[data-accept]").forEach(b=>b.onclick=()=>acceptOrder(b.dataset.accept));
-  box.querySelectorAll("[data-way]").forEach(b=>b.onclick=()=>driverUpdateOrder(b.dataset.way,"on_the_way"));
-  box.querySelectorAll("[data-done]").forEach(b=>b.onclick=()=>driverUpdateOrder(b.dataset.done,"delivered"));
- }catch(err){
-  box.textContent="خطأ في تحميل الطلبات: "+err.message;
- }
-}
-$("refreshDriverOrders").onclick=loadDriverOrders;
-
-async function acceptOrder(id){
- try{
-  await runTransaction(db,async tx=>{
-   const ref=doc(db,"orders",id);
-   const snap=await tx.get(ref);
-   if(!snap.exists())throw new Error("الطلب غير موجود");
-   const o=snap.data();
-   if(o.status!=="new"||o.driverId)throw new Error("مندوب آخر أخذ الطلب");
-   tx.update(ref,{
-    status:"accepted",driverId:auth.currentUser.uid,
-    driverName:currentDriver.name||"",acceptedAt:serverTimestamp()
-   });
+  $("applicationsTable").querySelectorAll("[data-reject]").forEach(button => {
+    button.addEventListener("click", () => rejectDriver(button.dataset.reject));
   });
-  activeOrderId=id;
-  localStorage.setItem("alHassanActiveOrderId",id);
-  message("تم قبول الطلب.");
-  await loadDriverOrders();
- }catch(err){
-  message("تعذّر قبول الطلب: "+err.message,"err");
- }
 }
 
-async function driverUpdateOrder(id,status){
- try{
-  const ref=doc(db,"orders",id);
-  const snap=await getDoc(ref);
-  if(!snap.exists()||snap.data().driverId!==auth.currentUser.uid)
-   throw new Error("هذا الطلب ليس مسندًا إليك");
-  await updateDoc(ref,{status,updatedAt:serverTimestamp()});
-  if(status==="delivered"&&activeOrderId===id){
-   await stopLocation();
-   activeOrderId=null;
-   localStorage.removeItem("alHassanActiveOrderId");
+async function approveDriver(uid) {
+  const application = applicationCache.find(item => item.id === uid);
+  if (!application) return;
+
+  try {
+    await setDoc(doc(db, "drivers", uid), {
+      uid,
+      email: application.email || "",
+      status: "approved",
+      approvedAt: serverTimestamp()
+    });
+
+    await updateDoc(doc(db, "driverApplications", uid), {
+      status: "approved",
+      reviewedAt: serverTimestamp()
+    });
+
+    alert("تم قبول المندوب.");
+  } catch (error) {
+    alert("تعذّر قبول المندوب: " + error.message);
   }
-  message("تم تحديث حالة الطلب.");
-  await loadDriverOrders();
- }catch(err){
-  message("تعذّر تحديث الطلب: "+err.message,"err");
- }
 }
 
-$("startLocation").onclick=()=>{
- if(!navigator.geolocation){
-  message("المتصفح لا يدعم تحديد الموقع.","err");
-  return;
- }
- if(!activeOrderId){
-  message("اقبل طلبًا أولًا قبل مشاركة الموقع.","err");
-  return;
- }
- if(locationWatchId!==null){
-  message("مشاركة الموقع تعمل بالفعل.");
-  return;
- }
- locationWatchId=navigator.geolocation.watchPosition(async pos=>{
-  try{
-   await updateDoc(doc(db,"orders",activeOrderId),{
-    driverLatitude:pos.coords.latitude,
-    driverLongitude:pos.coords.longitude,
-    driverAccuracy:pos.coords.accuracy,
-    driverLocationUpdatedAt:serverTimestamp(),
-    driverLocationActive:true
-   });
-  }catch(err){
-   console.error("Location update failed",err);
+async function rejectDriver(uid) {
+  try {
+    await updateDoc(doc(db, "driverApplications", uid), {
+      status: "rejected",
+      reviewedAt: serverTimestamp()
+    });
+    alert("تم رفض طلب المندوب.");
+  } catch (error) {
+    alert("تعذّر رفض الطلب: " + error.message);
   }
- },err=>message("تعذّر تحديد الموقع: "+err.message,"err"),
- {enableHighAccuracy:true,maximumAge:10000,timeout:20000});
- message("بدأت مشاركة الموقع. اترك الصفحة مفتوحة أثناء التوصيل.");
-};
-
-async function stopLocation(){
- if(locationWatchId!==null){
-  navigator.geolocation.clearWatch(locationWatchId);
-  locationWatchId=null;
- }
- if(activeOrderId&&auth.currentUser){
-  try{
-   await updateDoc(doc(db,"orders",activeOrderId),{
-    driverLocationActive:false,
-    driverLocationStoppedAt:serverTimestamp()
-   });
-  }catch{}
- }
 }
-$("stopLocation").onclick=async()=>{
- await stopLocation();
- message("تم إيقاف مشاركة الموقع.");
-};
 
-$("enableNotifications").onclick=async()=>{
- try{
-  if(!("Notification" in window))throw new Error("المتصفح لا يدعم الإشعارات");
-  const permission=await Notification.requestPermission();
-  if(permission!=="granted")throw new Error("لم يتم السماح بالإشعارات");
-  if(!(await isSupported()))throw new Error("إشعارات Firebase غير مدعومة");
-  const messaging=getMessaging(app);
-  const registration=await navigator.serviceWorker.register("./firebase-messaging-sw.js");
-  const token=await getToken(messaging,{
-   vapidKey:VAPID_KEY,serviceWorkerRegistration:registration
+function renderDrivers() {
+  const approved = driverCache.filter(item => item.status === "approved");
+
+  if (!approved.length) {
+    $("driversTable").innerHTML =
+      '<tr><td colspan="3">لا يوجد مندوبون مقبولون بعد.</td></tr>';
+    return;
+  }
+
+  $("driversTable").innerHTML = approved.map(driver => `
+    <tr>
+      <td>${escapeHtml(driver.email || driver.id)}</td>
+      <td><span class="status">مقبول</span></td>
+      <td>
+        <button class="small danger" data-disable="${escapeHtml(driver.id)}">
+          إلغاء الاعتماد
+        </button>
+      </td>
+    </tr>
+  `).join("");
+
+  $("driversTable").querySelectorAll("[data-disable]").forEach(button => {
+    button.addEventListener("click", async () => {
+      const uid = button.dataset.disable;
+      if (!confirm("هل تريدين إلغاء اعتماد هذا المندوب؟")) return;
+
+      try {
+        await updateDoc(doc(db, "drivers", uid), {
+          status: "disabled"
+        });
+      } catch (error) {
+        alert("تعذّر تحديث المندوب: " + error.message);
+      }
+    });
   });
-  if(!token)throw new Error("لم يتم الحصول على رمز الإشعارات");
-  await setDoc(doc(db,"notificationTokens",token),{
-   token,uid:auth.currentUser.uid,role:currentRole,
-   updatedAt:serverTimestamp()
-  },{merge:true});
-  message("تم تسجيل رمز الإشعارات. يجب أن يكون خادم إرسال الإشعارات مضبوطًا أيضًا.");
- }catch(err){
-  message("تعذّر تفعيل الإشعارات: "+err.message,"err");
- }
-};
+}
+
+function renderOrders() {
+  if (!orderCache.length) {
+    $("ordersTable").innerHTML =
+      '<tr><td colspan="6">لا توجد طلبات حتى الآن.</td></tr>';
+    return;
+  }
+
+  $("ordersTable").innerHTML = orderCache.map(order => {
+    const location =
+      Number.isFinite(order.driverLatitude) &&
+      Number.isFinite(order.driverLongitude)
+        ? `<a target="_blank" rel="noopener" href="https://maps.google.com/?q=${order.driverLatitude},${order.driverLongitude}">عرض الموقع</a>`
+        : "لا يوجد موقع";
+
+    return `
+      <tr>
+        <td>${escapeHtml(order.id)}</td>
+        <td>${escapeHtml(order.description || order.itemsText || order.details || "—")}</td>
+        <td><span class="status">${statusLabel(order.status)}</span></td>
+        <td>${escapeHtml(order.driverEmail || order.driverId || "غير معيّن")}</td>
+        <td>${location}</td>
+        <td>
+          <div class="row-actions">
+            ${order.status !== "delivered" ? `<button class="small" data-delivered="${escapeHtml(order.id)}">تم التسليم</button>` : ""}
+            ${order.status !== "cancelled" ? `<button class="small danger" data-cancel="${escapeHtml(order.id)}">إلغاء</button>` : ""}
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join("");
+
+  $("ordersTable").querySelectorAll("[data-delivered]").forEach(button => {
+    button.addEventListener("click", () => changeOrderStatus(button.dataset.delivered, "delivered"));
+  });
+
+  $("ordersTable").querySelectorAll("[data-cancel]").forEach(button => {
+    button.addEventListener("click", () => changeOrderStatus(button.dataset.cancel, "cancelled"));
+  });
+}
+
+async function changeOrderStatus(orderId, status) {
+  try {
+    await updateDoc(doc(db, "orders", orderId), {
+      status,
+      updatedAt: serverTimestamp()
+    });
+  } catch (error) {
+    alert("تعذّر تحديث الطلب: " + error.message);
+  }
+}
+
+/* Driver data */
+function startDriverListeners() {
+  const ordersUnsub = onSnapshot(
+    query(collection(db, "orders"), orderBy("createdAt", "desc")),
+    snapshot => {
+      orderCache = snapshot.docs.map(item => ({
+        id: item.id,
+        ...item.data()
+      }));
+      renderDriverOrders();
+      renderStats();
+    },
+    error => {
+      $("availableOrders").textContent =
+        "تعذّر تحميل الطلبات: " + error.message;
+    }
+  );
+  unsubscribers.push(ordersUnsub);
+
+  const driverUnsub = onSnapshot(doc(db, "drivers", currentUser.uid), snapshot => {
+    if (!snapshot.exists() || snapshot.data().status !== "approved") {
+      $("driverStatus").textContent =
+        "حساب المندوب غير معتمد أو تم إيقافه.";
+      return;
+    }
+
+    $("driverStatus").textContent =
+      "الحساب معتمد: " + (snapshot.data().email || currentUser.email || "");
+  });
+  unsubscribers.push(driverUnsub);
+}
+
+function renderDriverOrders() {
+  const available = orderCache.filter(order =>
+    order.status === "new" && !order.driverId
+  );
+
+  if (!available.length) {
+    $("availableOrders").innerHTML = '<p>لا توجد طلبات جديدة متاحة حاليًا.</p>';
+  } else {
+    $("availableOrders").innerHTML = available.map(order => `
+      <div class="panel">
+        <strong>طلب رقم:</strong> ${escapeHtml(order.id)}
+        <p>${escapeHtml(order.description || order.itemsText || order.details || "تفاصيل الطلب غير متوفرة")}</p>
+        <button data-accept="${escapeHtml(order.id)}">قبول الطلب</button>
+      </div>
+    `).join("");
+
+    $("availableOrders").querySelectorAll("[data-accept]").forEach(button => {
+      button.addEventListener("click", () => acceptOrder(button.dataset.accept));
+    });
+  }
+
+  const myOrder = orderCache.find(order =>
+    order.driverId === currentUser.uid &&
+    ["accepted", "on_the_way"].includes(order.status)
+  );
+
+  if (myOrder) {
+    activeOrderId = myOrder.id;
+    $("currentOrder").innerHTML = `
+      <p><strong>رقم الطلب:</strong> ${escapeHtml(myOrder.id)}</p>
+      <p><strong>الحالة:</strong> ${statusLabel(myOrder.status)}</p>
+      <p>${escapeHtml(myOrder.description || myOrder.itemsText || myOrder.details || "")}</p>
+      <div class="row-actions">
+        ${myOrder.status === "accepted" ? `<button id="onTheWayBtn">بدأت التوصيل</button>` : ""}
+        <button id="deliveredBtn">تم التسليم</button>
+      </div>
+    `;
+
+    $("onTheWayBtn")?.addEventListener("click", () =>
+      changeOrderStatus(myOrder.id, "on_the_way")
+    );
+
+    $("deliveredBtn")?.addEventListener("click", async () => {
+      await changeOrderStatus(myOrder.id, "delivered");
+      await updateDoc(doc(db, "orders", myOrder.id), {
+        driverLocationActive: false
+      });
+      stopLocationSharing();
+      activeOrderId = null;
+    });
+  } else {
+    activeOrderId = null;
+    $("currentOrder").textContent = "لا يوجد طلب حالي.";
+  }
+}
+
+async function acceptOrder(orderId) {
+  try {
+    await runTransaction(db, async transaction => {
+      const orderRef = doc(db, "orders", orderId);
+      const orderSnap = await transaction.get(orderRef);
+
+      if (!orderSnap.exists()) {
+        throw new Error("الطلب غير موجود.");
+      }
+
+      const order = orderSnap.data();
+      if (order.status !== "new" || order.driverId) {
+        throw new Error("تم قبول الطلب من مندوب آخر أو لم يعد متاحًا.");
+      }
+
+      transaction.update(orderRef, {
+        status: "accepted",
+        driverId: currentUser.uid,
+        driverEmail: currentUser.email || "",
+        acceptedAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+    });
+
+    activeOrderId = orderId;
+    alert("تم قبول الطلب بنجاح.");
+  } catch (error) {
+    alert("تعذّر قبول الطلب: " + error.message);
+  }
+}
+
+/* Notifications */
+async function enableNotifications() {
+  if (!currentUser) {
+    alert("سجّلي الدخول أولًا.");
+    return;
+  }
+
+  try {
+    if (!("Notification" in window)) {
+      throw new Error("هذا المتصفح لا يدعم الإشعارات.");
+    }
+
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") {
+      throw new Error("لم يتم السماح بالإشعارات من إعدادات المتصفح.");
+    }
+
+    if (!(await isSupported())) {
+      throw new Error("Firebase Messaging غير مدعوم في هذا المتصفح.");
+    }
+
+    messaging = getMessaging(app);
+
+    const registration = await navigator.serviceWorker.register(
+      "./firebase-messaging-sw.js"
+    );
+
+    const token = await getToken(messaging, {
+      vapidKey: VAPID_KEY,
+      serviceWorkerRegistration: registration
+    });
+
+    if (!token) {
+      throw new Error("لم يتم إنشاء رمز الإشعارات.");
+    }
+
+    await setDoc(doc(db, "notificationTokens", token), {
+      token,
+      uid: currentUser.uid,
+      email: currentUser.email || "",
+      role: currentRole,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+
+    alert("تم تفعيل الإشعارات وتسجيل الجهاز.");
+  } catch (error) {
+    alert("تعذّر تفعيل الإشعارات: " + error.message);
+  }
+}
+
+$("enableNotificationsBtn").addEventListener("click", enableNotifications);
+$("driverNotificationsBtn").addEventListener("click", enableNotifications);
+
+/* Driver location sharing */
+$("startLocationBtn").addEventListener("click", async () => {
+  if (!navigator.geolocation) {
+    $("locationMessage").textContent = "المتصفح لا يدعم تحديد الموقع.";
+    return;
+  }
+
+  if (!activeOrderId) {
+    $("locationMessage").textContent = "اقبل طلبًا أولًا حتى تتم مشاركة الموقع.";
+    return;
+  }
+
+  if (locationWatchId !== null) {
+    $("locationMessage").textContent = "مشاركة الموقع تعمل بالفعل.";
+    return;
+  }
+
+  try {
+    await updateDoc(doc(db, "orders", activeOrderId), {
+      driverLocationActive: true
+    });
+
+    locationWatchId = navigator.geolocation.watchPosition(
+      async position => {
+        if (!activeOrderId || !currentUser) return;
+
+        try {
+          await updateDoc(doc(db, "orders", activeOrderId), {
+            driverLatitude: position.coords.latitude,
+            driverLongitude: position.coords.longitude,
+            driverAccuracy: position.coords.accuracy,
+            driverLocationUpdatedAt: serverTimestamp(),
+            driverLocationActive: true
+          });
+
+          $("locationMessage").textContent = "تم تحديث الموقع بنجاح.";
+        } catch (error) {
+          $("locationMessage").textContent =
+            "تعذّر حفظ الموقع: " + error.message;
+        }
+      },
+      error => {
+        $("locationMessage").textContent =
+          "تعذّر تحديد الموقع: " + error.message;
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 5000,
+        timeout: 15000
+      }
+    );
+
+    $("locationMessage").textContent = "جارٍ مشاركة الموقع...";
+  } catch (error) {
+    $("locationMessage").textContent =
+      "تعذّر تشغيل مشاركة الموقع: " + error.message;
+  }
+});
+
+$("stopLocationBtn").addEventListener("click", stopLocationSharing);
+
+function stopLocationSharing() {
+  if (locationWatchId !== null && navigator.geolocation) {
+    navigator.geolocation.clearWatch(locationWatchId);
+  }
+  locationWatchId = null;
+  if ($("locationMessage")) {
+    $("locationMessage").textContent = "تم إيقاف مشاركة الموقع من هذا الجهاز.";
+  }
+}
 </script>
+
 </body>
 </html>
