@@ -32,64 +32,108 @@ input{width:100%;padding:13px;border:1px solid #ddd;border-radius:10px;font-size
 .coordinates{background:#eef7ff;padding:10px;border-radius:10px;margin-top:10px;font-size:13px;line-height:1.8;overflow-wrap:anywhere}
 .notification-box{background:#fff8e6;padding:12px;border-radius:10px;margin-top:12px;font-size:14px;line-height:1.7;overflow-wrap:anywhere}
 .notification-button{background:#ff9800;color:white;width:100%;margin-top:8px}
+.secondary{background:#555;color:white;width:100%;margin-top:8px}
+.hidden{display:none!important}
+.muted{font-size:13px;color:#666;line-height:1.7}
 </style>
 </head>
 <body>
+
 <header>
   <div class="logo">AL HASSAN 🛵</div>
   <div>مندوب</div>
 </header>
 
 <div class="wrap">
-  <div class="card">
+  <div class="card" id="authCard">
+    <div class="title">🔐 حساب المندوب</div>
+    <div id="authMessage" class="muted">
+      سجّل حسابًا جديدًا أو ادخل إلى حسابك. الحساب الجديد يحتاج موافقة المدير.
+    </div>
+
+    <div id="signupFields">
+      <input id="fullName" placeholder="الاسم الكامل" autocomplete="name">
+      <input id="driverNumber" placeholder="رقم المندوب" inputmode="numeric">
+      <input id="phone" placeholder="رقم الهاتف" type="tel" autocomplete="tel">
+    </div>
+
+    <input id="email" type="email" placeholder="البريد الإلكتروني" autocomplete="email">
+    <input id="password" type="password" placeholder="كلمة المرور (6 أحرف على الأقل)" autocomplete="current-password">
+
+    <button id="signupButton" class="primary">إنشاء حساب مندوب</button>
+    <button id="loginButton" class="secondary">تسجيل الدخول</button>
+    <button id="logoutButton" class="secondary hidden">تسجيل الخروج</button>
+  </div>
+
+  <div class="card hidden" id="pendingCard">
+    <div class="title">⏳ الحساب بانتظار موافقة المدير</div>
+    <p class="muted">
+      تم تسجيل طلبك. لن تظهر لك الطلبات ولن تتمكن من استلامها حتى يوافق المدير على حسابك.
+    </p>
+    <div id="pendingInfo" class="driver-info"></div>
+  </div>
+
+  <div class="card hidden" id="approvedInfoCard">
     <div class="title">👤 معلومات المندوب</div>
-    <input id="driverName" placeholder="اسم المندوب">
-    <input id="driverId" placeholder="رقم المندوب">
-    <button class="primary" onclick="saveDriver()">حفظ بياناتي</button>
-    <div id="driverInfo" class="driver-info" style="display:none"></div>
+    <div id="driverInfo" class="driver-info"></div>
   </div>
 
-  <div class="card">
-    <div class="title">🔔 إشعارات الطلبات</div>
-    <div id="notificationStatus" class="notification-box">جارٍ فحص الإشعارات...</div>
-    <button id="notificationButton" class="notification-button" style="display:none" onclick="enableNotifications()">🔔 تفعيل إشعارات الطلبات</button>
-  </div>
+  <div id="workArea" class="hidden">
+    <div class="card">
+      <div class="title">🔔 إشعارات الطلبات</div>
+      <div id="notificationStatus" class="notification-box">
+        سجّل الدخول بحساب مندوب موافَق عليه لتفعيل الإشعارات.
+      </div>
+      <button id="notificationButton" class="notification-button">
+        🔔 تفعيل إشعارات الطلبات
+      </button>
+    </div>
 
-  <div class="card">
-    <div class="title">📍 مشاركة موقع المندوب</div>
-    <p style="font-size:14px;color:#666">بعد استلام الطلب، اضغط على الزر حتى يعرف الزبون والإدارة مكانك.</p>
-    <button id="locationButton" class="green" onclick="startLocation()">📍 بدء مشاركة موقعي</button>
-    <div id="locationStatus" class="location-status">الموقع غير مشارك حاليًا.</div>
-    <div id="coordinates" class="coordinates" style="display:none"></div>
-    <button id="stopLocationButton" class="stop" style="display:none" onclick="stopLocation()">🛑 إيقاف مشاركة الموقع</button>
-  </div>
+    <div class="card">
+      <div class="title">📍 مشاركة موقع المندوب</div>
+      <p class="muted">
+        بعد استلام الطلب، اضغط على الزر حتى يعرف الزبون والإدارة مكانك.
+      </p>
+      <button id="locationButton" class="green">📍 بدء مشاركة موقعي</button>
+      <div id="locationStatus" class="location-status">الموقع غير مشارك حاليًا.</div>
+      <div id="coordinates" class="coordinates hidden"></div>
+      <button id="stopLocationButton" class="stop hidden">🛑 إيقاف مشاركة الموقع</button>
+    </div>
 
-  <div id="message" class="message"></div>
+    <div id="message" class="message"></div>
 
-  <div class="card">
-    <div class="title">📦 الطلبات المتاحة</div>
-    <div id="orders"><div class="empty">جارٍ تحميل الطلبات...</div></div>
-    <button class="primary" onclick="loadOrders()">🔄 تحديث الطلبات</button>
-  </div>
+    <div class="card">
+      <div class="title">📦 الطلبات المتاحة</div>
+      <div id="orders"><div class="empty">جارٍ تحميل الطلبات...</div></div>
+      <button id="refreshButton" class="primary">🔄 تحديث الطلبات</button>
+    </div>
 
-  <div id="activeOrderBox" class="card" style="display:none">
-    <div class="title">🛵 طلبي الحالي</div>
-    <div id="activeOrder"></div>
+    <div id="activeOrderBox" class="card hidden">
+      <div class="title">🛵 طلبي الحالي</div>
+      <div id="activeOrder"></div>
+    </div>
   </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
 import {
-  getFirestore, collection, getDocs, doc,
+  getFirestore, collection, getDocs, getDoc, doc, query, where,
   runTransaction, serverTimestamp, setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+  onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
 import {
   getMessaging, getToken, onMessage, isSupported
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB5QNkFX8y4jqBmmV7ZqhMYegatSKAFWk0",
+  apiKey: "AIzaSyB5hMTyYH6I6Z_Ij4YdVVsvaWAaiLt9SRA",
   authDomain: "al-hassan-b39d6.firebaseapp.com",
   projectId: "al-hassan-b39d6",
   storageBucket: "al-hassan-b39d6.firebasestorage.app",
@@ -102,31 +146,31 @@ const VAPID_KEY = "BCISwqcccFaenHMCg9sfcvasZJvYqULgNa9jtxnpMLjb-iZ7_bs-wdw9l0LIz
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 let messaging = null;
 let locationWatcher = null;
 let locationBusy = false;
 let notificationListenerStarted = false;
-let notificationAttemptRunning = false;
-
-let driverName = localStorage.getItem("alhassan_driver_name") || "";
-let driverId = localStorage.getItem("alhassan_driver_id") || "";
+let currentDriver = null;
+let driverData = null;
 let activeOrderId = localStorage.getItem("alhassan_active_order") || "";
 
-/* منع بعض خطوات التهيئة من الانتظار إلى أجل غير محدد */
-function withTimeout(promise, milliseconds, message) {
-  let timer;
+const $ = id => document.getElementById(id);
 
-  return Promise.race([
-    promise,
-    new Promise((_, reject) => {
-      timer = setTimeout(() => reject(new Error(message)), milliseconds);
-    })
-  ]).finally(() => clearTimeout(timer));
+function setVisible(id, yes) {
+  $(id).classList.toggle("hidden", !yes);
+}
+
+function showMessage(text, error = false) {
+  const box = $("message");
+  box.textContent = text;
+  box.style.color = error ? "#c00" : "#168a35";
 }
 
 function setNotificationStatus(text, type = "normal") {
-  const box = document.getElementById("notificationStatus");
+  const box = $("notificationStatus");
+  if (!box) return;
   box.textContent = text;
   box.style.background =
     type === "success" ? "#e9f8ed" :
@@ -136,118 +180,231 @@ function setNotificationStatus(text, type = "normal") {
     type === "error" ? "#c00" : "#555";
 }
 
-function showNotificationButton(show = true) {
-  document.getElementById("notificationButton").style.display =
-    show ? "block" : "none";
-}
-
-function isIOS() {
-  return /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
-    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-}
-
-function isStandalone() {
-  return window.matchMedia("(display-mode: standalone)").matches ||
-    navigator.standalone === true;
-}
-
 function supportMessage() {
-  if (isIOS() && !isStandalone()) {
-    return "على iPhone: افتح الصفحة في Safari، ثم مشاركة ← إضافة إلى الشاشة الرئيسية، وافتحها من الأيقونة. إشعارات الويب تحتاج iOS 16.4 أو أحدث.";
+  const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+  const standalone = window.matchMedia("(display-mode: standalone)").matches ||
+    navigator.standalone === true;
+
+  if (ios && !standalone) {
+    return "على iPhone: افتح الصفحة في Safari ثم مشاركة ← إضافة إلى الشاشة الرئيسية وافتحها من الأيقونة. إشعارات الويب تحتاج iOS 16.4 أو أحدث.";
   }
 
-  if (isIOS()) {
-    return "تأكد من iOS 16.4 أو أحدث، ومن السماح بإشعارات التطبيق من إعدادات الجهاز.";
+  if (ios) {
+    return "تأكد من iOS 16.4 أو أحدث ومن السماح بالإشعارات من إعدادات الجهاز.";
   }
 
   return "هذا المتصفح أو وضع التصفح الحالي لا يدعم إشعارات الويب المطلوبة.";
 }
 
-function showMessage(text, error = false) {
-  const box = document.getElementById("message");
-  box.textContent = text;
-  box.style.color = error ? "#c00" : "#168a35";
-  setTimeout(() => {
-    box.textContent = "";
-  }, 5000);
+function withTimeout(promise, ms, msg) {
+  let timer;
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(msg)), ms);
+    })
+  ]).finally(() => clearTimeout(timer));
 }
 
-/* بيانات المندوب */
-function showDriver() {
-  if (!driverName || !driverId) return;
-
-  document.getElementById("driverName").value = driverName;
-  document.getElementById("driverId").value = driverId;
-
-  const info = document.getElementById("driverInfo");
-  info.style.display = "block";
-  info.textContent = "👤 المندوب: " + driverName + " | 🆔 الرقم: " + driverId;
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, c => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[c]));
 }
 
-window.saveDriver = async function() {
-  const name = document.getElementById("driverName").value.trim();
-  const id = document.getElementById("driverId").value.trim();
+function authError(error) {
+  const codes = {
+    "auth/email-already-in-use": "هذا البريد مسجّل من قبل. جرّب تسجيل الدخول.",
+    "auth/invalid-email": "صيغة البريد الإلكتروني غير صحيحة.",
+    "auth/weak-password": "كلمة المرور قصيرة؛ استخدم 6 أحرف على الأقل.",
+    "auth/invalid-credential": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+    "auth/user-not-found": "لا يوجد حساب بهذا البريد.",
+    "auth/wrong-password": "كلمة المرور غير صحيحة.",
+    "auth/too-many-requests": "محاولات كثيرة. انتظر قليلًا ثم حاول مجددًا.",
+    "auth/network-request-failed": "تعذّر الاتصال بالإنترنت."
+  };
 
-  if (!name || !id) {
-    showMessage("⚠️ اكتب اسم المندوب ورقمه.", true);
+  return codes[error.code] || error.message || "حدث خطأ غير معروف.";
+}
+
+$("signupButton").addEventListener("click", async () => {
+  const name = $("fullName").value.trim();
+  const number = $("driverNumber").value.trim();
+  const phone = $("phone").value.trim();
+  const email = $("email").value.trim();
+  const password = $("password").value;
+
+  if (!name || !number || !phone || !email || !password) {
+    $("authMessage").textContent = "يرجى تعبئة الاسم ورقم المندوب والهاتف والبريد وكلمة المرور.";
     return;
   }
 
-  driverName = name;
-  driverId = id;
-
-  localStorage.setItem("alhassan_driver_name", name);
-  localStorage.setItem("alhassan_driver_id", id);
-
-  showDriver();
-  showMessage("✅ تم حفظ بيانات المندوب.");
-
-  const oldToken = localStorage.getItem("alhassan_fcm_token");
-
-  if (oldToken) {
-    try {
-      await setDoc(doc(db, "notificationTokens", oldToken), {
-        token: oldToken,
-        role: "driver",
-        driverId,
-        driverName,
-        active: true,
-        updatedAt: serverTimestamp()
-      }, { merge: true });
-    } catch (error) {
-      console.error("Token update error:", error);
-    }
+  if (password.length < 6) {
+    $("authMessage").textContent = "كلمة المرور يجب أن تكون 6 أحرف على الأقل.";
+    return;
   }
 
-  await checkNotificationSetup();
-};
+  $("signupButton").disabled = true;
 
-/* إعداد الإشعارات */
+  try {
+    const credential = await createUserWithEmailAndPassword(auth, email, password);
+
+    await setDoc(doc(db, "driverApplications", credential.user.uid), {
+      uid: credential.user.uid,
+      name,
+      driverNumber: number,
+      phone,
+      email,
+      status: "pending",
+      createdAt: serverTimestamp()
+    });
+
+    await refreshAccount(credential.user);
+
+    $("authMessage").textContent =
+      "تم إنشاء الحساب وإرسال طلب الموافقة. انتظر موافقة المدير.";
+  } catch (e) {
+    $("authMessage").textContent = "تعذّر إنشاء الحساب: " + authError(e);
+  } finally {
+    $("signupButton").disabled = false;
+  }
+});
+
+$("loginButton").addEventListener("click", async () => {
+  const email = $("email").value.trim();
+  const password = $("password").value;
+
+  if (!email || !password) {
+    $("authMessage").textContent = "اكتب البريد الإلكتروني وكلمة المرور أولًا.";
+    return;
+  }
+
+  $("loginButton").disabled = true;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (e) {
+    $("authMessage").textContent = "تعذّر تسجيل الدخول: " + authError(e);
+  } finally {
+    $("loginButton").disabled = false;
+  }
+});
+
+$("logoutButton").addEventListener("click", async () => {
+  await stopLocation(false);
+  await signOut(auth);
+  activeOrderId = "";
+  localStorage.removeItem("alhassan_active_order");
+  $("authMessage").textContent = "تم تسجيل الخروج.";
+});
+
+async function refreshAccount(user) {
+  currentDriver = user;
+  driverData = null;
+
+  setVisible("authCard", !user);
+  setVisible("logoutButton", !!user);
+
+  if (!user) {
+    setVisible("pendingCard", false);
+    setVisible("approvedInfoCard", false);
+    setVisible("workArea", false);
+    $("signupFields").classList.remove("hidden");
+    $("authMessage").textContent =
+      "سجّل حسابًا جديدًا أو ادخل إلى حسابك. الحساب الجديد يحتاج موافقة المدير.";
+    $("signupButton").classList.remove("hidden");
+    $("loginButton").classList.remove("hidden");
+    return;
+  }
+
+  $("signupFields").classList.add("hidden");
+  setVisible("authCard", true);
+  setVisible("logoutButton", true);
+  $("authMessage").textContent = "جارٍ التحقق من حالة حسابك...";
+
+  try {
+    const approvedSnap = await getDoc(doc(db, "drivers", user.uid));
+
+    if (approvedSnap.exists() && approvedSnap.data().status === "approved") {
+      driverData = approvedSnap.data();
+      driverData.uid = user.uid;
+
+      setVisible("pendingCard", false);
+      setVisible("approvedInfoCard", true);
+      setVisible("workArea", true);
+
+      $("driverInfo").textContent =
+        "👤 " + (driverData.name || "مندوب") +
+        " | 🆔 " + (driverData.driverNumber || "غير محدد") +
+        " | 📞 " + (driverData.phone || "غير محدد");
+
+      $("authMessage").textContent = "تم تسجيل الدخول بنجاح.";
+      $("signupButton").classList.add("hidden");
+      $("loginButton").classList.add("hidden");
+      $("logoutButton").classList.remove("hidden");
+
+      await window.loadOrders();
+      await loadActiveOrder();
+      await checkNotificationSetup();
+      return;
+    }
+
+    const appSnap = await getDoc(doc(db, "driverApplications", user.uid));
+
+    setVisible("approvedInfoCard", false);
+    setVisible("workArea", false);
+    setVisible("pendingCard", true);
+
+    $("signupButton").classList.add("hidden");
+    $("loginButton").classList.add("hidden");
+
+    if (appSnap.exists()) {
+      const a = appSnap.data();
+      $("pendingInfo").textContent =
+        "👤 " + (a.name || "مندوب") +
+        " | 🆔 " + (a.driverNumber || "غير محدد") +
+        " | الحالة: " +
+        (a.status === "rejected" ? "مرفوض - تواصل مع الإدارة" : "بانتظار موافقة المدير");
+    } else {
+      $("pendingInfo").textContent =
+        "لم نعثر على طلب موافقة لهذا الحساب. تواصل مع المدير.";
+    }
+
+    $("authMessage").textContent =
+      "الحساب غير معتمد بعد. لن تظهر الطلبات قبل موافقة المدير.";
+  } catch (e) {
+    $("authMessage").textContent =
+      "تعذّر التحقق من الحساب. تأكد من نشر قواعد Firestore المتوافقة: " + e.message;
+  }
+}
+
+onAuthStateChanged(auth, user => {
+  refreshAccount(user);
+});
+
 async function prepareMessaging() {
-  if (!("Notification" in window)) {
+  if (!("Notification" in window) || !("serviceWorker" in navigator)) {
     throw new Error(supportMessage());
   }
 
-  if (!("serviceWorker" in navigator)) {
-    throw new Error("المتصفح لا يدعم Service Worker.");
+  if (!await withTimeout(isSupported(), 10000, "استغرق فحص دعم الإشعارات وقتًا طويلًا.")) {
+    throw new Error(supportMessage());
   }
-
-  const supported = await withTimeout(
-    isSupported(),
-    10000,
-    "استغرق فحص دعم الإشعارات وقتًا طويلًا."
-  );
-
-  if (!supported) throw new Error(supportMessage());
 
   if (!messaging) messaging = getMessaging(app);
 
   if (!notificationListenerStarted) {
     onMessage(messaging, payload => {
-      const title = payload.notification?.title || "AL HASSAN";
-      const body = payload.notification?.body || "لديك إشعار جديد";
-
-      showMessage("🔔 " + title + " - " + body);
+      showMessage(
+        "🔔 " + (payload.notification?.title || "AL HASSAN") +
+        " - " + (payload.notification?.body || "لديك إشعار جديد")
+      );
       window.loadOrders();
       loadActiveOrder();
     });
@@ -256,174 +413,143 @@ async function prepareMessaging() {
   }
 }
 
-/* تسجيل Service Worker بمسار نسبي ليتوافق مع مسار GitHub Pages */
 async function registerMessagingServiceWorker() {
   const swUrl = new URL("./firebase-messaging-sw.js", import.meta.url);
   const scopeUrl = new URL("./", import.meta.url);
 
-  const registration = await withTimeout(
-    navigator.serviceWorker.register(swUrl.href, {
-      scope: scopeUrl.pathname
-    }),
+  await withTimeout(
+    navigator.serviceWorker.register(swUrl.href, { scope: scopeUrl.pathname }),
     15000,
-    "انتهت مهلة تسجيل Service Worker. تحقق من وجود ملف firebase-messaging-sw.js بجانب Driver.html."
+    "تعذر تسجيل Service Worker. تأكد من وجود firebase-messaging-sw.js بجانب Driver.html."
   );
 
-  await withTimeout(
+  return await withTimeout(
     navigator.serviceWorker.ready,
     15000,
-    "لم يصبح Service Worker جاهزًا. تحقق من مسار الملف وصحة محتواه."
+    "لم يصبح Service Worker جاهزًا."
   );
-
-  return registration;
 }
 
-window.enableNotifications = async function() {
-  if (notificationAttemptRunning) return;
-  notificationAttemptRunning = true;
+$("notificationButton").addEventListener("click", enableNotifications);
 
+async function enableNotifications() {
   try {
-    if (!driverName || !driverId) {
-      setNotificationStatus("احفظ اسم المندوب ورقمه أولًا.", "error");
-      showMessage("⚠️ احفظ بيانات المندوب أولًا.", true);
+    if (!currentDriver || !driverData) {
+      setNotificationStatus("يجب أن يوافق المدير على حسابك أولًا.", "error");
       return;
     }
 
     if (!("Notification" in window)) {
       setNotificationStatus(supportMessage(), "error");
-      showNotificationButton(true);
       return;
     }
 
     if (location.protocol !== "https:" && location.hostname !== "localhost") {
-      setNotificationStatus("يجب فتح الصفحة عبر HTTPS حتى تعمل الإشعارات والموقع.", "error");
-      showNotificationButton(true);
+      setNotificationStatus("يجب فتح الصفحة عبر HTTPS.", "error");
       return;
     }
 
     let permission = Notification.permission;
 
     if (permission === "denied") {
-      setNotificationStatus("الإشعارات ممنوعة من إعدادات الجهاز أو المتصفح. اسمح بها ثم أعد المحاولة.", "error");
-      showNotificationButton(true);
+      setNotificationStatus("الإشعارات ممنوعة من إعدادات الجهاز أو المتصفح.", "error");
       return;
     }
 
     if (permission === "default") {
-      setNotificationStatus("⏳ بانتظار موافقتك على الإشعارات...");
       permission = await Notification.requestPermission();
     }
 
     if (permission !== "granted") {
-      setNotificationStatus("لم يتم السماح بالإشعارات. اضغط زر التفعيل بعد السماح بها.", "error");
-      showNotificationButton(true);
+      setNotificationStatus("لم يتم السماح بالإشعارات. اسمح بها ثم أعد المحاولة.", "error");
       return;
     }
 
-    setNotificationStatus("⏳ جارٍ فحص دعم Firebase للإشعارات...");
+    setNotificationStatus("⏳ جارٍ تجهيز الإشعارات...");
     await prepareMessaging();
 
-    setNotificationStatus("⏳ جارٍ تسجيل Service Worker...");
     const registration = await registerMessagingServiceWorker();
 
-    setNotificationStatus("⏳ جارٍ طلب رمز الإشعارات من Firebase...");
     const token = await withTimeout(
       getToken(messaging, {
         vapidKey: VAPID_KEY,
         serviceWorkerRegistration: registration
       }),
       20000,
-      "استغرق الحصول على رمز الإشعارات وقتًا طويلًا. تحقق من إعداد VAPID وملف Service Worker."
+      "تعذر الحصول على رمز الإشعارات. تحقق من إعداد VAPID."
     );
 
-    if (!token) {
-      throw new Error("لم ينشئ Firebase رمز الإشعارات. تحقق من إعداد VAPID.");
-    }
+    if (!token) throw new Error("لم ينشئ Firebase رمز الإشعارات.");
 
-    setNotificationStatus("⏳ جارٍ حفظ إعدادات جهازك...");
-    await withTimeout(
-      setDoc(doc(db, "notificationTokens", token), {
-        token,
-        role: "driver",
-        driverId,
-        driverName,
-        active: true,
-        updatedAt: serverTimestamp()
-      }, { merge: true }),
-      15000,
-      "انتهت مهلة حفظ رمز الإشعارات في Firestore. تحقق من قواعد قاعدة البيانات."
-    );
+    await setDoc(doc(db, "notificationTokens", token), {
+      token,
+      role: "driver",
+      driverId: currentDriver.uid,
+      driverNumber: driverData.driverNumber || "",
+      driverName: driverData.name || "",
+      active: true,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
 
     localStorage.setItem("alhassan_fcm_token", token);
 
     setNotificationStatus("✅ تم تسجيل جهازك للإشعارات بنجاح.", "success");
-    showNotificationButton(false);
-
-  } catch (error) {
-    console.error("Notification registration error:", error);
-
-    setNotificationStatus(
-      "❌ " + (error.message || "تعذر تسجيل الإشعارات. افتح أدوات المطور للتحقق من الخطأ."),
-      "error"
-    );
-
-    showNotificationButton(true);
-
-  } finally {
-    notificationAttemptRunning = false;
+  } catch (e) {
+    console.error(e);
+    setNotificationStatus("❌ " + (e.message || "تعذر تفعيل الإشعارات."), "error");
   }
-};
+}
 
 async function checkNotificationSetup() {
-  if (!driverName || !driverId) {
-    setNotificationStatus("احفظ اسم المندوب ورقمه أولًا، ثم فعّل الإشعارات.");
-    showNotificationButton(true);
-    return;
-  }
+  if (!currentDriver || !driverData) return;
 
   if (!("Notification" in window)) {
     setNotificationStatus(supportMessage(), "error");
-    showNotificationButton(true);
-    return;
-  }
-
-  if (Notification.permission === "denied") {
-    setNotificationStatus("إذن الإشعارات مرفوض. راجع إعدادات المتصفح أو الجهاز.", "error");
-    showNotificationButton(true);
     return;
   }
 
   if (Notification.permission === "granted") {
-    await window.enableNotifications();
+    await enableNotifications();
     return;
   }
 
   setNotificationStatus("اضغط على زر تفعيل إشعارات الطلبات.");
-  showNotificationButton(true);
 }
 
-/* تحميل الطلبات المتاحة */
+const categoryNames = {
+  food: "🍔 مطعم",
+  market: "🛒 سوبرماركت",
+  pharmacy: "💊 صيدلية",
+  clothes: "👗 ملابس",
+  beauty: "💄 تجميل",
+  electronics: "📱 إلكترونيات",
+  gifts: "🎁 هدايا",
+  other: "🏪 محل آخر"
+};
+
 window.loadOrders = async function() {
-  const box = document.getElementById("orders");
+  const box = $("orders");
+
+  if (!currentDriver || !driverData) {
+    box.innerHTML = '<div class="empty">سجّل الدخول وانتظر موافقة المدير.</div>';
+    return;
+  }
+
   box.innerHTML = '<div class="empty">⏳ جارٍ تحميل الطلبات...</div>';
 
   try {
+    const q = query(
+      collection(db, "orders"),
+      where("status", "==", "new"),
+      where("driverId", "==", "")
+    );
+
     const snapshot = await withTimeout(
-      getDocs(collection(db, "orders")),
-      15000,
-      "انتهت مهلة تحميل الطلبات من Firebase."
+      getDocs(q), 15000, "انتهت مهلة تحميل الطلبات."
     );
 
     const orders = [];
-
-    snapshot.forEach(item => {
-      const order = item.data();
-
-      if (!order.driverId && (order.status === "new" || !order.status)) {
-        orders.push({ id: item.id, ...order });
-      }
-    });
-
+    snapshot.forEach(s => orders.push({ id: s.id, ...s.data() }));
     orders.reverse();
 
     if (!orders.length) {
@@ -433,33 +559,21 @@ window.loadOrders = async function() {
 
     box.innerHTML = "";
 
-    const categoryNames = {
-      food: "🍔 مطعم",
-      market: "🛒 سوبرماركت",
-      pharmacy: "💊 صيدلية",
-      clothes: "👗 ملابس",
-      beauty: "💄 تجميل",
-      electronics: "📱 إلكترونيات",
-      gifts: "🎁 هدايا",
-      other: "🏪 محل آخر"
-    };
-
-    orders.forEach(order => {
+    for (const order of orders) {
       const card = document.createElement("div");
       card.className = "order";
 
       const top = document.createElement("div");
       top.className = "order-top";
 
-      const category = document.createElement("div");
-      category.className = "category";
-      category.textContent = categoryNames[order.category] || "🛵 طلب";
+      const cat = document.createElement("div");
+      cat.className = "category";
+      cat.textContent = categoryNames[order.category] || "🛵 طلب";
 
       const status = document.createElement("div");
       status.className = "status";
       status.textContent = "🆕 جديد";
-
-      top.append(category, status);
+      top.append(cat, status);
 
       const details = document.createElement("div");
       details.className = "details";
@@ -477,53 +591,40 @@ window.loadOrders = async function() {
 
       card.append(top, details, accept);
       box.appendChild(card);
-    });
-
-  } catch (error) {
-    console.error("Load orders error:", error);
-
+    }
+  } catch (e) {
+    console.error(e);
     box.innerHTML =
       '<div class="empty">❌ تعذر تحميل الطلبات: ' +
-      escapeHTML(error.message || "تحقق من اتصال Firebase وصلاحيات قاعدة البيانات.") +
+      escapeHTML(e.message || "تحقق من قواعد Firestore.") +
       '</div>';
   }
 };
 
-function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, char => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  })[char]);
-}
+$("refreshButton").addEventListener("click", () => window.loadOrders());
 
-/* استلام الطلب */
 window.acceptOrder = async function(orderId) {
-  if (!driverName || !driverId) {
-    showMessage("⚠️ احفظ اسم المندوب ورقمه أولًا.", true);
+  if (!currentDriver || !driverData) {
+    showMessage("يجب تسجيل الدخول بحساب معتمد.", true);
     return;
   }
 
   try {
-    const orderRef = doc(db, "orders", orderId);
+    const ref = doc(db, "orders", orderId);
 
-    await runTransaction(db, async transaction => {
-      const snap = await transaction.get(orderRef);
+    await runTransaction(db, async tx => {
+      const snap = await tx.get(ref);
 
       if (!snap.exists()) throw new Error("ORDER_NOT_FOUND");
 
-      const order = snap.data();
+      const o = snap.data();
 
-      if (order.driverId) throw new Error("ORDER_ALREADY_TAKEN");
-      if (order.status && order.status !== "new") {
-        throw new Error("ORDER_NOT_AVAILABLE");
-      }
+      if (o.driverId) throw new Error("ORDER_ALREADY_TAKEN");
+      if (o.status !== "new") throw new Error("ORDER_NOT_AVAILABLE");
 
-      transaction.update(orderRef, {
-        driverId,
-        driverName,
+      tx.update(ref, {
+        driverId: currentDriver.uid,
+        driverName: driverData.name || "",
         acceptedAt: serverTimestamp(),
         status: "accepted"
       });
@@ -535,44 +636,39 @@ window.acceptOrder = async function(orderId) {
     showMessage("✅ تم استلام الطلب باسمك.");
     await window.loadOrders();
     await loadActiveOrder();
+  } catch (e) {
+    console.error(e);
 
-  } catch (error) {
-    console.error("Accept order error:", error);
-
-    if (error.message === "ORDER_ALREADY_TAKEN") {
-      showMessage("⚠️ استلم مندوب آخر هذا الطلب.", true);
-    } else if (error.message === "ORDER_NOT_AVAILABLE") {
-      showMessage("⚠️ لم يعد الطلب متاحًا للاستلام.", true);
-    } else {
-      showMessage("❌ تعذر استلام الطلب. راجع قواعد Firestore وسجل الأخطاء.", true);
-    }
+    showMessage(
+      e.message === "ORDER_ALREADY_TAKEN"
+        ? "استلم مندوب آخر هذا الطلب."
+        : e.message === "ORDER_NOT_AVAILABLE"
+        ? "لم يعد الطلب متاحًا للاستلام."
+        : "تعذر استلام الطلب. تحقق من قواعد Firestore.",
+      true
+    );
   }
 };
 
-/* الطلب الحالي */
 async function loadActiveOrder() {
-  if (!activeOrderId || !driverId) return;
+  if (!currentDriver || !driverData || !activeOrderId) return;
 
   try {
-    const snapshot = await getDocs(collection(db, "orders"));
-    let found = null;
+    const ref = doc(db, "orders", activeOrderId);
+    const snap = await getDoc(ref);
 
-    snapshot.forEach(item => {
-      if (item.id === activeOrderId) {
-        found = { id: item.id, ...item.data() };
-      }
-    });
-
-    if (!found || found.driverId !== driverId) {
+    if (!snap.exists() || snap.data().driverId !== currentDriver.uid) {
       activeOrderId = "";
       localStorage.removeItem("alhassan_active_order");
-      document.getElementById("activeOrderBox").style.display = "none";
+      setVisible("activeOrderBox", false);
       return;
     }
 
-    document.getElementById("activeOrderBox").style.display = "block";
+    const found = { id: snap.id, ...snap.data() };
 
-    const box = document.getElementById("activeOrder");
+    setVisible("activeOrderBox", true);
+
+    const box = $("activeOrder");
     box.innerHTML = "";
 
     const details = document.createElement("div");
@@ -583,10 +679,10 @@ async function loadActiveOrder() {
       "\n📞 " + (found.phone || "غير محدد") +
       "\n📌 الحالة: " + (found.status || "غير محددة");
 
-    const locationButton = document.createElement("button");
-    locationButton.className = "green";
-    locationButton.textContent = "📍 مشاركة موقعي للزبون والإدارة";
-    locationButton.onclick = window.startLocation;
+    const loc = document.createElement("button");
+    loc.className = "green";
+    loc.textContent = "📍 مشاركة موقعي للزبون والإدارة";
+    loc.onclick = startLocation;
 
     const map = document.createElement("a");
     map.className = "map-link";
@@ -596,184 +692,140 @@ async function loadActiveOrder() {
       encodeURIComponent(found.address || "");
     map.textContent = "🗺️ فتح عنوان الزبون";
 
-    box.append(details, locationButton, map);
-
-  } catch (error) {
-    console.error("Load active order error:", error);
+    box.append(details, loc, map);
+  } catch (e) {
+    console.error("Active order:", e);
   }
 }
 
-/* مشاركة الموقع */
-window.startLocation = function() {
-  if (!driverName || !driverId) {
-    showMessage("⚠️ احفظ اسم المندوب ورقمه أولًا.", true);
+$("locationButton").addEventListener("click", startLocation);
+$("stopLocationButton").addEventListener("click", () => stopLocation(true));
+
+function startLocation() {
+  if (!currentDriver || !driverData) {
+    showMessage("يجب تسجيل الدخول بحساب معتمد.", true);
     return;
   }
 
   if (!activeOrderId) {
-    showMessage("⚠️ استلم طلبًا أولًا حتى تشارك موقعك.", true);
+    showMessage("استلم طلبًا أولًا حتى تشارك موقعك.", true);
     return;
   }
 
   if (!navigator.geolocation) {
-    document.getElementById("locationStatus").textContent =
-      "❌ جهازك أو متصفحك لا يدعم تحديد الموقع.";
+    $("locationStatus").textContent = "جهازك أو متصفحك لا يدعم تحديد الموقع.";
     return;
   }
 
   if (locationWatcher !== null) {
-    showMessage("📍 موقعك تتم مشاركته حاليًا.");
+    showMessage("موقعك تتم مشاركته حاليًا.");
     return;
   }
 
   if (location.protocol !== "https:" && location.hostname !== "localhost") {
-    document.getElementById("locationStatus").textContent =
-      "❌ يجب فتح الصفحة عبر HTTPS حتى يعمل تحديد الموقع.";
+    $("locationStatus").textContent =
+      "يجب فتح الصفحة عبر HTTPS حتى يعمل تحديد الموقع.";
     return;
   }
 
-  document.getElementById("locationStatus").textContent =
-    "📍 جارٍ طلب موقعك من الجهاز...";
+  $("locationStatus").textContent = "📍 جارٍ طلب موقعك من الجهاز...";
 
-  locationWatcher = navigator.geolocation.watchPosition(
-    async position => {
-      if (locationBusy) return;
-      locationBusy = true;
+  locationWatcher = navigator.geolocation.watchPosition(async pos => {
+    if (locationBusy) return;
+    locationBusy = true;
 
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
-      const accuracy = position.coords.accuracy;
-      const coords = document.getElementById("coordinates");
+    const latitude = pos.coords.latitude;
+    const longitude = pos.coords.longitude;
+    const accuracy = pos.coords.accuracy;
 
-      coords.style.display = "block";
-      coords.style.whiteSpace = "pre-line";
-      coords.textContent =
-        "📍 Latitude: " + latitude.toFixed(6) +
-        "\n📍 Longitude: " + longitude.toFixed(6) +
-        "\n🎯 دقة GPS: " + Math.round(accuracy) + " متر";
+    $("coordinates").classList.remove("hidden");
+    $("coordinates").textContent =
+      "📍 Latitude: " + latitude.toFixed(6) +
+      "\n📍 Longitude: " + longitude.toFixed(6) +
+      "\n🎯 دقة GPS: " + Math.round(accuracy) + " متر";
 
-      try {
-        const orderRef = doc(db, "orders", activeOrderId);
+    try {
+      await runTransaction(db, async tx => {
+        const ref = doc(db, "orders", activeOrderId);
+        const snap = await tx.get(ref);
 
-        await runTransaction(db, async transaction => {
-          const snap = await transaction.get(orderRef);
+        if (!snap.exists()) throw new Error("ORDER_NOT_FOUND");
+        if (snap.data().driverId !== currentDriver.uid) throw new Error("NOT_DRIVER");
 
-          if (!snap.exists()) throw new Error("ORDER_NOT_FOUND");
-
-          const order = snap.data();
-          if (order.driverId !== driverId) throw new Error("NOT_DRIVER");
-
-          transaction.update(orderRef, {
-            driverLatitude: latitude,
-            driverLongitude: longitude,
-            driverAccuracy: accuracy,
-            driverLocationUpdatedAt: serverTimestamp(),
-            driverLocationActive: true
-          });
+        tx.update(ref, {
+          driverLatitude: latitude,
+          driverLongitude: longitude,
+          driverAccuracy: accuracy,
+          driverLocationUpdatedAt: serverTimestamp(),
+          driverLocationActive: true
         });
+      });
 
-        const status = document.getElementById("locationStatus");
-        status.textContent = "✅ تم إرسال موقعك إلى Firebase ويتم تحديثه الآن.";
-        status.className = "location-status success";
-        document.getElementById("stopLocationButton").style.display = "block";
-        document.getElementById("locationButton").textContent =
-          "📍 موقعك تتم مشاركته الآن";
+      $("locationStatus").textContent =
+        "✅ تم إرسال موقعك إلى Firebase ويتم تحديثه الآن.";
+      $("locationStatus").className = "location-status success";
+      setVisible("stopLocationButton", true);
+      $("locationButton").textContent = "📍 موقعك تتم مشاركته الآن";
+    } catch (e) {
+      console.error(e);
+      $("locationStatus").textContent = "تعذر إرسال الموقع إلى Firebase: " + e.message;
+      $("locationStatus").className = "location-status error";
 
-      } catch (error) {
-        console.error("GPS Firestore error:", error);
+      if (e.message === "NOT_DRIVER") stopLocation(false);
+    } finally {
+      locationBusy = false;
+    }
+  }, err => {
+    if (locationWatcher !== null) {
+      navigator.geolocation.clearWatch(locationWatcher);
+      locationWatcher = null;
+    }
 
-        const status = document.getElementById("locationStatus");
-        status.textContent =
-          "⚠️ تم تحديد موقعك، لكن تعذر إرساله إلى Firebase: " +
-          (error.message || "خطأ غير معروف");
-        status.className = "location-status error";
+    $("locationStatus").className = "location-status error";
 
-        if (error.message === "NOT_DRIVER") {
-          window.stopLocation();
-        }
+    $("locationStatus").textContent =
+      err.code === 1
+        ? "صلاحية الموقع مرفوضة. اسمح للمتصفح باستخدام موقعك."
+        : err.code === 2
+        ? "تعذر تحديد الموقع. تأكد من تشغيل خدمات الموقع."
+        : "انتهى وقت تحديد الموقع. حاول مجددًا.";
+  }, {
+    enableHighAccuracy: true,
+    timeout: 30000,
+    maximumAge: 0
+  });
+}
 
-      } finally {
-        locationBusy = false;
-      }
-    },
-
-    error => {
-      console.error("GPS error:", error);
-
-      /* السماح بمحاولة جديدة بعد فشل تحديد الموقع */
-      if (locationWatcher !== null) {
-        navigator.geolocation.clearWatch(locationWatcher);
-        locationWatcher = null;
-      }
-
-      let message = "❌ تعذر تحديد الموقع.";
-
-      if (error.code === 1) {
-        message = "⚠️ صلاحية الموقع مرفوضة. اسمح للمتصفح باستخدام موقعك.";
-      } else if (error.code === 2) {
-        message = "❌ تعذر تحديد الموقع. تأكد من تشغيل خدمات الموقع.";
-      } else if (error.code === 3) {
-        message = "⏱️ انتهى وقت تحديد الموقع. اضغط بدء مشاركة موقعي للمحاولة مجددًا.";
-      }
-
-      const status = document.getElementById("locationStatus");
-      status.textContent = message;
-      status.className = "location-status error";
-    },
-
-    { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 }
-  );
-};
-
-/* إيقاف مشاركة الموقع */
-window.stopLocation = async function() {
+async function stopLocation(updateDatabase = true) {
   if (locationWatcher !== null) {
     navigator.geolocation.clearWatch(locationWatcher);
     locationWatcher = null;
   }
 
-  document.getElementById("stopLocationButton").style.display = "none";
-  document.getElementById("locationButton").textContent = "📍 بدء مشاركة موقعي";
+  setVisible("stopLocationButton", false);
+  $("locationButton").textContent = "📍 بدء مشاركة موقعي";
 
-  const status = document.getElementById("locationStatus");
-  status.textContent = "تم إيقاف مشاركة الموقع.";
-  status.className = "location-status";
+  if ($("locationStatus")) {
+    $("locationStatus").textContent = "تم إيقاف مشاركة الموقع.";
+    $("locationStatus").className = "location-status";
+  }
 
-  if (activeOrderId && driverId) {
+  if (updateDatabase && activeOrderId && currentDriver) {
     try {
-      const orderRef = doc(db, "orders", activeOrderId);
+      const ref = doc(db, "orders", activeOrderId);
 
-      await runTransaction(db, async transaction => {
-        const snap = await transaction.get(orderRef);
-        if (!snap.exists()) return;
+      await runTransaction(db, async tx => {
+        const snap = await tx.get(ref);
 
-        if (snap.data().driverId === driverId) {
-          transaction.update(orderRef, { driverLocationActive: false });
+        if (snap.exists() && snap.data().driverId === currentDriver.uid) {
+          tx.update(ref, { driverLocationActive: false });
         }
       });
-
-    } catch (error) {
-      console.error("Stop location error:", error);
+    } catch (e) {
+      console.error("Stop location:", e);
     }
   }
-};
-
-/* تشغيل الصفحة */
-showDriver();
-
-window.loadOrders();
-loadActiveOrder();
-
-checkNotificationSetup().catch(error => {
-  console.error("Initial notification check:", error);
-
-  setNotificationStatus(
-    "تعذر فحص الإشعارات: " + (error.message || "خطأ غير معروف"),
-    "error"
-  );
-
-  showNotificationButton(true);
-});
+}
 </script>
 </body>
 </html>
