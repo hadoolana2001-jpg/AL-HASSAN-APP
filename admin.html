@@ -2,571 +2,348 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AL HASSAN - الإدارة</title>
-
 <style>
-*{
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f5f5f5;
-  color:#222;
-  padding-bottom:30px;
-}
-
-header{
-  background:#e30613;
-  color:white;
-  padding:18px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  position:sticky;
-  top:0;
-  z-index:5;
-}
-
-.logo{
-  font-size:22px;
-  font-weight:bold;
-}
-
-.wrap{
-  max-width:800px;
-  margin:auto;
-  padding:16px;
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-  margin-bottom:15px;
-}
-
-.stat{
-  background:white;
-  border-radius:14px;
-  padding:15px;
-  text-align:center;
-  box-shadow:0 2px 7px #ddd;
-}
-
-.stat b{
-  display:block;
-  font-size:24px;
-  color:#e30613;
-}
-
-.filters{
-  background:white;
-  padding:12px;
-  border-radius:14px;
-  margin-bottom:15px;
-  box-shadow:0 2px 7px #ddd;
-}
-
-.filters select{
-  width:100%;
-  padding:11px;
-  border:1px solid #ddd;
-  border-radius:10px;
-}
-
-.order{
-  background:white;
-  border-radius:16px;
-  padding:16px;
-  margin-bottom:12px;
-  box-shadow:0 2px 7px #ddd;
-}
-
-.top{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-}
-
-.type{
-  font-weight:bold;
-  color:#e30613;
-}
-
-.date{
-  font-size:11px;
-  color:#777;
-}
-
-.detail{
-  line-height:1.8;
-  margin:10px 0;
-}
-
-.order select{
-  width:100%;
-  padding:11px;
-  border:1px solid #ddd;
-  border-radius:10px;
-  margin-top:8px;
-}
-
-.save{
-  width:100%;
-  border:0;
-  background:#e30613;
-  color:white;
-  padding:11px;
-  border-radius:10px;
-  margin-top:8px;
-  font-weight:bold;
-}
-
-.msg{
-  text-align:center;
-  padding:10px;
-  font-weight:bold;
-}
-
-.empty{
-  text-align:center;
-  color:#777;
-  padding:35px;
-}
-
-@media(max-width:500px){
-
-  .stats{
-    grid-template-columns:repeat(3,1fr);
-  }
-
-  .stat{
-    font-size:12px;
-    padding:10px;
-  }
-
-  .stat b{
-    font-size:20px;
-  }
-
-}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f5f5f5;color:#222;padding-bottom:30px}
+header{background:#e30613;color:#fff;padding:18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+.logo{font-size:22px;font-weight:bold}
+.wrap{max-width:850px;margin:auto;padding:16px}
+.card,.order{background:#fff;border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 2px 7px #ddd}
+h2{font-size:18px;margin:0 0 12px}
+input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:5px 0;font-size:15px}
+button{border:0;border-radius:10px;padding:12px;font-weight:bold;cursor:pointer}
+.primary{background:#e30613;color:#fff;width:100%}
+.green{background:#168a35;color:#fff}
+.reject{background:#555;color:#fff}
+.msg{text-align:center;font-weight:bold;padding:10px}
+.muted{color:#777;font-size:13px;line-height:1.7}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row button{flex:1;min-width:120px}
+.hidden{display:none}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{text-align:center;background:#fff;padding:12px;border-radius:12px}
+.stat b{display:block;color:#e30613;font-size:22px}
+.details{line-height:1.9;overflow-wrap:anywhere;margin:10px 0}
+.pill{display:inline-block;background:#eee;border-radius:20px;padding:5px 9px;font-size:12px}
 </style>
 </head>
-
 <body>
-
 <header>
-
-<div class="logo">
-AL HASSAN 🛵
-</div>
-
-<div>
-لوحة الإدارة
-</div>
-
+  <div class="logo">AL HASSAN 🛵</div>
+  <div>لوحة الإدارة</div>
 </header>
-
 <div class="wrap">
-
-<div class="stats">
-
-<div class="stat">
-<b id="newCount">0</b>
-جديد
+  <section id="loginCard" class="card">
+    <h2>🔐 دخول المدير</h2>
+    <p class="muted">سجّلي الدخول بحساب المدير الموجود في Firebase.</p>
+    <input id="email" type="email" autocomplete="username" placeholder="البريد الإلكتروني">
+    <input id="password" type="password" autocomplete="current-password" placeholder="كلمة المرور">
+    <button id="loginBtn" class="primary">تسجيل الدخول</button>
+    <div id="loginMessage" class="msg"></div>
+  </section>
+  <section id="dashboard" class="hidden">
+    <div class="card">
+      <div class="row" style="align-items:center">
+        <b id="managerEmail"></b>
+        <button id="logoutBtn" class="reject">تسجيل الخروج</button>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="pendingCount">0</b>طلبات مندوبين</div>
+      <div class="stat"><b id="newCount">0</b>طلبات جديدة</div>
+      <div class="stat"><b id="activeCount">0</b>قيد التنفيذ</div>
+    </div>
+    <div id="message" class="msg"></div>
+    <div class="card">
+      <h2>🧑‍✈️ طلبات تسجيل المندوبين</h2>
+      <p class="muted">لن يتمكن المندوب من استلام الطلبات إلا بعد الموافقة عليه.</p>
+      <div id="applications">جارٍ تحميل الطلبات...</div>
+    </div>
+    <div class="card">
+      <h2>📦 إدارة الطلبات</h2>
+      <select id="filter">
+        <option value="all">كل الطلبات</option>
+        <option value="new">جديد</option>
+        <option value="accepted">تم استلامه</option>
+        <option value="preparing">قيد التنفيذ</option>
+        <option value="purchased">تم الشراء</option>
+        <option value="onway">بالطريق</option>
+        <option value="delivered">تم التسليم</option>
+      </select>
+      <div id="orders">جارٍ تحميل الطلبات...</div>
+    </div>
+  </section>
 </div>
-
-<div class="stat">
-<b id="activeCount">0</b>
-قيد التنفيذ
-</div>
-
-<div class="stat">
-<b id="doneCount">0</b>
-تم التسليم
-</div>
-
-</div>
-
-<div class="filters">
-
-<select id="filter" onchange="loadOrders()">
-
-<option value="all">
-كل الطلبات
-</option>
-
-<option value="new">
-🆕 جديد
-</option>
-
-<option value="preparing">
-🔄 قيد التنفيذ
-</option>
-
-<option value="purchased">
-🛍️ تم الشراء
-</option>
-
-<option value="onway">
-🛵 بالطريق
-</option>
-
-<option value="delivered">
-✅ تم التسليم
-</option>
-
-</select>
-
-</div>
-
-<div id="message" class="msg"></div>
-
-<div id="orders">
-
-<div class="empty">
-جارِ تحميل الطلبات...
-</div>
-
-</div>
-
-</div>
-
-
 <script type="module">
-
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
-getFirestore,
-collection,
-getDocs,
-doc,
-updateDoc
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  updateDoc,
+  setDoc,
+  serverTimestamp,
+  query,
+  where
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyB5hMTyYH6I6Z_Ij4VYdVsvaWAaiLt9SRA",
+  authDomain: "al-hassan-b39d6.firebaseapp.com",
+  projectId: "al-hassan-b39d6",
+  storageBucket: "al-hassan-b39d6.firebasestorage.app",
+  messagingSenderId: "239416840375",
+  appId: "1:239416840375:web:804d0308ce3d7afee97d32",
+  measurementId: "G-6C86NGWQCS"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const $ = id => document.getElementById(id);
+let isManager = false;
+function message(text, error = false) {
+  $("message").textContent = text;
+  $("message").style.color = error ? "#c00" : "#168a35";
 }
-from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-
-const firebaseConfig={
-
-apiKey:
-"AIzaSyB5hMTyYH6I6Z_Ij4VYdVsvaWAaiLt9SRA",
-
-authDomain:
-"al-hassan-b39d6.firebaseapp.com",
-
-projectId:
-"al-hassan-b39d6",
-
-storageBucket:
-"al-hassan-b39d6.firebasestorage.app",
-
-messagingSenderId:
-"239416840375",
-
-appId:
-"1:239416840375:web:804d0308ce3d7afee97d32",
-
-measurementId:
-"G-6C86NGWQCS"
-
-};
-
-
-const app=initializeApp(firebaseConfig);
-
-const db=getFirestore(app);
-
-
-const names={
-
-food:"🍔 مطعم",
-
-market:"🛒 سوبرماركت",
-
-pharmacy:"💊 صيدلية",
-
-clothes:"👗 ملابس",
-
-beauty:"💄 تجميل",
-
-electronics:"📱 إلكترونيات",
-
-gifts:"🎁 هدايا",
-
-other:"🏪 محل آخر"
-
-};
-
-
-const statuses={
-
-new:"🆕 جديد",
-
-preparing:"🔄 قيد التنفيذ",
-
-purchased:"🛍️ تم الشراء",
-
-onway:"🛵 بالطريق",
-
-delivered:"✅ تم التسليم"
-
-};
-
-
-window.loadOrders=async function(){
-
-const box=document.getElementById("orders");
-
-box.innerHTML=
-'<div class="empty">جارِ تحميل الطلبات...</div>';
-
-try{
-
-const snap=
-await getDocs(
-collection(db,"orders")
-);
-
-let rows=[];
-
-let n=0;
-
-let a=0;
-
-let d=0;
-
-
-snap.forEach(x=>{
-
-const o=x.data();
-
-if(o.status==="new")
-n++;
-
-if(
-["preparing","purchased","onway"]
-.includes(o.status)
-)
-a++;
-
-if(o.status==="delivered")
-d++;
-
-rows.push({
-id:x.id,
-...o
+function loginMessage(text, error = false) {
+  $("loginMessage").textContent = text;
+  $("loginMessage").style.color = error ? "#c00" : "#168a35";
+}
+function esc(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[char]));
+}
+async function checkManager(user) {
+  if (!user) {
+    isManager = false;
+    $("loginCard").classList.remove("hidden");
+    $("dashboard").classList.add("hidden");
+    return;
+  }
+  const adminDoc = await getDoc(doc(db, "admins", user.uid));
+  if (!adminDoc.exists() || adminDoc.data().role !== "admin") {
+    isManager = false;
+    await signOut(auth);
+    $("loginCard").classList.remove("hidden");
+    $("dashboard").classList.add("hidden");
+    loginMessage("هذا الحساب ليس لديه صلاحية مدير. تحققي من UID وحقل role في admins.", true);
+    return;
+  }
+  isManager = true;
+  $("loginCard").classList.add("hidden");
+  $("dashboard").classList.remove("hidden");
+  $("managerEmail").textContent = user.email || "المدير";
+  await refreshAll();
+}
+onAuthStateChanged(auth, user => {
+  checkManager(user).catch(error => {
+    console.error(error);
+    loginMessage("تعذر التحقق من صلاحية المدير. تحققي من قواعد Firestore.", true);
+  });
 });
-
-});
-
-
-document.getElementById("newCount").innerText=n;
-
-document.getElementById("activeCount").innerText=a;
-
-document.getElementById("doneCount").innerText=d;
-
-
-const filter=
-document.getElementById("filter").value;
-
-
-if(filter!=="all"){
-
-rows=
-rows.filter(
-o=>o.status===filter
-);
-
-}
-
-
-rows.reverse();
-
-
-if(!rows.length){
-
-box.innerHTML=
-'<div class="empty">لا توجد طلبات بهذا التصنيف 📦</div>';
-
-return;
-
-}
-
-
-box.innerHTML="";
-
-
-rows.forEach(o=>{
-
-const type=
-names[o.category]||"🛵 طلب";
-
-const status=
-o.status||"new";
-
-
-box.innerHTML+=`
-
-<div class="order">
-
-<div class="top">
-
-<div class="type">
-${type}
-</div>
-
-<div class="date">
-${
-o.createdAt?.toDate
-?
-o.createdAt.toDate()
-.toLocaleString("ar-SY")
-:
-""
-}
-</div>
-
-</div>
-
-
-<div class="detail">
-
-<b>
-${o.item||"طلب"}
-</b>
-
-<br>
-
-📍 ${o.address||""}
-
-<br>
-
-📞 ${o.phone||""}
-
-${o.merchant
-?
-"<br>🏪 "+o.merchant
-:
-""}
-
-${o.notes
-?
-"<br>📝 "+o.notes
-:
-""}
-
-</div>
-
-
-<select id="status-${o.id}">
-
-${
-Object.entries(statuses)
-.map(
-([k,v])=>
-`
-<option
-value="${k}"
-${k===status?"selected":""}
->
-${v}
-</option>
-`
-)
-.join("")
-}
-
-</select>
-
-
-<button
-class="save"
-onclick="saveStatus('${o.id}')"
->
-حفظ حالة الطلب
-</button>
-
-</div>
-
-`;
-
-});
-
-
-}catch(e){
-
-console.error(e);
-
-box.innerHTML=
-'<div class="empty">تعذر تحميل الطلبات.</div>';
-
-}
-
+$("loginBtn").onclick = async () => {
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  if (!email || !password) {
+    loginMessage("اكتبي البريد الإلكتروني وكلمة المرور.", true);
+    return;
+  }
+  $("loginBtn").disabled = true;
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    loginMessage("");
+  } catch (error) {
+    console.error(error);
+    loginMessage("تعذر تسجيل الدخول. تأكدي من البريد وكلمة المرور وتفعيل Email/Password.", true);
+  } finally {
+    $("loginBtn").disabled = false;
+  }
 };
-
-
-window.saveStatus=async function(id){
-
-const value=
-document
-.getElementById("status-"+id)
-.value;
-
-
-try{
-
-await updateDoc(
-doc(db,"orders",id),
-{
-status:value
-}
-);
-
-
-document.getElementById("message")
-.innerText=
-"✅ تم تحديث حالة الطلب";
-
-
-setTimeout(
-()=>{
-document.getElementById("message")
-.innerText="";
-},
-1800
-);
-
-
-loadOrders();
-
-
-}catch(e){
-
-console.error(e);
-
-document.getElementById("message")
-.innerText=
-"❌ تعذر تحديث الطلب";
-
-}
-
+$("logoutBtn").onclick = async () => {
+  await signOut(auth);
 };
-
-
-loadOrders();
-
+$("filter").onchange = loadOrders;
+async function refreshAll() {
+  if (!isManager) return;
+  await Promise.all([loadApplications(), loadOrders()]);
+}
+async function loadApplications() {
+  const box = $("applications");
+  box.textContent = "جارٍ تحميل طلبات التسجيل...";
+  try {
+    const snapshot = await getDocs(
+      query(collection(db, "driverApplications"), where("status", "==", "pending"))
+    );
+    $("pendingCount").textContent = snapshot.size;
+    if (snapshot.empty) {
+      box.innerHTML = '<p class="muted">لا توجد طلبات تسجيل معلّقة حاليًا.</p>';
+      return;
+    }
+    box.innerHTML = "";
+    snapshot.forEach(item => {
+      const application = item.data();
+      const uid = item.id;
+      const card = document.createElement("div");
+      card.className = "order";
+      card.innerHTML = `
+        <b>${esc(application.name || "بدون اسم")}</b>
+        <span class="pill">بانتظار الموافقة</span>
+        <div class="details">
+          🆔 رقم المندوب: ${esc(application.driverNumber || "—")}<br>
+          📞 الهاتف: ${esc(application.phone || "—")}<br>
+          ✉️ البريد: ${esc(application.email || "—")}<br>
+          🗓️ تاريخ التسجيل: ${
+            application.createdAt?.toDate
+              ? esc(application.createdAt.toDate().toLocaleString("ar"))
+              : "—"
+          }
+        </div>
+        <div class="row">
+          <button class="green">موافقة</button>
+          <button class="reject">رفض</button>
+        </div>
+      `;
+      const [approveButton, rejectButton] = card.querySelectorAll("button");
+      approveButton.onclick = () => decideApplication(uid, application, true);
+      rejectButton.onclick = () => decideApplication(uid, application, false);
+      box.appendChild(card);
+    });
+  } catch (error) {
+    console.error(error);
+    box.textContent = "تعذر تحميل طلبات التسجيل. تحققي من قواعد Firestore.";
+  }
+}
+async function decideApplication(uid, application, approved) {
+  if (!confirm(
+    approved
+      ? "هل تريدين الموافقة على تسجيل هذا المندوب؟"
+      : "هل تريدين رفض طلب هذا المندوب؟"
+  )) return;
+  try {
+    if (approved) {
+      await setDoc(doc(db, "drivers", uid), {
+        uid,
+        name: application.name,
+        driverNumber: application.driverNumber,
+        phone: application.phone,
+        email: application.email,
+        status: "approved",
+        approvedAt: serverTimestamp(),
+        approvedBy: auth.currentUser.uid
+      });
+      await updateDoc(doc(db, "driverApplications", uid), {
+        status: "approved",
+        reviewedAt: serverTimestamp(),
+        reviewedBy: auth.currentUser.uid
+      });
+    } else {
+      await updateDoc(doc(db, "driverApplications", uid), {
+        status: "rejected",
+        reviewedAt: serverTimestamp(),
+        reviewedBy: auth.currentUser.uid
+      });
+    }
+    message(approved ? "تمت الموافقة على المندوب." : "تم رفض طلب المندوب.");
+    await loadApplications();
+  } catch (error) {
+    console.error(error);
+    message("تعذر حفظ القرار. تأكدي من قواعد Firestore المنشورة.", true);
+  }
+}
+const statusNames = {
+  new: "🆕 جديد",
+  accepted: "🛵 استلمه المندوب",
+  preparing: "🔄 قيد التنفيذ",
+  purchased: "🛍️ تم الشراء",
+  onway: "🚚 بالطريق",
+  delivered: "✅ تم التسليم"
+};
+async function loadOrders() {
+  if (!isManager) return;
+  const box = $("orders");
+  box.textContent = "جارٍ تحميل الطلبات...";
+  try {
+    const snapshot = await getDocs(collection(db, "orders"));
+    let orders = [];
+    let newCount = 0;
+    let activeCount = 0;
+    snapshot.forEach(item => {
+      const order = {id: item.id, ...item.data()};
+      if ((order.status || "new") === "new") newCount++;
+      if (["accepted", "preparing", "purchased", "onway"].includes(order.status)) {
+        activeCount++;
+      }
+      orders.push(order);
+    });
+    $("newCount").textContent = newCount;
+    $("activeCount").textContent = activeCount;
+    const filter = $("filter").value;
+    if (filter !== "all") {
+      orders = orders.filter(order => (order.status || "new") === filter);
+    }
+    orders.reverse();
+    if (!orders.length) {
+      box.innerHTML = '<p class="muted">لا توجد طلبات بهذا التصنيف.</p>';
+      return;
+    }
+    box.innerHTML = "";
+    orders.forEach(order => {
+      const card = document.createElement("div");
+      card.className = "order";
+      card.innerHTML = `
+        <b>${esc(order.item || "طلب")}</b>
+        <span class="pill">${esc(statusNames[order.status || "new"] || order.status || "جديد")}</span>
+        <div class="details">
+          📍 ${esc(order.address || "")}<br>
+          📞 ${esc(order.phone || "")}<br>
+          🏪 ${esc(order.merchant || "—")}<br>
+          🧑‍✈️ المندوب: ${esc(order.driverName || "لم يُعيّن")}<br>
+          🗓️ ${
+            order.createdAt?.toDate
+              ? esc(order.createdAt.toDate().toLocaleString("ar"))
+              : ""
+          }
+        </div>
+        <select>
+          ${Object.entries(statusNames).map(([key, label]) =>
+            `<option value="${key}" ${key === (order.status || "new") ? "selected" : ""}>${esc(label)}</option>`
+          ).join("")}
+        </select>
+        <button class="primary">حفظ حالة الطلب</button>
+      `;
+      const select = card.querySelector("select");
+      const saveButton = card.querySelector("button");
+      saveButton.onclick = async () => {
+        try {
+          await updateDoc(doc(db, "orders", order.id), {status: select.value});
+          message("تم تحديث حالة الطلب.");
+          await loadOrders();
+        } catch (error) {
+          console.error(error);
+          message("تعذر تحديث الطلب. تحققي من قواعد Firestore.", true);
+        }
+      };
+      box.appendChild(card);
+    });
+  } catch (error) {
+    console.error(error);
+    box.textContent = "تعذر تحميل الطلبات. تحققي من قواعد Firestore.";
+  }
+}
 </script>
-
 </body>
 </html>
