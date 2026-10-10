@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AL HASSAN 🛵</title>
 
-<!-- مكتبة الخريطة -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
@@ -63,15 +62,11 @@ h2{margin:0 0 13px;font-size:20px}
 .location-message{text-align:center;font-size:13px;margin:8px 0 2px;color:#555}
 .map-link{display:inline-block;margin-top:8px;color:#e30613;font-weight:bold;text-decoration:none}
 #recaptcha-container{margin-top:10px}
-
-/* خريطة تتبّع المندوب للزبون */
 .customer-tracking{margin-top:14px;padding-top:12px;border-top:1px solid #eee}
 .customer-tracking-title{display:block;margin-bottom:7px}
 .customer-tracking-status{font-size:13px;color:#555;line-height:1.7;margin:5px 0 10px}
 .customer-tracking-map{height:260px;width:100%;border-radius:12px;overflow:hidden;background:#eee;z-index:1}
 .customer-tracking-note{font-size:11px;color:#777;margin-top:7px}
-
-/* القائمة الجانبية */
 .drawer-overlay{display:none;position:fixed;inset:0;background:#0008;z-index:200}
 .drawer-overlay.open{display:block}
 .drawer{position:fixed;top:0;right:0;width:min(310px,85vw);height:100%;background:white;z-index:201;transform:translateX(110%);transition:transform .25s;box-shadow:-4px 0 15px #0002;padding:20px;overflow-y:auto}
@@ -190,7 +185,6 @@ h2{margin:0 0 13px;font-size:20px}
 </div>
 </main>
 
-<!-- نافذة الطلب -->
 <div id="orderModal" class="modal">
   <div class="modal-box">
     <h2>🛵 اطلب أي شيء</h2>
@@ -232,7 +226,6 @@ h2{margin:0 0 13px;font-size:20px}
   </div>
 </div>
 
-<!-- نافذة تسجيل الدخول -->
 <div id="authModal" class="modal">
   <div class="modal-box">
     <h2>👤 تسجيل الدخول</h2>
@@ -272,7 +265,7 @@ h2{margin:0 0 13px;font-size:20px}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-/* إعدادات Firebase الأصلية */
+/* إعدادات Firebase */
 const firebaseConfig = {
   apiKey: "AIzaSyB5hMTyYH6I6Z_Ij4VYdVsvaWAaiLt9SRA",
   authDomain: "al-hassan-b39d6.firebaseapp.com",
@@ -359,7 +352,6 @@ function startCustomerTracking(orderId,mapElement,statusElement){
 
   stopCustomerTracking(orderId);
 
-  /* مركز مؤقت للخريطة إلى أن يصل موقع المندوب */
   const map = L.map(mapElement).setView([32.625,36.105],13);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
@@ -384,7 +376,6 @@ function startCustomerTracking(orderId,mapElement,statusElement){
 
       const order = snapshot.data();
 
-      /* حماية: لا تعرض بيانات طلب لا يملكه المستخدم الحالي */
       if(!currentUser || order.userId !== currentUser.uid){
         statusElement.textContent = "لا يمكن عرض موقع هذا الطلب.";
         stopCustomerTracking(orderId);
@@ -401,7 +392,6 @@ function startCustomerTracking(orderId,mapElement,statusElement){
         return;
       }
 
-      /* عرض موقع الزبون إن كان قد شاركه */
       const customerLat = order.customerLatitude;
       const customerLng = order.customerLongitude;
 
@@ -443,7 +433,6 @@ function startCustomerTracking(orderId,mapElement,statusElement){
         tracking.marker.setLatLng(driverPosition);
       }
 
-      /* إذا كان موقع الزبون متاحاً، اعرض النقطتين ضمن الخريطة */
       if(tracking.customerMarker){
         const bounds = L.latLngBounds([
           driverPosition,
@@ -462,7 +451,6 @@ function startCustomerTracking(orderId,mapElement,statusElement){
           "🟢 موقع المندوب يتحدّث مباشرةً عند وصول تحديث جديد.";
       }
 
-      /* إصلاح حجم الخريطة عند عرضها داخل صفحة الطلبات */
       setTimeout(function(){
         if(customerTrackingMaps.get(orderId) === tracking){
           map.invalidateSize();
@@ -802,9 +790,11 @@ function backToTypes(){
   selectedOrderType = "";
 }
 
+/* إرسال الطلب + إشعار ntfy */
 async function sendOrder(){
   if(!currentUser){
-    document.getElementById("orderMessage").innerText = "⚠️ سجّل الدخول أولاً.";
+    document.getElementById("orderMessage").innerText =
+      "⚠️ سجّل الدخول أولاً.";
     return;
   }
 
@@ -825,7 +815,8 @@ async function sendOrder(){
   const orderMessage = document.getElementById("orderMessage");
 
   if(!item || !address || !phone){
-    orderMessage.innerText = "⚠️ الرجاء كتابة الطلب والعنوان ورقم الهاتف.";
+    orderMessage.innerText =
+      "⚠️ الرجاء كتابة الطلب والعنوان ورقم الهاتف.";
     return;
   }
 
@@ -836,29 +827,78 @@ async function sendOrder(){
   if(color) fullDetails += " | اللون: " + color;
   if(details) fullDetails += " | التفاصيل: " + details;
 
+  const categoryNames = {
+    food: "مطعم",
+    market: "سوبرماركت",
+    pharmacy: "صيدلية",
+    clothes: "ملابس",
+    beauty: "عطور وتجميل",
+    electronics: "إلكترونيات",
+    gifts: "هدايا",
+    other: "محل آخر"
+  };
+
   orderMessage.innerText = "⏳ جارٍ إرسال الطلب...";
 
   try{
-    await db.collection("orders").add({
-      item:fullDetails,
-      category:selectedOrderType,
-      address:address,
-      phone:phone,
-      notes:notes,
-      status:"new",
-      merchant:store,
-      driver:"",
-      driverId:"",
-      driverName:"",
-      userId:currentUser.uid,
-      userEmail:currentUser.email || "",
-      userPhone:currentUser.phoneNumber || "",
-      customerLatitude:customerLatitude,
-      customerLongitude:customerLongitude,
-      customerLocationAccuracy:customerAccuracy,
-      customerLocationSelected:customerLatitude !== null && customerLongitude !== null,
-      createdAt:firebase.firestore.FieldValue.serverTimestamp()
+    // حفظ الطلب في Firebase أولاً
+    const orderRef = await db.collection("orders").add({
+      item: fullDetails,
+      category: selectedOrderType,
+      address: address,
+      phone: phone,
+      notes: notes,
+      status: "new",
+      merchant: store,
+      driver: "",
+      driverId: "",
+      driverName: "",
+      userId: currentUser.uid,
+      userEmail: currentUser.email || "",
+      userPhone: currentUser.phoneNumber || "",
+      customerLatitude: customerLatitude,
+      customerLongitude: customerLongitude,
+      customerLocationAccuracy: customerAccuracy,
+      customerLocationSelected:
+        customerLatitude !== null &&
+        customerLongitude !== null,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
+
+    // إشعار ntfy: لا نرسل العنوان أو الهاتف
+    try{
+      const notificationText =
+        "📦 طلب جديد في AL HASSAN\n" +
+        "رقم الطلب: " + orderRef.id + "\n" +
+        "التصنيف: " +
+        (categoryNames[selectedOrderType] || "طلب جديد") + "\n" +
+        "تفاصيل الطلب: " + item;
+
+      const response = await fetch(
+        "https://ntfy.sh/al-hassan-order",
+        {
+          method: "POST",
+          headers: {
+            "Title": "طلب جديد - AL HASSAN",
+            "Priority": "high",
+            "Tags": "package"
+          },
+          body: notificationText
+        }
+      );
+
+      if(!response.ok){
+        console.error(
+          "تعذّر إرسال إشعار ntfy:",
+          response.status
+        );
+      }
+    }catch(notificationError){
+      console.error(
+        "خطأ في إشعار ntfy:",
+        notificationError
+      );
+    }
 
     orderMessage.innerText = "✅ تم إرسال طلبك بنجاح!";
 
@@ -870,15 +910,18 @@ async function sendOrder(){
     customerLongitude = null;
     customerAccuracy = null;
 
-    document.getElementById("locationMessage").innerText = "لم يتم تحديد الموقع بعد";
+    document.getElementById("locationMessage").innerText =
+      "لم يتم تحديد الموقع بعد";
 
     setTimeout(function(){
       closeOrder();
       showPage("orders");
     },1200);
+
   }catch(error){
     console.error(error);
-    orderMessage.innerText = "❌ حدث خطأ أثناء إرسال الطلب: " + error.message;
+    orderMessage.innerText =
+      "❌ حدث خطأ أثناء إرسال الطلب: " + error.message;
   }
 }
 
@@ -916,7 +959,6 @@ function showPage(page){
 async function loadOrders(){
   const box = document.getElementById("ordersList");
 
-  /* إيقاف الخرائط والمستمعات القديمة قبل إنشاء بطاقات جديدة */
   stopAllCustomerTracking();
 
   if(!currentUser){
@@ -930,7 +972,6 @@ async function loadOrders(){
     const snapshot = await db.collection("orders")
       .where("userId","==",currentUser.uid).get();
 
-    /* تأكد أن المستخدم لم يتغير أثناء تحميل البيانات */
     if(!currentUser){
       box.innerHTML = '<div class="empty">سجّل الدخول أولاً لرؤية طلباتك 📦</div>';
       return;
@@ -993,7 +1034,6 @@ async function loadOrders(){
 
       box.appendChild(card);
 
-      /* إظهار خريطة التتبّع فقط إذا كان الطلب مسنداً إلى مندوب */
       if(
         order.driverId &&
         order.status !== "delivered" &&
