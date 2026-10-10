@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AL HASSAN 🛵</title>
-
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
@@ -62,11 +61,38 @@ h2{margin:0 0 13px;font-size:20px}
 .location-message{text-align:center;font-size:13px;margin:8px 0 2px;color:#555}
 .map-link{display:inline-block;margin-top:8px;color:#e30613;font-weight:bold;text-decoration:none}
 #recaptcha-container{margin-top:10px}
+
+/* خريطة التتبع المصغّرة */
 .customer-tracking{margin-top:14px;padding-top:12px;border-top:1px solid #eee}
-.customer-tracking-title{display:block;margin-bottom:7px}
-.customer-tracking-status{font-size:13px;color:#555;line-height:1.7;margin:5px 0 10px}
-.customer-tracking-map{height:260px;width:100%;border-radius:12px;overflow:hidden;background:#eee;z-index:1}
-.customer-tracking-note{font-size:11px;color:#777;margin-top:7px}
+.customer-tracking-title{display:block;margin-bottom:7px;font-size:15px}
+.customer-tracking-status{font-size:12px;color:#555;line-height:1.7;margin:5px 0 8px}
+.customer-tracking-map{
+  height:155px;
+  width:100%;
+  border-radius:12px;
+  overflow:hidden;
+  background:#eee;
+  z-index:1;
+  border:1px solid #e5e5e5;
+  transition:height .2s ease;
+}
+.customer-tracking-map.expanded{
+  height:55vh;
+  min-height:300px;
+}
+.tracking-expand-button{
+  display:block;
+  width:100%;
+  padding:10px;
+  margin:7px 0;
+  border:1px solid #eee;
+  border-radius:9px;
+  background:#fff5f5;
+  color:#e30613;
+  font-weight:bold;
+  font-size:13px;
+}
+.customer-tracking-note{font-size:11px;color:#777;margin-top:7px;line-height:1.6}
 .drawer-overlay{display:none;position:fixed;inset:0;background:#0008;z-index:200}
 .drawer-overlay.open{display:block}
 .drawer{position:fixed;top:0;right:0;width:min(310px,85vw);height:100%;background:white;z-index:201;transform:translateX(110%);transition:transform .25s;box-shadow:-4px 0 15px #0002;padding:20px;overflow-y:auto}
@@ -79,7 +105,11 @@ h2{margin:0 0 13px;font-size:20px}
 .drawer-link:hover{background:#fff0f0}
 .drawer-link span{margin-left:9px}
 .drawer-note{font-size:12px;color:#777;line-height:1.7;margin-top:18px}
-@media(max-width:380px){.categories{grid-template-columns:repeat(3,1fr)}.logo{font-size:19px}.location{font-size:11px}}
+@media(max-width:380px){
+  .categories{grid-template-columns:repeat(3,1fr)}
+  .logo{font-size:19px}
+  .location{font-size:11px}
+}
 </style>
 </head>
 
@@ -99,26 +129,11 @@ h2{margin:0 0 13px;font-size:20px}
     <strong>AL HASSAN 🛵</strong>
     <p>خدمات الزبائن والمدير والمندوبين</p>
   </div>
-
-  <button class="drawer-link" onclick="closeDrawer();showPage('home')">
-    <span>🏠</span> الرئيسية للزبائن
-  </button>
-
-  <a class="drawer-link" href="./admin.html">
-    <span>🔐</span> دخول المدير
-  </a>
-
-  <a class="drawer-link" href="./admin.html">
-    <span>🛵</span> دخول المندوب
-  </a>
-
-  <a class="drawer-link" href="./admin.html">
-    <span>📝</span> التسجيل كمندوب جديد
-  </a>
-
-  <p class="drawer-note">
-    تسجيل المندوبين الجدد يحتاج إلى موافقة المدير قبل السماح لهم بالدخول إلى لوحة المندوب.
-  </p>
+  <button class="drawer-link" onclick="closeDrawer();showPage('home')"><span>🏠</span> الرئيسية للزبائن</button>
+  <a class="drawer-link" href="./admin.html"><span>🔐</span> دخول المدير</a>
+  <a class="drawer-link" href="./admin.html"><span>🛵</span> دخول المندوب</a>
+  <a class="drawer-link" href="./admin.html"><span>📝</span> التسجيل كمندوب جديد</a>
+  <p class="drawer-note">تسجيل المندوبين الجدد يحتاج إلى موافقة المدير قبل السماح لهم بالدخول إلى لوحة المندوب.</p>
 </aside>
 
 <main>
@@ -188,7 +203,6 @@ h2{margin:0 0 13px;font-size:20px}
 <div id="orderModal" class="modal">
   <div class="modal-box">
     <h2>🛵 اطلب أي شيء</h2>
-
     <div id="stepType">
       <div class="form-title">شو بدك نجيبلك؟</div>
       <div class="type-grid">
@@ -208,14 +222,12 @@ h2{margin:0 0 13px;font-size:20px}
       <div id="selectedTypeTitle" class="form-title"></div>
       <div id="dynamicFields"></div>
       <input id="orderAddress" placeholder="📍 عنوان التوصيل">
-
       <div class="location-box">
         <b>📍 موقعك على الخريطة</b>
         <p style="font-size:13px;color:#666;margin:7px 0">اختياري — يمكنك مشاركة موقعك الحالي ليساعد المندوب في الوصول إليك.</p>
         <button type="button" class="location-button" onclick="getCustomerLocation()">📍 تحديد موقعي الحالي</button>
         <p id="locationMessage" class="location-message">لم يتم تحديد الموقع بعد</p>
       </div>
-
       <input id="orderPhone" type="tel" placeholder="📞 رقم الهاتف">
       <textarea id="orderNotes" placeholder="📝 ملاحظات إضافية (اختياري)"></textarea>
       <button class="primary" onclick="sendOrder()">إرسال الطلب 🛵</button>
@@ -236,7 +248,6 @@ h2{margin:0 0 13px;font-size:20px}
     <input id="passwordInput" type="password" placeholder="🔒 كلمة المرور">
     <button class="auth-button primary" onclick="emailLogin()">📧 تسجيل الدخول / إنشاء حساب</button>
     <button class="auth-button phone" onclick="showPhoneLogin()">📱 الدخول برقم الهاتف</button>
-
     <div id="phoneArea" style="display:none">
       <input id="phoneInput" type="tel" placeholder="📱 رقم الهاتف مع رمز الدولة، مثال +963...">
       <div id="recaptcha-container"></div>
@@ -244,7 +255,6 @@ h2{margin:0 0 13px;font-size:20px}
       <input id="smsCodeInput" type="text" placeholder="🔢 رمز التحقق" style="display:none">
       <button id="verifyCodeButton" class="auth-button primary" onclick="verifyPhoneCode()" style="display:none">تأكيد الرمز</button>
     </div>
-
     <p id="authMessage"></p>
     <button class="secondary" onclick="closeAuth()">إغلاق</button>
   </div>
@@ -279,7 +289,6 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
 
-/* القائمة الجانبية */
 function openDrawer(){
   document.getElementById("sideDrawer").classList.add("open");
   document.getElementById("drawerOverlay").classList.add("open");
@@ -289,22 +298,18 @@ function closeDrawer(){
   document.getElementById("drawerOverlay").classList.remove("open");
 }
 
-/* Firebase Messaging */
 let messaging = null;
-try {
+try{
   messaging = firebase.messaging();
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register(
-      "/AL-HASSAN-APP/firebase-messaging-sw.js"
-    ).then(registration => {
-      console.log("Service Worker registered", registration.scope);
-    }).catch(error => console.error("Service Worker error:", error));
+  if("serviceWorker" in navigator){
+    navigator.serviceWorker.register("/AL-HASSAN-APP/firebase-messaging-sw.js")
+      .then(registration => console.log("Service Worker registered",registration.scope))
+      .catch(error => console.error("Service Worker error:",error));
   }
-} catch(error) {
-  console.error("Firebase Messaging unavailable:", error);
+}catch(error){
+  console.error("Firebase Messaging unavailable:",error);
 }
 
-/* المتغيرات */
 let currentUser = null;
 let confirmationResult = null;
 let recaptchaVerifier = null;
@@ -313,7 +318,6 @@ let customerLongitude = null;
 let customerAccuracy = null;
 let selectedOrderType = "";
 
-/* خرائط تتبّع طلبات الزبون */
 const customerTrackingMaps = new Map();
 const customerTrackingListeners = new Map();
 
@@ -323,7 +327,6 @@ function stopCustomerTracking(orderId){
     unsubscribe();
     customerTrackingListeners.delete(orderId);
   }
-
   const tracking = customerTrackingMaps.get(orderId);
   if(tracking){
     tracking.map.remove();
@@ -335,23 +338,23 @@ function stopAllCustomerTracking(){
   for(const orderId of [...customerTrackingMaps.keys()]){
     stopCustomerTracking(orderId);
   }
-
   for(const orderId of [...customerTrackingListeners.keys()]){
     stopCustomerTracking(orderId);
   }
 }
 
+/* متابعة موقع المندوب وتحديث الخريطة بدون تحريك مزعج */
 function startCustomerTracking(orderId,mapElement,statusElement){
   if(!window.L){
     statusElement.textContent = "تعذّر تحميل الخريطة. تأكد من اتصال الإنترنت.";
     return;
   }
-
   if(!orderId || !mapElement || !statusElement) return;
 
   stopCustomerTracking(orderId);
 
-  const map = L.map(mapElement).setView([32.625,36.105],13);
+  const map = L.map(mapElement,{scrollWheelZoom:false})
+    .setView([32.625,36.105],13);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
     maxZoom:19,
@@ -359,9 +362,10 @@ function startCustomerTracking(orderId,mapElement,statusElement){
   }).addTo(map);
 
   const tracking = {
-    map:map,
+    map,
     marker:null,
-    customerMarker:null
+    customerMarker:null,
+    hasInitialView:false
   };
 
   customerTrackingMaps.set(orderId,tracking);
@@ -393,11 +397,11 @@ function startCustomerTracking(orderId,mapElement,statusElement){
 
       const customerLat = order.customerLatitude;
       const customerLng = order.customerLongitude;
-
-      if(
+      const hasCustomerPosition =
         typeof customerLat === "number" &&
-        typeof customerLng === "number"
-      ){
+        typeof customerLng === "number";
+
+      if(hasCustomerPosition){
         const customerPosition = [customerLat,customerLng];
 
         if(!tracking.customerMarker){
@@ -411,14 +415,25 @@ function startCustomerTracking(orderId,mapElement,statusElement){
 
       const latitude = order.driverLatitude;
       const longitude = order.driverLongitude;
+      const hasDriverPosition =
+        typeof latitude === "number" &&
+        typeof longitude === "number";
 
-      if(
-        typeof latitude !== "number" ||
-        typeof longitude !== "number"
-      ){
+      if(!hasDriverPosition){
+        if(hasCustomerPosition && !tracking.hasInitialView){
+          map.setView([customerLat,customerLng],15);
+          tracking.hasInitialView = true;
+        }
+
         statusElement.textContent = order.driverId
           ? "⏳ تم استلام الطلب. بانتظار مشاركة المندوب لموقعه..."
           : "⏳ بانتظار استلام الطلب من أحد المندوبين...";
+
+        setTimeout(function(){
+          if(customerTrackingMaps.get(orderId) === tracking){
+            map.invalidateSize();
+          }
+        },100);
         return;
       }
 
@@ -432,14 +447,23 @@ function startCustomerTracking(orderId,mapElement,statusElement){
         tracking.marker.setLatLng(driverPosition);
       }
 
-      if(tracking.customerMarker){
-        const bounds = L.latLngBounds([
-          driverPosition,
-          [customerLat,customerLng]
-        ]);
-        map.fitBounds(bounds,{padding:[30,30],maxZoom:16});
-      }else{
-        map.setView(driverPosition,16);
+      /* نضبط عرض الموقع أول مرة فقط */
+      if(!tracking.hasInitialView){
+        if(hasCustomerPosition){
+          map.fitBounds(
+            L.latLngBounds([
+              driverPosition,
+              [customerLat,customerLng]
+            ]),
+            {padding:[20,20],maxZoom:15}
+          );
+        }else{
+          map.setView(driverPosition,15);
+        }
+        tracking.hasInitialView = true;
+      }else if(!map.getBounds().contains(driverPosition)){
+        /* إذا خرج المندوب من حدود الخريطة، نلاحقه بهدوء */
+        map.panTo(driverPosition,{animate:true,duration:0.4});
       }
 
       if(order.driverLocationActive === false){
@@ -454,7 +478,7 @@ function startCustomerTracking(orderId,mapElement,statusElement){
         if(customerTrackingMaps.get(orderId) === tracking){
           map.invalidateSize();
         }
-      },150);
+      },100);
     },
     function(error){
       console.error("Customer tracking error:",error);
@@ -472,7 +496,20 @@ function startCustomerTracking(orderId,mapElement,statusElement){
   },300);
 }
 
-/* أنواع الطلبات */
+/* تكبير وتصغير الخريطة */
+function toggleTrackingMap(mapElement,button){
+  const expanded = mapElement.classList.toggle("expanded");
+  button.textContent = expanded ? "↙ تصغير الخريطة" : "⛶ تكبير الخريطة";
+
+  setTimeout(function(){
+    const orderId = mapElement.dataset.orderId;
+    const tracking = customerTrackingMaps.get(orderId);
+    if(tracking){
+      tracking.map.invalidateSize();
+    }
+  },250);
+}
+
 const orderTypes = {
   food:{
     title:"🍔 طلب من مطعم",
@@ -523,21 +560,17 @@ const orderTypes = {
   }
 };
 
-/* حالة تسجيل الدخول */
 auth.onAuthStateChanged(function(user){
   currentUser = user;
   updateAccount();
 
-  if(!user){
-    stopAllCustomerTracking();
-  }
+  if(!user) stopAllCustomerTracking();
 
   if(document.getElementById("ordersPage").classList.contains("active")){
     loadOrders();
   }
 });
 
-/* تحديد موقع الزبون */
 function getCustomerLocation(){
   const message = document.getElementById("locationMessage");
 
@@ -566,7 +599,6 @@ function getCustomerLocation(){
   },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
 }
 
-/* نافذة تسجيل الدخول */
 function openAuth(){
   document.getElementById("authModal").style.display = "block";
   document.getElementById("authMessage").innerText = "";
@@ -575,7 +607,6 @@ function closeAuth(){
   document.getElementById("authModal").style.display = "none";
 }
 
-/* Google */
 async function googleLogin(){
   const message = document.getElementById("authMessage");
   message.innerText = "جارِ تسجيل الدخول...";
@@ -591,7 +622,6 @@ async function googleLogin(){
   }
 }
 
-/* البريد الإلكتروني */
 async function emailLogin(){
   const email = document.getElementById("emailInput").value.trim();
   const password = document.getElementById("passwordInput").value;
@@ -623,7 +653,6 @@ async function emailLogin(){
   }
 }
 
-/* تسجيل الدخول بالهاتف */
 function showPhoneLogin(){
   document.getElementById("phoneArea").style.display = "block";
   document.getElementById("authMessage").innerText = "اكتب رقم الهاتف مع رمز الدولة.";
@@ -631,7 +660,6 @@ function showPhoneLogin(){
 
 function normalizePhoneNumber(value){
   let phone = value.trim().replace(/[\s\-()]/g,"");
-
   if(phone.startsWith("00")) phone = "+" + phone.substring(2);
 
   if(!phone.startsWith("+")){
@@ -639,7 +667,6 @@ function normalizePhoneNumber(value){
     else if(phone.startsWith("0")) phone = "+961" + phone.substring(1);
     else phone = "+" + phone;
   }
-
   return phone;
 }
 
@@ -668,7 +695,6 @@ async function sendPhoneCode(){
     }
 
     confirmationResult = await auth.signInWithPhoneNumber(phone,recaptchaVerifier);
-
     document.getElementById("smsCodeInput").style.display = "block";
     document.getElementById("verifyCodeButton").style.display = "block";
     message.innerText = "📩 تم إرسال رمز التحقق.";
@@ -691,7 +717,6 @@ async function verifyPhoneCode(){
     message.innerText = "⚠️ اكتب رمز التحقق.";
     return;
   }
-
   if(!confirmationResult){
     message.innerText = "❌ أرسل رمز SMS أولاً.";
     return;
@@ -707,7 +732,6 @@ async function verifyPhoneCode(){
   }
 }
 
-/* الحساب */
 function updateAccount(){
   const box = document.getElementById("accountContent");
   if(!box) return;
@@ -744,13 +768,11 @@ async function logout(){
   }
 }
 
-/* الطلبات */
 function openOrder(){
   if(!currentUser){
     openAuth();
     return;
   }
-
   document.getElementById("orderModal").style.display = "block";
   backToTypes();
 }
@@ -760,7 +782,6 @@ function openOrderWithCategory(type){
     openAuth();
     return;
   }
-
   document.getElementById("orderModal").style.display = "block";
   selectOrderType(type);
 }
@@ -773,7 +794,6 @@ function closeOrder(){
 function selectOrderType(type){
   selectedOrderType = type;
   const data = orderTypes[type];
-
   if(!data) return;
 
   document.getElementById("stepType").style.display = "none";
@@ -792,8 +812,7 @@ function backToTypes(){
 /* إرسال الطلب وإشعار ntfy */
 async function sendOrder(){
   if(!currentUser){
-    document.getElementById("orderMessage").innerText =
-      "⚠️ سجّل الدخول أولاً.";
+    document.getElementById("orderMessage").innerText = "⚠️ سجّل الدخول أولاً.";
     return;
   }
 
@@ -814,8 +833,7 @@ async function sendOrder(){
   const orderMessage = document.getElementById("orderMessage");
 
   if(!item || !address || !phone){
-    orderMessage.innerText =
-      "⚠️ الرجاء كتابة الطلب والعنوان ورقم الهاتف.";
+    orderMessage.innerText = "⚠️ الرجاء كتابة الطلب والعنوان ورقم الهاتف.";
     return;
   }
 
@@ -827,87 +845,57 @@ async function sendOrder(){
   if(details) fullDetails += " | التفاصيل: " + details;
 
   const categoryNames = {
-    food: "مطعم",
-    market: "سوبرماركت",
-    pharmacy: "صيدلية",
-    clothes: "ملابس",
-    beauty: "عطور وتجميل",
-    electronics: "إلكترونيات",
-    gifts: "هدايا",
-    other: "محل آخر"
+    food:"مطعم",market:"سوبرماركت",pharmacy:"صيدلية",clothes:"ملابس",
+    beauty:"عطور وتجميل",electronics:"إلكترونيات",gifts:"هدايا",other:"محل آخر"
   };
 
   orderMessage.innerText = "⏳ جارٍ إرسال الطلب...";
 
   try{
-    // حفظ الطلب في Firebase أولاً
     const orderRef = await db.collection("orders").add({
-      item: fullDetails,
-      category: selectedOrderType,
-      address: address,
-      phone: phone,
-      notes: notes,
-      status: "new",
-      merchant: store,
-      driver: "",
-      driverId: "",
-      driverName: "",
-      userId: currentUser.uid,
-      userEmail: currentUser.email || "",
-      userPhone: currentUser.phoneNumber || "",
-      customerLatitude: customerLatitude,
-      customerLongitude: customerLongitude,
-      customerLocationAccuracy: customerAccuracy,
-      customerLocationSelected:
-        customerLatitude !== null &&
-        customerLongitude !== null,
-      createdAt:
-        firebase.firestore.FieldValue.serverTimestamp()
+      item:fullDetails,
+      category:selectedOrderType,
+      address,
+      phone,
+      notes,
+      status:"new",
+      merchant:store,
+      driver:"",
+      driverId:"",
+      driverName:"",
+      userId:currentUser.uid,
+      userEmail:currentUser.email || "",
+      userPhone:currentUser.phoneNumber || "",
+      customerLatitude:customerLatitude,
+      customerLongitude:customerLongitude,
+      customerLocationAccuracy:customerAccuracy,
+      customerLocationSelected:customerLatitude !== null && customerLongitude !== null,
+      createdAt:firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    // إرسال إشعار ntfy بعد نجاح حفظ الطلب
     let notificationSent = false;
 
     try{
       const notificationText =
         "رقم الطلب: " + orderRef.id +
-        "\nالتصنيف: " +
-        (categoryNames[selectedOrderType] || selectedOrderType) +
+        "\nالتصنيف: " + (categoryNames[selectedOrderType] || selectedOrderType) +
         "\nالمنتج: " + item;
 
-      const response = await fetch(
-        "https://ntfy.sh/al-hassan-order",
-        {
-          method: "POST",
-          body: notificationText
-        }
-      );
+      const response = await fetch("https://ntfy.sh/al-hassan-order",{
+        method:"POST",
+        body:notificationText
+      });
 
-      if(!response.ok){
-        throw new Error("ntfy HTTP " + response.status);
-      }
-
+      if(!response.ok) throw new Error("ntfy HTTP " + response.status);
       notificationSent = true;
-
-      console.log(
-        "تم إرسال إشعار ntfy بنجاح للطلب:",
-        orderRef.id
-      );
-
+      console.log("تم إرسال إشعار ntfy بنجاح للطلب:",orderRef.id);
     }catch(notificationError){
-      console.error(
-        "فشل إرسال إشعار ntfy:",
-        notificationError
-      );
+      console.error("فشل إرسال إشعار ntfy:",notificationError);
     }
 
-    if(notificationSent){
-      orderMessage.innerText =
-        "✅ تم إرسال الطلب بنجاح!";
-    }else{
-      orderMessage.innerText =
-        "✅ تم حفظ الطلب بنجاح، لكن تعذّر إرسال الإشعار. الطلب محفوظ.";
-    }
+    orderMessage.innerText = notificationSent
+      ? "✅ تم إرسال الطلب بنجاح!"
+      : "✅ تم حفظ الطلب بنجاح، لكن تعذّر إرسال الإشعار. الطلب محفوظ.";
 
     document.getElementById("orderAddress").value = "";
     document.getElementById("orderPhone").value = "";
@@ -916,9 +904,7 @@ async function sendOrder(){
     customerLatitude = null;
     customerLongitude = null;
     customerAccuracy = null;
-
-    document.getElementById("locationMessage").innerText =
-      "لم يتم تحديد الموقع بعد";
+    document.getElementById("locationMessage").innerText = "لم يتم تحديد الموقع بعد";
 
     setTimeout(function(){
       closeOrder();
@@ -927,13 +913,10 @@ async function sendOrder(){
 
   }catch(error){
     console.error("خطأ في حفظ الطلب:",error);
-
-    orderMessage.innerText =
-      "❌ حدث خطأ أثناء إرسال الطلب: " + error.message;
+    orderMessage.innerText = "❌ حدث خطأ أثناء إرسال الطلب: " + error.message;
   }
 }
 
-/* التنقل بين الصفحات */
 function showPage(page){
   document.querySelectorAll(".page").forEach(element => element.classList.remove("active"));
   document.querySelectorAll(".bottom button").forEach(element => element.classList.remove("active"));
@@ -942,31 +925,26 @@ function showPage(page){
     document.getElementById("homePage").classList.add("active");
     document.getElementById("navHome").classList.add("active");
   }
-
   if(page === "search"){
     document.getElementById("searchPage").classList.add("active");
     document.getElementById("navSearch").classList.add("active");
   }
-
   if(page === "orders"){
     document.getElementById("ordersPage").classList.add("active");
     document.getElementById("navOrders").classList.add("active");
     loadOrders();
   }
-
   if(page === "account"){
     document.getElementById("accountPage").classList.add("active");
     document.getElementById("navAccount").classList.add("active");
     updateAccount();
   }
-
   window.scrollTo(0,0);
 }
 
-/* تحميل طلبات الزبون مع خريطة المندوب */
+/* تحميل الطلبات وإظهار الخريطة المصغّرة */
 async function loadOrders(){
   const box = document.getElementById("ordersList");
-
   stopAllCustomerTracking();
 
   if(!currentUser){
@@ -977,10 +955,11 @@ async function loadOrders(){
   box.innerHTML = "جارٍ تحميل طلباتك...";
 
   try{
+    const userAtLoad = currentUser;
     const snapshot = await db.collection("orders")
-      .where("userId","==",currentUser.uid).get();
+      .where("userId","==",userAtLoad.uid).get();
 
-    if(!currentUser){
+    if(!currentUser || currentUser.uid !== userAtLoad.uid){
       box.innerHTML = '<div class="empty">سجّل الدخول أولاً لرؤية طلباتك 📦</div>';
       return;
     }
@@ -993,14 +972,9 @@ async function loadOrders(){
     box.innerHTML = "";
 
     const categoryNames = {
-      food:"🍔 مطعم",
-      market:"🛒 سوبرماركت",
-      pharmacy:"💊 صيدلية",
-      clothes:"👗 ملابس",
-      beauty:"💄 عطور وتجميل",
-      electronics:"📱 إلكترونيات",
-      gifts:"🎁 هدايا",
-      other:"🏪 محل آخر"
+      food:"🍔 مطعم",market:"🛒 سوبرماركت",pharmacy:"💊 صيدلية",
+      clothes:"👗 ملابس",beauty:"💄 عطور وتجميل",
+      electronics:"📱 إلكترونيات",gifts:"🎁 هدايا",other:"🏪 محل آخر"
     };
 
     snapshot.forEach(function(doc){
@@ -1014,7 +988,6 @@ async function loadOrders(){
       if(order.status === "cancelled") status = "ملغى";
 
       const category = categoryNames[order.category] || "🛵 طلب";
-
       let customerLocation = "";
 
       if(order.customerLatitude != null && order.customerLongitude != null){
@@ -1030,7 +1003,6 @@ async function loadOrders(){
 
       const card = document.createElement("div");
       card.className = "order-card";
-
       card.innerHTML = `
         <b>${escapeHtml(category)}</b>
         <p>${escapeHtml(order.item || "طلب")}</p>
@@ -1060,14 +1032,24 @@ async function loadOrders(){
 
         const mapElement = document.createElement("div");
         mapElement.className = "customer-tracking-map";
+        mapElement.dataset.orderId = doc.id;
+
+        const expandButton = document.createElement("button");
+        expandButton.className = "tracking-expand-button";
+        expandButton.type = "button";
+        expandButton.textContent = "⛶ تكبير الخريطة";
+        expandButton.addEventListener("click",function(){
+          toggleTrackingMap(mapElement,expandButton);
+        });
 
         const note = document.createElement("p");
         note.className = "customer-tracking-note";
-        note.textContent = "يتحدّث الموقع عند إرسال المندوب تحديثاً جديداً من جهازه.";
+        note.textContent = "يتحدّث موقع المندوب عند وصول تحديث جديد من جهازه. يلزم أن يشارك المندوب موقعه وأن يكون الاتصال متاحًا.";
 
         trackingSection.appendChild(heading);
         trackingSection.appendChild(trackingStatus);
         trackingSection.appendChild(mapElement);
+        trackingSection.appendChild(expandButton);
         trackingSection.appendChild(note);
         card.appendChild(trackingSection);
 
@@ -1081,29 +1063,19 @@ async function loadOrders(){
   }
 }
 
-/* البحث في التصنيفات */
 document.getElementById("searchInput").addEventListener("input",function(){
   const value = this.value.trim().toLowerCase();
-
   if(!value) return;
 
   const types = {
-    "أكل":"food",
-    "مطعم":"food",
-    "سوبرماركت":"market",
-    "ملابس":"clothes",
-    "صيدلية":"pharmacy",
-    "تجميل":"beauty",
-    "إلكترونيات":"electronics",
-    "هدايا":"gifts"
+    "أكل":"food","مطعم":"food","سوبرماركت":"market","ملابس":"clothes",
+    "صيدلية":"pharmacy","تجميل":"beauty","إلكترونيات":"electronics","هدايا":"gifts"
   };
 
   const type = types[value];
-
   if(type) openOrderWithCategory(type);
 });
 
-/* إتاحة الدوال للأزرار */
 window.openDrawer = openDrawer;
 window.closeDrawer = closeDrawer;
 window.getCustomerLocation = getCustomerLocation;
