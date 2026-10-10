@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AL HASSAN - المندوب</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:#f5f5f5;color:#222;padding-bottom:30px}
@@ -29,17 +30,80 @@ input{width:100%;padding:13px;border:1px solid #ddd;border-radius:10px;font-size
 .empty{text-align:center;color:#777;padding:25px}
 .driver-info{background:#fff3f3;padding:12px;border-radius:10px;margin-top:10px;font-size:14px}
 .stop{background:#555;color:white;width:100%;margin-top:8px}
-.map-link{display:block;text-align:center;background:#eee;color:#222;padding:11px;border-radius:10px;text-decoration:none;margin-top:8px;font-weight:bold}
+.map-link{display:block;text-align:center;background:#fff0f0;color:#c9000c;padding:12px;border-radius:10px;text-decoration:none;margin-top:8px;font-weight:bold;border:1px solid #ffd5d5}
 .coordinates{background:#eef7ff;padding:10px;border-radius:10px;margin-top:10px;font-size:13px;line-height:1.8;overflow-wrap:anywhere}
 .notification-box{background:#fff8e6;padding:12px;border-radius:10px;margin-top:12px;font-size:14px;line-height:1.7;overflow-wrap:anywhere}
 .notification-button{background:#ff9800;color:white;width:100%;margin-top:8px}
 .secondary{background:#555;color:white;width:100%;margin-top:8px}
 .hidden{display:none!important}
 .muted{font-size:13px;color:#666;line-height:1.7}
-#driverMap{height:300px;width:100%;border-radius:12px;margin-top:12px;z-index:1;background:#eee}
+
+/* خريطة تتبّع شبيهة بتطبيقات التوصيل */
+.map-shell{
+  position:relative;
+  overflow:hidden;
+  border-radius:15px;
+  border:1px solid #e5e5e5;
+  background:#eee;
+  margin-top:12px;
+}
+#driverMap{
+  height:175px;
+  width:100%;
+  z-index:1;
+  background:#eee;
+  transition:height .2s ease;
+}
+.map-shell.expanded{
+  position:fixed;
+  z-index:9999;
+  inset:10px;
+  border-radius:16px;
+  box-shadow:0 0 0 100vmax rgba(0,0,0,.65);
+}
+.map-shell.expanded #driverMap{
+  height:calc(100dvh - 100px);
+  min-height:300px;
+}
+.map-controls{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:10px;
+}
+.map-control{
+  background:#f2f2f2;
+  color:#222;
+  padding:11px 8px;
+  font-size:13px;
+  border-radius:10px;
+}
+.map-control.red{
+  background:#e30613;
+  color:#fff;
+}
 .map-caption{font-size:12px;color:#666;line-height:1.7;margin-top:8px}
+.map-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:#444}
+.legend-item{display:flex;align-items:center;gap:5px}
+.legend-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.customer-dot{background:#e30613}
+.driver-dot{background:#168a35}
+.route-status{font-size:12px;color:#666;margin-top:8px;line-height:1.6}
+.leaflet-popup-content{font-family:Arial,sans-serif;line-height:1.7;text-align:right}
+.custom-map-icon{background:transparent;border:0}
+.map-pin{
+  width:38px;height:38px;border-radius:50% 50% 50% 8px;
+  transform:rotate(-45deg);
+  display:flex;align-items:center;justify-content:center;
+  border:3px solid #fff;
+  box-shadow:0 2px 9px #0004;
+}
+.map-pin span{transform:rotate(45deg);font-size:19px}
+.map-pin.driver{background:#168a35}
+.map-pin.customer{background:#e30613}
 </style>
 </head>
+
 <body>
 <header>
   <div class="logo">AL HASSAN 🛵</div>
@@ -85,14 +149,31 @@ input{width:100%;padding:13px;border:1px solid #ddd;border-radius:10px;font-size
     </div>
 
     <div class="card">
-      <div class="title">📍 مشاركة موقع المندوب</div>
-      <p class="muted">بعد استلام الطلب، اضغط على الزر حتى يعرف الزبون والإدارة مكانك.</p>
-      <button id="locationButton" class="green">📍 بدء مشاركة موقعي</button>
-      <div id="locationStatus" class="location-status">الموقع غير مشارك حاليًا.</div>
+      <div class="title">🗺️ خريطة التوصيل</div>
+      <p class="muted">بعد استلام الطلب، ستظهر هنا علامة موقع الزبون وموقعك الحالي والطريق بينكما عند توفر البيانات.</p>
+
+      <div id="mapShell" class="map-shell">
+        <div id="driverMap"></div>
+      </div>
+
+      <div class="map-controls">
+        <button id="expandMapButton" class="map-control">⛶ تكبير الخريطة</button>
+        <button id="fitMapButton" class="map-control">📍 إظهار الموقعين</button>
+      </div>
+
+      <div class="map-legend">
+        <span class="legend-item"><span class="legend-dot driver-dot"></span> موقع المندوب</span>
+        <span class="legend-item"><span class="legend-dot customer-dot"></span> موقع الزبون</span>
+      </div>
+
+      <div id="routeStatus" class="route-status">بانتظار استلام طلب لعرض الطريق.</div>
+
       <div id="coordinates" class="coordinates hidden"></div>
-      <div id="driverMap"></div>
-      <p class="map-caption">تظهر هنا حركة موقعك وموقع الزبون عند توفر الإحداثيات. الخريطة مقدّمة من OpenStreetMap.</p>
+
+      <button id="locationButton" class="green" style="margin-top:12px">📍 بدء مشاركة موقعي</button>
+      <div id="locationStatus" class="location-status">الموقع غير مشارك حاليًا.</div>
       <button id="stopLocationButton" class="stop hidden">🛑 إيقاف مشاركة الموقع</button>
+      <p class="map-caption">الخريطة من OpenStreetMap. يمكن استخدام Google Maps للملاحة. يتطلب التتبع السماح للموقع والاتصال بالإنترنت.</p>
     </div>
 
     <div id="message" class="message"></div>
@@ -150,7 +231,6 @@ let currentDriver = null;
 let driverData = null;
 let activeOrderId = localStorage.getItem("alhassan_active_order") || "";
 
-/* مستمع مباشر واحد للطلب الحالي */
 let activeOrderUnsubscribe = null;
 let listeningOrderId = "";
 
@@ -169,7 +249,6 @@ function showMessage(text, error = false) {
 function setNotificationStatus(text, type = "normal") {
   const box = $("notificationStatus");
   if (!box) return;
-
   box.textContent = text;
   box.style.background =
     type === "success" ? "#e9f8ed" :
@@ -182,16 +261,13 @@ function setNotificationStatus(text, type = "normal") {
 function supportMessage() {
   const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
     (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-
   const standalone = window.matchMedia("(display-mode: standalone)").matches ||
     navigator.standalone === true;
 
   if (ios && !standalone) {
     return "على iPhone: افتح الصفحة في Safari ثم مشاركة ← إضافة إلى الشاشة الرئيسية وافتحها من الأيقونة. إشعارات الويب تحتاج iOS 16.4 أو أحدث.";
   }
-  if (ios) {
-    return "تأكد من iOS 16.4 أو أحدث ومن السماح بالإشعارات من إعدادات الجهاز.";
-  }
+  if (ios) return "تأكد من iOS 16.4 أو أحدث ومن السماح بالإشعارات من إعدادات الجهاز.";
   return "هذا المتصفح أو وضع التصفح الحالي لا يدعم إشعارات الويب المطلوبة.";
 }
 
@@ -207,28 +283,54 @@ function withTimeout(promise, ms, msg) {
 
 function escapeHTML(value) {
   return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   }[c]));
 }
 
 /* =========================
-   خريطة المندوب والزبون
+   خريطة المندوب والزبون والطريق
 ========================= */
 
 let driverMap = null;
 let driverMarker = null;
 let customerMarker = null;
+let routeLine = null;
+let currentMapOrderId = "";
+let lastRouteFetchAt = 0;
+let routeRefreshTimer = null;
+let routeRequestRunning = false;
+let routeRequestAgain = false;
+let lastRouteSignature = "";
+
+const driverIcon = L.divIcon({
+  className: "custom-map-icon",
+  html: '<div class="map-pin driver"><span>🛵</span></div>',
+  iconSize: [42, 46],
+  iconAnchor: [21, 42],
+  popupAnchor: [0, -40]
+});
+
+const customerIcon = L.divIcon({
+  className: "custom-map-icon",
+  html: '<div class="map-pin customer"><span>📍</span></div>',
+  iconSize: [42, 46],
+  iconAnchor: [21, 42],
+  popupAnchor: [0, -40]
+});
+
+function setRouteStatus(text) {
+  $("routeStatus").textContent = text;
+}
 
 function initializeDriverMap() {
   const element = $("driverMap");
   if (!element || !window.L) return;
 
   if (!driverMap) {
-    driverMap = L.map(element).setView([32.625, 36.105], 13);
+    driverMap = L.map(element, {
+      zoomControl: true,
+      scrollWheelZoom: true
+    }).setView([32.625, 36.105], 13);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
@@ -241,33 +343,47 @@ function initializeDriverMap() {
   }, 250);
 }
 
-/* التأكد أن الخريطة تعرض العلامتين عند توفرهما */
+function resetMapForOrder(orderId) {
+  if (!orderId || currentMapOrderId === orderId) return;
+
+  currentMapOrderId = orderId;
+
+  if (driverMarker && driverMap) driverMap.removeLayer(driverMarker);
+  if (customerMarker && driverMap) driverMap.removeLayer(customerMarker);
+  if (routeLine && driverMap) driverMap.removeLayer(routeLine);
+
+  driverMarker = null;
+  customerMarker = null;
+  routeLine = null;
+  lastRouteSignature = "";
+
+  setRouteStatus("جارٍ تحميل موقع الزبون والطريق...");
+}
+
 function keepMarkersVisible(forceFit = false) {
   if (!driverMap) return;
 
   const markers = [];
   if (customerMarker) markers.push(customerMarker);
   if (driverMarker) markers.push(driverMarker);
-
   if (!markers.length) return;
 
   if (markers.length === 1) {
-    const marker = markers[0];
-    const pos = marker.getLatLng();
-
+    const pos = markers[0].getLatLng();
     if (forceFit || !driverMap.getBounds().contains(pos)) {
-      driverMap.setView(pos, 16);
+      driverMap.setView(pos, 16, { animate: true });
     }
     return;
   }
 
-  const customerPos = customerMarker.getLatLng();
-  const driverPos = driverMarker.getLatLng();
-  const bounds = L.latLngBounds([customerPos, driverPos]);
+  const bounds = L.latLngBounds([
+    customerMarker.getLatLng(),
+    driverMarker.getLatLng()
+  ]);
 
   const bothVisible =
-    driverMap.getBounds().contains(customerPos) &&
-    driverMap.getBounds().contains(driverPos);
+    driverMap.getBounds().contains(customerMarker.getLatLng()) &&
+    driverMap.getBounds().contains(driverMarker.getLatLng());
 
   if (forceFit || !bothVisible) {
     driverMap.fitBounds(bounds.pad(0.2), {
@@ -286,7 +402,7 @@ function updateDriverMapPosition(latitude, longitude) {
   const position = [latitude, longitude];
 
   if (!driverMarker) {
-    driverMarker = L.marker(position)
+    driverMarker = L.marker(position, { icon: driverIcon })
       .addTo(driverMap)
       .bindPopup("🛵 موقع مندوب AL HASSAN");
   } else {
@@ -294,61 +410,209 @@ function updateDriverMapPosition(latitude, longitude) {
   }
 
   keepMarkersVisible(false);
+  scheduleRouteUpdate();
 }
 
 function updateCustomerMarker(order, forceFit = false) {
   initializeDriverMap();
   if (!driverMap || !order) return;
 
+  if (order.id) resetMapForOrder(order.id);
+
   if (typeof order.customerLatitude !== "number" ||
       typeof order.customerLongitude !== "number") {
+    setRouteStatus("لا توجد إحداثيات محفوظة لموقع الزبون في هذا الطلب.");
     return;
   }
 
-  const position = [
-    order.customerLatitude,
-    order.customerLongitude
-  ];
-
-  let changed = false;
+  const position = [order.customerLatitude, order.customerLongitude];
 
   if (!customerMarker) {
-    customerMarker = L.marker(position)
+    customerMarker = L.marker(position, { icon: customerIcon })
       .addTo(driverMap)
-      .bindPopup("📍 موقع الزبون");
-    changed = true;
+      .bindPopup("📍 موقع تسليم الطلب");
   } else {
-    const oldPosition = customerMarker.getLatLng();
-    changed =
-      oldPosition.lat !== position[0] ||
-      oldPosition.lng !== position[1];
-
     customerMarker.setLatLng(position);
   }
 
-  keepMarkersVisible(forceFit || changed);
+  keepMarkersVisible(forceFit);
+  scheduleRouteUpdate();
 }
 
-/* إيقاف مستمع الطلب السابق لتجنب تكرار المستمعين */
+/* طلب الطريق من خدمة توجيه عامة؛ الخريطة نفسها من OpenStreetMap */
+function scheduleRouteUpdate() {
+  if (!driverMarker || !customerMarker) {
+    if (!customerMarker) setRouteStatus("بانتظار إحداثيات موقع الزبون.");
+    else setRouteStatus("بانتظار موقع المندوب لعرض الطريق.");
+    return;
+  }
+
+  if (routeRefreshTimer) return;
+
+  const elapsed = Date.now() - lastRouteFetchAt;
+  const wait = Math.max(0, 5000 - elapsed);
+
+  routeRefreshTimer = setTimeout(async () => {
+    routeRefreshTimer = null;
+    await updateRoute();
+  }, wait);
+}
+
+async function updateRoute() {
+  if (!driverMarker || !customerMarker) return;
+
+  if (routeRequestRunning) {
+    routeRequestAgain = true;
+    return;
+  }
+
+  const d = driverMarker.getLatLng();
+  const c = customerMarker.getLatLng();
+  const signature = [
+    d.lat.toFixed(4), d.lng.toFixed(4),
+    c.lat.toFixed(4), c.lng.toFixed(4)
+  ].join(",");
+
+  if (signature === lastRouteSignature && routeLine) return;
+
+  routeRequestRunning = true;
+  lastRouteFetchAt = Date.now();
+  setRouteStatus("🗺️ جارٍ تحديث الطريق إلى الزبون...");
+
+  try {
+    const url =
+      "https://router.project-osrm.org/route/v1/driving/" +
+      d.lng + "," + d.lat + ";" + c.lng + "," + c.lat +
+      "?overview=full&geometries=geojson&steps=false";
+
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("ROUTE_UNAVAILABLE");
+
+    const result = await response.json();
+    if (result.code !== "Ok" || !result.routes?.length) {
+      throw new Error("ROUTE_NOT_FOUND");
+    }
+
+    /* تجاهل النتيجة إن تغيّر الطلب أثناء انتظار خدمة التوجيه */
+    if (!driverMarker || !customerMarker) return;
+
+    const latestDriver = driverMarker.getLatLng();
+    const latestCustomer = customerMarker.getLatLng();
+    const latestSignature = [
+      latestDriver.lat.toFixed(4), latestDriver.lng.toFixed(4),
+      latestCustomer.lat.toFixed(4), latestCustomer.lng.toFixed(4)
+    ].join(",");
+
+    const coords = result.routes[0].geometry.coordinates.map(
+      point => [point[1], point[0]]
+    );
+
+    if (routeLine && driverMap) driverMap.removeLayer(routeLine);
+
+    routeLine = L.polyline(coords, {
+      color: "#e30613",
+      weight: 5,
+      opacity: 0.85,
+      lineCap: "round",
+      lineJoin: "round"
+    }).addTo(driverMap);
+
+    lastRouteSignature = latestSignature;
+
+    const distanceKm = result.routes[0].distance / 1000;
+    const durationMin = Math.max(1, Math.round(result.routes[0].duration / 60));
+
+    setRouteStatus(
+      "✅ الطريق ظاهر على الخريطة • المسافة التقريبية " +
+      distanceKm.toFixed(1) + " كم • وقت القيادة التقديري " +
+      durationMin + " دقيقة. قد يختلف الوقت الفعلي حسب حركة السير."
+    );
+  } catch (error) {
+    console.warn("Route service:", error);
+    setRouteStatus(
+      "تعذر تحميل خط الطريق الآن. ما زالت علامات الموقع ظاهرة، ويمكنك فتح الاتجاهات في Google Maps."
+    );
+  } finally {
+    routeRequestRunning = false;
+
+    if (routeRequestAgain) {
+      routeRequestAgain = false;
+      scheduleRouteUpdate();
+    }
+  }
+}
+
+function fitTrackingMap() {
+  initializeDriverMap();
+  if (!driverMap) return;
+
+  if (driverMarker && customerMarker) {
+    driverMap.fitBounds(
+      L.latLngBounds([
+        driverMarker.getLatLng(),
+        customerMarker.getLatLng()
+      ]).pad(0.2),
+      { maxZoom: 16, animate: true }
+    );
+  } else if (driverMarker) {
+    driverMap.setView(driverMarker.getLatLng(), 16);
+  } else if (customerMarker) {
+    driverMap.setView(customerMarker.getLatLng(), 16);
+  } else {
+    setRouteStatus("ستظهر المواقع هنا بعد استلام طلب وتوفر إحداثياته.");
+  }
+
+  setTimeout(() => driverMap?.invalidateSize(), 250);
+}
+
+$("expandMapButton").addEventListener("click", () => {
+  const shell = $("mapShell");
+  const expanded = shell.classList.toggle("expanded");
+  $("expandMapButton").textContent =
+    expanded ? "✕ إغلاق الخريطة المكبّرة" : "⛶ تكبير الخريطة";
+
+  document.body.style.overflow = expanded ? "hidden" : "";
+
+  setTimeout(() => {
+    driverMap?.invalidateSize();
+    fitTrackingMap();
+  }, 250);
+});
+
+$("fitMapButton").addEventListener("click", fitTrackingMap);
+
+function closeExpandedMap() {
+  if (!$("mapShell").classList.contains("expanded")) return;
+  $("mapShell").classList.remove("expanded");
+  $("expandMapButton").textContent = "⛶ تكبير الخريطة";
+  document.body.style.overflow = "";
+  setTimeout(() => driverMap?.invalidateSize(), 200);
+}
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") closeExpandedMap();
+});
+
+/* =========================
+   مستمع الطلب الحالي
+========================= */
+
 function stopActiveOrderListener() {
   if (typeof activeOrderUnsubscribe === "function") {
     activeOrderUnsubscribe();
   }
-
   activeOrderUnsubscribe = null;
   listeningOrderId = "";
 }
 
-/* الاستماع لتغييرات الطلب لحظيًا */
 function startActiveOrderListener(orderId) {
   if (!orderId || !currentDriver || !driverData) return;
 
-  if (listeningOrderId === orderId && activeOrderUnsubscribe) {
-    return;
-  }
+  if (listeningOrderId === orderId && activeOrderUnsubscribe) return;
 
   stopActiveOrderListener();
   listeningOrderId = orderId;
+  resetMapForOrder(orderId);
 
   const ref = doc(db, "orders", orderId);
 
@@ -358,14 +622,14 @@ function startActiveOrderListener(orderId) {
       return;
     }
 
-    const order = snap.data();
+    const order = { id: snap.id, ...snap.data() };
 
-    /* لا نعرض طلبًا أصبح تابعًا لمندوب آخر */
     if (order.driverId !== currentDriver?.uid) {
       stopActiveOrderListener();
       activeOrderId = "";
       localStorage.removeItem("alhassan_active_order");
       setVisible("activeOrderBox", false);
+      resetMapForOrder("");
       return;
     }
 
@@ -373,13 +637,9 @@ function startActiveOrderListener(orderId) {
 
     if (typeof order.driverLatitude === "number" &&
         typeof order.driverLongitude === "number") {
-      updateDriverMapPosition(
-        order.driverLatitude,
-        order.driverLongitude
-      );
+      updateDriverMapPosition(order.driverLatitude, order.driverLongitude);
     }
 
-    /* تحديث تفاصيل الطلب من دون إعادة بناء الأزرار */
     const details = $("activeOrder").querySelector(".details");
     if (details) {
       details.textContent =
@@ -389,16 +649,13 @@ function startActiveOrderListener(orderId) {
         "\n📌 الحالة: " + (order.status || "غير محددة");
     }
 
-    /* تحديث رابط الاتجاهات إذا كانت إحداثيات الزبون موجودة */
     const mapLink = $("activeOrder").querySelector(".map-link");
     if (mapLink) {
       if (typeof order.customerLatitude === "number" &&
           typeof order.customerLongitude === "number") {
         mapLink.href =
           "https://www.google.com/maps/dir/?api=1&destination=" +
-          encodeURIComponent(
-            order.customerLatitude + "," + order.customerLongitude
-          );
+          encodeURIComponent(order.customerLatitude + "," + order.customerLongitude);
         mapLink.textContent = "🗺️ الاتجاه إلى موقع الزبون";
       } else {
         mapLink.href =
@@ -408,25 +665,18 @@ function startActiveOrderListener(orderId) {
       }
     }
 
-    /* عند اكتمال الطلب أو إلغائه نوقف مشاركة موقع المندوب */
     if (order.status === "delivered" || order.status === "cancelled") {
       stopLocation(false);
       stopActiveOrderListener();
       activeOrderId = "";
       localStorage.removeItem("alhassan_active_order");
       setVisible("activeOrderBox", false);
-      showMessage(
-        order.status === "delivered"
-          ? "✅ تم تسليم الطلب."
-          : "تم إلغاء الطلب."
-      );
+      showMessage(order.status === "delivered" ? "✅ تم تسليم الطلب." : "تم إلغاء الطلب.");
+      setRouteStatus("انتهى الطلب. استلم طلبًا جديدًا لعرض خريطته.");
     }
   }, error => {
     console.error("Active order listener:", error);
-    showMessage(
-      "تعذر تحديث الخريطة مباشرة. تحقق من اتصال الإنترنت وقواعد Firestore.",
-      true
-    );
+    showMessage("تعذر تحديث الخريطة مباشرة. تحقق من اتصال الإنترنت وقواعد Firestore.", true);
   });
 }
 
@@ -445,7 +695,6 @@ function authError(error) {
     "auth/too-many-requests": "محاولات كثيرة. انتظر قليلًا ثم حاول مجددًا.",
     "auth/network-request-failed": "تعذّر الاتصال بالإنترنت."
   };
-
   return codes[error.code] || error.message || "حدث خطأ غير معروف.";
 }
 
@@ -461,23 +710,19 @@ $("signupButton").addEventListener("click", async () => {
   const password = $("password").value;
 
   if (!name || !number || !phone || !email || !password) {
-    $("authMessage").textContent =
-      "يرجى تعبئة الاسم ورقم المندوب والهاتف والبريد وكلمة المرور.";
+    $("authMessage").textContent = "يرجى تعبئة الاسم ورقم المندوب والهاتف والبريد وكلمة المرور.";
     return;
   }
 
   if (password.length < 6) {
-    $("authMessage").textContent =
-      "كلمة المرور يجب أن تكون 6 أحرف على الأقل.";
+    $("authMessage").textContent = "كلمة المرور يجب أن تكون 6 أحرف على الأقل.";
     return;
   }
 
   $("signupButton").disabled = true;
 
   try {
-    const credential = await createUserWithEmailAndPassword(
-      auth, email, password
-    );
+    const credential = await createUserWithEmailAndPassword(auth, email, password);
 
     await setDoc(doc(db, "driverApplications", credential.user.uid), {
       uid: credential.user.uid,
@@ -490,12 +735,9 @@ $("signupButton").addEventListener("click", async () => {
     });
 
     await refreshAccount(credential.user);
-
-    $("authMessage").textContent =
-      "تم إنشاء الحساب وإرسال طلب الموافقة. انتظر موافقة المدير.";
+    $("authMessage").textContent = "تم إنشاء الحساب وإرسال طلب الموافقة. انتظر موافقة المدير.";
   } catch (e) {
-    $("authMessage").textContent =
-      "تعذّر إنشاء الحساب: " + authError(e);
+    $("authMessage").textContent = "تعذّر إنشاء الحساب: " + authError(e);
   } finally {
     $("signupButton").disabled = false;
   }
@@ -510,8 +752,7 @@ $("loginButton").addEventListener("click", async () => {
   const password = $("password").value;
 
   if (!email || !password) {
-    $("authMessage").textContent =
-      "اكتب البريد الإلكتروني وكلمة المرور أولًا.";
+    $("authMessage").textContent = "اكتب البريد الإلكتروني وكلمة المرور أولًا.";
     return;
   }
 
@@ -520,8 +761,7 @@ $("loginButton").addEventListener("click", async () => {
   try {
     await signInWithEmailAndPassword(auth, email, password);
   } catch (e) {
-    $("authMessage").textContent =
-      "تعذّر تسجيل الدخول: " + authError(e);
+    $("authMessage").textContent = "تعذّر تسجيل الدخول: " + authError(e);
   } finally {
     $("loginButton").disabled = false;
   }
@@ -534,7 +774,7 @@ $("logoutButton").addEventListener("click", async () => {
 
   activeOrderId = "";
   localStorage.removeItem("alhassan_active_order");
-
+  closeExpandedMap();
   $("authMessage").textContent = "تم تسجيل الخروج.";
 });
 
@@ -552,15 +792,12 @@ async function refreshAccount(user) {
   if (!user) {
     await stopLocation(false);
     stopActiveOrderListener();
-
     setVisible("pendingCard", false);
     setVisible("approvedInfoCard", false);
     setVisible("workArea", false);
-
     $("signupFields").classList.remove("hidden");
     $("authMessage").textContent =
       "سجّل حسابًا جديدًا أو ادخل إلى حسابك. الحساب الجديد يحتاج موافقة المدير.";
-
     $("signupButton").classList.remove("hidden");
     $("loginButton").classList.remove("hidden");
     return;
@@ -574,8 +811,7 @@ async function refreshAccount(user) {
   try {
     const approvedSnap = await getDoc(doc(db, "drivers", user.uid));
 
-    if (approvedSnap.exists() &&
-        approvedSnap.data().status === "approved") {
+    if (approvedSnap.exists() && approvedSnap.data().status === "approved") {
       driverData = approvedSnap.data();
       driverData.uid = user.uid;
 
@@ -604,7 +840,6 @@ async function refreshAccount(user) {
     setVisible("approvedInfoCard", false);
     setVisible("workArea", false);
     setVisible("pendingCard", true);
-
     $("signupButton").classList.add("hidden");
     $("loginButton").classList.add("hidden");
 
@@ -616,20 +851,15 @@ async function refreshAccount(user) {
         "👤 " + (a.name || "مندوب") +
         " | 🆔 " + (a.driverNumber || "غير محدد") +
         " | الحالة: " +
-        (a.status === "rejected"
-          ? "مرفوض - تواصل مع الإدارة"
-          : "بانتظار موافقة المدير");
+        (a.status === "rejected" ? "مرفوض - تواصل مع الإدارة" : "بانتظار موافقة المدير");
     } else {
-      $("pendingInfo").textContent =
-        "لم نعثر على طلب موافقة لهذا الحساب. تواصل مع المدير.";
+      $("pendingInfo").textContent = "لم نعثر على طلب موافقة لهذا الحساب. تواصل مع المدير.";
     }
 
-    $("authMessage").textContent =
-      "الحساب غير معتمد بعد. لن تظهر الطلبات قبل موافقة المدير.";
+    $("authMessage").textContent = "الحساب غير معتمد بعد. لن تظهر الطلبات قبل موافقة المدير.";
   } catch (e) {
     $("authMessage").textContent =
-      "تعذّر التحقق من الحساب. تأكد من نشر قواعد Firestore المتوافقة: " +
-      e.message;
+      "تعذّر التحقق من الحساب. تأكد من نشر قواعد Firestore المتوافقة: " + e.message;
   }
 }
 
@@ -642,16 +872,11 @@ onAuthStateChanged(auth, user => {
 ========================= */
 
 async function prepareMessaging() {
-  if (!("Notification" in window) ||
-      !("serviceWorker" in navigator)) {
+  if (!("Notification" in window) || !("serviceWorker" in navigator)) {
     throw new Error(supportMessage());
   }
 
-  if (!await withTimeout(
-    isSupported(),
-    10000,
-    "استغرق فحص دعم الإشعارات وقتًا طويلًا."
-  )) {
+  if (!await withTimeout(isSupported(), 10000, "استغرق فحص دعم الإشعارات وقتًا طويلًا.")) {
     throw new Error(supportMessage());
   }
 
@@ -663,11 +888,9 @@ async function prepareMessaging() {
         "🔔 " + (payload.notification?.title || "AL HASSAN") +
         " - " + (payload.notification?.body || "لديك إشعار جديد")
       );
-
       window.loadOrders();
       loadActiveOrder();
     });
-
     notificationListenerStarted = true;
   }
 }
@@ -677,9 +900,7 @@ async function registerMessagingServiceWorker() {
   const scopeUrl = new URL("./", import.meta.url);
 
   await withTimeout(
-    navigator.serviceWorker.register(swUrl.href, {
-      scope: scopeUrl.pathname
-    }),
+    navigator.serviceWorker.register(swUrl.href, { scope: scopeUrl.pathname }),
     15000,
     "تعذر تسجيل Service Worker. تأكد من وجود firebase-messaging-sw.js بجانب Driver.html."
   );
@@ -696,9 +917,7 @@ $("notificationButton").addEventListener("click", enableNotifications);
 async function enableNotifications() {
   try {
     if (!currentDriver || !driverData) {
-      setNotificationStatus(
-        "يجب أن يوافق المدير على حسابك أولًا.", "error"
-      );
+      setNotificationStatus("يجب أن يوافق المدير على حسابك أولًا.", "error");
       return;
     }
 
@@ -707,8 +926,7 @@ async function enableNotifications() {
       return;
     }
 
-    if (location.protocol !== "https:" &&
-        location.hostname !== "localhost") {
+    if (location.protocol !== "https:" && location.hostname !== "localhost") {
       setNotificationStatus("يجب فتح الصفحة عبر HTTPS.", "error");
       return;
     }
@@ -716,40 +934,28 @@ async function enableNotifications() {
     let permission = Notification.permission;
 
     if (permission === "denied") {
-      setNotificationStatus(
-        "الإشعارات ممنوعة من إعدادات الجهاز أو المتصفح.", "error"
-      );
+      setNotificationStatus("الإشعارات ممنوعة من إعدادات الجهاز أو المتصفح.", "error");
       return;
     }
 
-    if (permission === "default") {
-      permission = await Notification.requestPermission();
-    }
+    if (permission === "default") permission = await Notification.requestPermission();
 
     if (permission !== "granted") {
-      setNotificationStatus(
-        "لم يتم السماح بالإشعارات. اسمح بها ثم أعد المحاولة.", "error"
-      );
+      setNotificationStatus("لم يتم السماح بالإشعارات. اسمح بها ثم أعد المحاولة.", "error");
       return;
     }
 
     setNotificationStatus("⏳ جارٍ تجهيز الإشعارات...");
     await prepareMessaging();
-
     const registration = await registerMessagingServiceWorker();
 
     const token = await withTimeout(
-      getToken(messaging, {
-        vapidKey: VAPID_KEY,
-        serviceWorkerRegistration: registration
-      }),
+      getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration: registration }),
       20000,
       "تعذر الحصول على رمز الإشعارات. تحقق من إعداد VAPID."
     );
 
-    if (!token) {
-      throw new Error("لم ينشئ Firebase رمز الإشعارات.");
-    }
+    if (!token) throw new Error("لم ينشئ Firebase رمز الإشعارات.");
 
     await setDoc(doc(db, "notificationTokens", token), {
       token,
@@ -762,15 +968,10 @@ async function enableNotifications() {
     }, { merge: true });
 
     localStorage.setItem("alhassan_fcm_token", token);
-
-    setNotificationStatus(
-      "✅ تم تسجيل جهازك للإشعارات بنجاح.", "success"
-    );
+    setNotificationStatus("✅ تم تسجيل جهازك للإشعارات بنجاح.", "success");
   } catch (e) {
     console.error(e);
-    setNotificationStatus(
-      "❌ " + (e.message || "تعذر تفعيل الإشعارات."), "error"
-    );
+    setNotificationStatus("❌ " + (e.message || "تعذر تفعيل الإشعارات."), "error");
   }
 }
 
@@ -813,13 +1014,11 @@ window.loadOrders = async function() {
   const box = $("orders");
 
   if (!currentDriver || !driverData) {
-    box.innerHTML =
-      '<div class="empty">سجّل الدخول وانتظر موافقة المدير.</div>';
+    box.innerHTML = '<div class="empty">سجّل الدخول وانتظر موافقة المدير.</div>';
     return;
   }
 
-  box.innerHTML =
-    '<div class="empty">⏳ جارٍ تحميل الطلبات...</div>';
+  box.innerHTML = '<div class="empty">⏳ جارٍ تحميل الطلبات...</div>';
 
   try {
     const q = query(
@@ -828,19 +1027,13 @@ window.loadOrders = async function() {
       where("driverId", "==", "")
     );
 
-    const snapshot = await withTimeout(
-      getDocs(q),
-      15000,
-      "انتهت مهلة تحميل الطلبات."
-    );
-
+    const snapshot = await withTimeout(getDocs(q), 15000, "انتهت مهلة تحميل الطلبات.");
     const orders = [];
     snapshot.forEach(s => orders.push({ id: s.id, ...s.data() }));
     orders.reverse();
 
     if (!orders.length) {
-      box.innerHTML =
-        '<div class="empty">لا توجد طلبات متاحة حاليًا 📦</div>';
+      box.innerHTML = '<div class="empty">لا توجد طلبات متاحة حاليًا 📦</div>';
       return;
     }
 
@@ -882,11 +1075,9 @@ window.loadOrders = async function() {
     }
   } catch (e) {
     console.error(e);
-
     box.innerHTML =
       '<div class="empty">❌ تعذر تحميل الطلبات: ' +
-      escapeHTML(e.message || "تحقق من قواعد Firestore.") +
-      '</div>';
+      escapeHTML(e.message || "تحقق من قواعد Firestore.") + '</div>';
   }
 };
 
@@ -907,20 +1098,11 @@ window.acceptOrder = async function(orderId) {
 
     await runTransaction(db, async tx => {
       const snap = await tx.get(ref);
-
-      if (!snap.exists()) {
-        throw new Error("ORDER_NOT_FOUND");
-      }
+      if (!snap.exists()) throw new Error("ORDER_NOT_FOUND");
 
       const order = snap.data();
-
-      if (order.driverId) {
-        throw new Error("ORDER_ALREADY_TAKEN");
-      }
-
-      if (order.status !== "new") {
-        throw new Error("ORDER_NOT_AVAILABLE");
-      }
+      if (order.driverId) throw new Error("ORDER_ALREADY_TAKEN");
+      if (order.status !== "new") throw new Error("ORDER_NOT_AVAILABLE");
 
       tx.update(ref, {
         driverId: currentDriver.uid,
@@ -934,12 +1116,10 @@ window.acceptOrder = async function(orderId) {
     localStorage.setItem("alhassan_active_order", activeOrderId);
 
     showMessage("✅ تم استلام الطلب باسمك.");
-
     await window.loadOrders();
     await loadActiveOrder();
   } catch (e) {
     console.error(e);
-
     showMessage(
       e.message === "ORDER_ALREADY_TAKEN"
         ? "استلم مندوب آخر هذا الطلب."
@@ -967,19 +1147,16 @@ async function loadActiveOrder() {
     const ref = doc(db, "orders", activeOrderId);
     const snap = await getDoc(ref);
 
-    if (!snap.exists() ||
-        snap.data().driverId !== currentDriver.uid) {
+    if (!snap.exists() || snap.data().driverId !== currentDriver.uid) {
       stopActiveOrderListener();
-
       activeOrderId = "";
       localStorage.removeItem("alhassan_active_order");
-
       setVisible("activeOrderBox", false);
       return;
     }
 
     const found = { id: snap.id, ...snap.data() };
-
+    resetMapForOrder(found.id);
     setVisible("activeOrderBox", true);
 
     const box = $("activeOrder");
@@ -1007,9 +1184,7 @@ async function loadActiveOrder() {
         typeof found.customerLongitude === "number") {
       map.href =
         "https://www.google.com/maps/dir/?api=1&destination=" +
-        encodeURIComponent(
-          found.customerLatitude + "," + found.customerLongitude
-        );
+        encodeURIComponent(found.customerLatitude + "," + found.customerLongitude);
       map.textContent = "🗺️ الاتجاه إلى موقع الزبون";
     } else {
       map.href =
@@ -1021,20 +1196,14 @@ async function loadActiveOrder() {
     box.append(details, loc, map);
 
     initializeDriverMap();
-
-    /* إظهار موقع الزبون الثابت وموقع المندوب إن كان متوفرًا */
     updateCustomerMarker(found, true);
 
     if (typeof found.driverLatitude === "number" &&
         typeof found.driverLongitude === "number") {
-      updateDriverMapPosition(
-        found.driverLatitude,
-        found.driverLongitude
-      );
+      updateDriverMapPosition(found.driverLatitude, found.driverLongitude);
       keepMarkersVisible(true);
     }
 
-    /* بدء التحديث المباشر من Firebase */
     startActiveOrderListener(activeOrderId);
   } catch (e) {
     console.error("Active order:", e);
@@ -1047,9 +1216,7 @@ async function loadActiveOrder() {
 ========================= */
 
 $("locationButton").addEventListener("click", startLocation);
-$("stopLocationButton").addEventListener(
-  "click", () => stopLocation(true)
-);
+$("stopLocationButton").addEventListener("click", () => stopLocation(true));
 
 function startLocation() {
   if (!currentDriver || !driverData) {
@@ -1063,8 +1230,7 @@ function startLocation() {
   }
 
   if (!navigator.geolocation) {
-    $("locationStatus").textContent =
-      "جهازك أو متصفحك لا يدعم تحديد الموقع.";
+    $("locationStatus").textContent = "جهازك أو متصفحك لا يدعم تحديد الموقع.";
     return;
   }
 
@@ -1073,17 +1239,13 @@ function startLocation() {
     return;
   }
 
-  if (location.protocol !== "https:" &&
-      location.hostname !== "localhost") {
-    $("locationStatus").textContent =
-      "يجب فتح الصفحة عبر HTTPS حتى يعمل تحديد الموقع.";
+  if (location.protocol !== "https:" && location.hostname !== "localhost") {
+    $("locationStatus").textContent = "يجب فتح الصفحة عبر HTTPS حتى يعمل تحديد الموقع.";
     return;
   }
 
   initializeDriverMap();
-
-  $("locationStatus").textContent =
-    "📍 جارٍ طلب موقعك من الجهاز...";
+  $("locationStatus").textContent = "📍 جارٍ طلب موقعك من الجهاز...";
 
   locationWatcher = navigator.geolocation.watchPosition(
     async pos => {
@@ -1110,13 +1272,8 @@ function startLocation() {
           const ref = doc(db, "orders", orderIdAtUpdate);
           const snap = await tx.get(ref);
 
-          if (!snap.exists()) {
-            throw new Error("ORDER_NOT_FOUND");
-          }
-
-          if (snap.data().driverId !== driverIdAtUpdate) {
-            throw new Error("NOT_DRIVER");
-          }
+          if (!snap.exists()) throw new Error("ORDER_NOT_FOUND");
+          if (snap.data().driverId !== driverIdAtUpdate) throw new Error("NOT_DRIVER");
 
           tx.update(ref, {
             driverLatitude: latitude,
@@ -1127,22 +1284,16 @@ function startLocation() {
           });
         });
 
-        $("locationStatus").textContent =
-          "✅ تم إرسال موقعك إلى Firebase ويتم تحديثه الآن.";
+        $("locationStatus").textContent = "✅ تم إرسال موقعك إلى Firebase ويتم تحديثه الآن.";
         $("locationStatus").className = "location-status success";
-
         setVisible("stopLocationButton", true);
-        $("locationButton").textContent =
-          "📍 موقعك تتم مشاركته الآن";
+        $("locationButton").textContent = "📍 موقعك تتم مشاركته الآن";
       } catch (e) {
         console.error(e);
-
-        $("locationStatus").textContent =
-          "تعذر إرسال الموقع إلى Firebase: " + e.message;
+        $("locationStatus").textContent = "تعذر إرسال الموقع إلى Firebase: " + e.message;
         $("locationStatus").className = "location-status error";
 
-        if (e.message === "NOT_DRIVER" ||
-            e.message === "ORDER_NOT_FOUND") {
+        if (e.message === "NOT_DRIVER" || e.message === "ORDER_NOT_FOUND") {
           await stopLocation(false);
         }
       } finally {
@@ -1163,11 +1314,7 @@ function startLocation() {
           ? "تعذر تحديد الموقع. تأكد من تشغيل خدمات الموقع."
           : "انتهى وقت تحديد الموقع. حاول مجددًا.";
     },
-    {
-      enableHighAccuracy: true,
-      timeout: 30000,
-      maximumAge: 0
-    }
+    { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 }
   );
 }
 
@@ -1197,12 +1344,8 @@ async function stopLocation(updateDatabase = true) {
 
       await runTransaction(db, async tx => {
         const snap = await tx.get(ref);
-
-        if (snap.exists() &&
-            snap.data().driverId === driverIdAtStop) {
-          tx.update(ref, {
-            driverLocationActive: false
-          });
+        if (snap.exists() && snap.data().driverId === driverIdAtStop) {
+          tx.update(ref, { driverLocationActive: false });
         }
       });
     } catch (e) {
