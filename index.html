@@ -12,7 +12,7 @@ body{margin:0;font-family:Arial,sans-serif;background:#f5f5f5;color:#222;padding
 button,input,textarea,select{font-family:inherit}
 button{cursor:pointer}
 
-/* الشريط العلوي الرفيع */
+/* الشريط العلوي */
 .welcome-ticker{
   height:31px;width:100%;overflow:hidden;background:#fff;color:#d90714;
   border-bottom:1px solid #f0dfe0;display:flex;align-items:center;
@@ -75,7 +75,67 @@ h2{margin:0 0 13px;font-size:20px}
 .form-title{background:#fff3f3;padding:12px;border-radius:10px;margin-bottom:8px;font-weight:bold;color:#e30613}
 .back-button{background:#eee;color:#222}
 .auth-button{width:100%;padding:13px;border:0;border-radius:10px;margin-top:8px;font-size:15px;font-weight:bold}
-.google{background:#fff;border:1px solid #ddd!important;color:#222}
+
+/* تصميم تسجيل الدخول وGoogle */
+.google{
+  background:#fff!important;
+  border:1px solid #ddd!important;
+  color:#222!important;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+}
+.google-mark{
+  font-size:22px;
+  font-weight:bold;
+  color:#4285f4;
+}
+.auth-screen{display:none}
+.auth-screen.active{display:block}
+.auth-heading{text-align:center;margin:4px 0 8px}
+.auth-subtitle{text-align:center;color:#777;font-size:13px;line-height:1.8;margin:0 0 18px}
+.auth-divider{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:#888;
+  font-size:12px;
+  margin:18px 0 10px;
+}
+.auth-divider::before,.auth-divider::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:#e5e5e5;
+}
+.auth-switch{
+  display:block;
+  width:100%;
+  border:0!important;
+  background:transparent!important;
+  color:#d90714;
+  font-weight:bold;
+  padding:13px 5px;
+  margin-top:8px;
+}
+.auth-screen input{
+  width:100%;
+  padding:13px;
+  margin:7px 0;
+  border:1px solid #ddd;
+  border-radius:10px;
+  font-size:15px;
+  outline-color:#e30613;
+}
+.auth-screen input:focus{border-color:#e30613}
+.auth-message{
+  font-size:13px;
+  line-height:1.8;
+  overflow-wrap:anywhere;
+  white-space:normal;
+}
+.auth-back{background:#f4f4f4;color:#333}
 .logout{background:#eee;color:#222}
 .user-box{background:#fff3f3;padding:15px;border-radius:12px;margin-bottom:15px}
 .location-box{background:#f7f7f7;border:1px solid #e5e5e5;border-radius:12px;padding:12px;margin:8px 0}
@@ -102,12 +162,12 @@ h2{margin:0 0 13px;font-size:20px}
 .drawer-link span{margin-left:9px}
 .drawer-note{font-size:12px;color:#777;line-height:1.7;margin-top:18px}
 
-/* معلومات الإدارة أسفل الصفحة وعلى جنب */
+/* معلومات الإدارة */
 .site-footer{margin:8px 17px 22px;padding:10px 0;text-align:right;color:#777;font-size:12px;line-height:1.9}
 .site-footer .manager-name{color:#555;font-weight:bold}
 .site-footer a{color:#e30613;text-decoration:none;direction:ltr;unicode-bidi:embed;display:inline-block;font-weight:bold}
 
-/* زر نسيت كلمة السر */
+/* استعادة كلمة السر */
 .reset-password-button{
   background:#fff3f3;
   color:#e30613;
@@ -226,6 +286,7 @@ h2{margin:0 0 13px;font-size:20px}
   </div>
 </footer>
 
+<!-- نافذة الطلبات -->
 <div id="orderModal" class="modal">
   <div class="modal-box">
     <h2>🛵 اطلب أي شيء</h2>
@@ -264,34 +325,63 @@ h2{margin:0 0 13px;font-size:20px}
   </div>
 </div>
 
-<!-- نافذة تسجيل الدخول -->
+<!-- نافذة المصادقة: تسجيل الدخول وإنشاء الحساب كشاشتين منفصلتين -->
 <div id="authModal" class="modal">
   <div class="modal-box">
-    <h2>👤 تسجيل الدخول</h2>
-    <div class="form-title">اختاري طريقة الدخول</div>
 
-    <button class="auth-button google" onclick="googleLogin()">🔵 الدخول باستخدام Google</button>
-    <hr>
+    <!-- الشاشة الأولى: تسجيل الدخول -->
+    <div id="loginScreen" class="auth-screen active">
+      <h2 class="auth-heading">👤 أهلاً بك في AL HASSAN</h2>
+      <p class="auth-subtitle">سجّل دخولك حتى تطلب وتتابع طلباتك بسهولة 🛵</p>
 
-    <input id="emailInput" type="email" placeholder="📧 البريد الإلكتروني" autocomplete="email">
-    <input id="passwordInput" type="password" placeholder="🔒 كلمة المرور" autocomplete="current-password">
+      <button class="auth-button google" onclick="googleLogin()">
+        <span class="google-mark">G</span>
+        المتابعة باستخدام Google
+      </button>
 
-    <button class="auth-button primary" onclick="createEmailAccount()">✉️ إنشاء حساب جديد</button>
-    <button class="auth-button primary" onclick="emailLogin()">🔐 تسجيل الدخول</button>
+      <div class="auth-divider">أو باستخدام البريد الإلكتروني</div>
 
-    <!-- الزر الجديد لاستعادة كلمة السر -->
-    <button
-      id="resetPasswordButton"
-      type="button"
-      class="auth-button reset-password-button"
-      onclick="resetPassword()">
-      🔑 نسيت كلمة السر؟
-    </button>
+      <input id="emailInput" type="email" placeholder="📧 البريد الإلكتروني" autocomplete="email">
+      <input id="passwordInput" type="password" placeholder="🔒 كلمة المرور" autocomplete="current-password">
 
-    <button class="auth-button" onclick="resendVerificationEmail()">📩 إعادة إرسال رسالة التأكيد</button>
+      <button class="auth-button primary" onclick="emailLogin()">🔐 تسجيل الدخول</button>
 
-    <p id="authMessage" role="status" aria-live="polite"></p>
-    <button class="secondary" onclick="closeAuth()">إغلاق</button>
+      <button id="resetPasswordButton" type="button" class="auth-button reset-password-button" onclick="resetPassword()">
+        🔑 نسيت كلمة السر؟
+      </button>
+
+      <button class="auth-button secondary" onclick="resendVerificationEmail()">📩 إعادة إرسال رسالة التأكيد</button>
+
+      <p id="authMessage" class="auth-message" role="status" aria-live="polite"></p>
+
+      <div class="auth-divider">مستخدم جديد؟</div>
+
+      <button class="auth-switch" onclick="showSignupScreen()">✨ إنشاء حساب جديد</button>
+      <button class="auth-button secondary" onclick="closeAuth()">إغلاق</button>
+    </div>
+
+    <!-- الشاشة الثانية: إنشاء حساب جديد -->
+    <div id="signupScreen" class="auth-screen">
+      <h2 class="auth-heading">✨ إنشاء حساب جديد</h2>
+      <p class="auth-subtitle">أنشئ حسابك لتبدأ باستخدام خدمات AL HASSAN</p>
+
+      <input id="signupEmailInput" type="email" placeholder="📧 البريد الإلكتروني" autocomplete="email">
+      <input id="signupPasswordInput" type="password" placeholder="🔒 كلمة المرور (6 أحرف على الأقل)" autocomplete="new-password">
+      <input id="signupPasswordConfirm" type="password" placeholder="🔒 أعد كتابة كلمة المرور" autocomplete="new-password">
+
+      <button class="auth-button primary" onclick="createEmailAccount()">✨ إنشاء الحساب</button>
+
+      <p id="signupMessage" class="auth-message" role="status" aria-live="polite"></p>
+
+      <button class="auth-button google" onclick="googleLogin()">
+        <span class="google-mark">G</span>
+        المتابعة باستخدام Google
+      </button>
+
+      <button class="auth-switch" onclick="showLoginScreen()">🔙 عندك حساب بالفعل؟ تسجيل الدخول</button>
+      <button class="auth-button auth-back" onclick="closeAuth()">إغلاق</button>
+    </div>
+
   </div>
 </div>
 
@@ -547,6 +637,7 @@ auth.onAuthStateChanged(function(user){
   if(document.getElementById("ordersPage").classList.contains("active")) loadOrders();
 });
 
+/* تحديد موقع الزبون */
 function getCustomerLocation(){
   const message = document.getElementById("locationMessage");
 
@@ -575,38 +666,68 @@ function getCustomerLocation(){
   },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
 }
 
+/* فتح نافذة الدخول على شاشة تسجيل الدخول */
 function openAuth(){
+  showLoginScreen();
   document.getElementById("authModal").style.display = "block";
-  document.getElementById("authMessage").innerText = "";
 }
 
 function closeAuth(){
   document.getElementById("authModal").style.display = "none";
 }
 
+function showLoginScreen(){
+  document.getElementById("loginScreen").classList.add("active");
+  document.getElementById("signupScreen").classList.remove("active");
+  document.getElementById("authMessage").innerText = "";
+  document.getElementById("signupMessage").innerText = "";
+}
+
+function showSignupScreen(){
+  document.getElementById("loginScreen").classList.remove("active");
+  document.getElementById("signupScreen").classList.add("active");
+  document.getElementById("authMessage").innerText = "";
+  document.getElementById("signupMessage").innerText = "";
+}
+
+/* اختيار مكان عرض رسالة المصادقة */
+function getAuthMessage(){
+  const signupIsActive = document.getElementById("signupScreen").classList.contains("active");
+  return document.getElementById(signupIsActive ? "signupMessage" : "authMessage");
+}
+
+/* تسجيل الدخول باستخدام Google */
 async function googleLogin(){
-  const message = document.getElementById("authMessage");
-  message.innerText = "جارِ تسجيل الدخول...";
+  const message = getAuthMessage();
+  message.innerText = "⏳ جارٍ تسجيل الدخول باستخدام Google...";
 
   try{
     const provider = new firebase.auth.GoogleAuthProvider();
     await auth.signInWithPopup(provider);
-    message.innerText = "✅ تم تسجيل الدخول بنجاح";
+    message.innerText = "✅ تم تسجيل الدخول بنجاح.";
     setTimeout(closeAuth,800);
   }catch(error){
-    console.error(error);
-    message.innerText = "❌ تعذر تسجيل الدخول بواسطة Google: " + error.message;
+    console.error("Google login error:",error);
+
+    if(error.code === "auth/popup-closed-by-user"){
+      message.innerText = "تم إغلاق نافذة Google قبل إكمال تسجيل الدخول.";
+    }else if(error.code === "auth/popup-blocked"){
+      message.innerText = "المتصفح منع نافذة Google. اسمح بالنوافذ المنبثقة وحاول مرة ثانية.";
+    }else{
+      message.innerText = "❌ تعذّر تسجيل الدخول بواسطة Google. تأكد من إعدادات Firebase واتصال الإنترنت.";
+    }
   }
 }
 
-/* إنشاء حساب جديد وإرسال رابط تأكيد البريد */
+/* إنشاء حساب جديد من الشاشة المنفصلة */
 async function createEmailAccount(){
-  const email = document.getElementById("emailInput").value.trim();
-  const password = document.getElementById("passwordInput").value;
-  const message = document.getElementById("authMessage");
+  const email = document.getElementById("signupEmailInput").value.trim();
+  const password = document.getElementById("signupPasswordInput").value;
+  const confirmPassword = document.getElementById("signupPasswordConfirm").value;
+  const message = document.getElementById("signupMessage");
 
-  if(!email || !password){
-    message.innerText = "⚠️ أدخلي البريد الإلكتروني وكلمة المرور.";
+  if(!email || !password || !confirmPassword){
+    message.innerText = "⚠️ الرجاء تعبئة جميع الحقول.";
     return;
   }
 
@@ -615,22 +736,38 @@ async function createEmailAccount(){
     return;
   }
 
+  if(password !== confirmPassword){
+    message.innerText = "❌ كلمتا المرور غير متطابقتين.";
+    return;
+  }
+
+  message.innerText = "⏳ جارٍ إنشاء الحساب...";
+
   try{
     const result = await auth.createUserWithEmailAndPassword(email,password);
+
     await result.user.sendEmailVerification();
 
-    message.innerText = "✅ تم إنشاء الحساب وإرسال رسالة التأكيد. افتحي بريدك واضغطي الرابط، ثم سجّلي الدخول.";
+    message.innerText =
+      "✅ تم إنشاء الحساب وإرسال رسالة تأكيد إلى بريدك الإلكتروني. افتح الرسالة واضغط رابط التأكيد قبل إرسال الطلبات.";
+
+    document.getElementById("signupPasswordInput").value = "";
+    document.getElementById("signupPasswordConfirm").value = "";
   }catch(error){
-    console.error(error);
+    console.error("Create account error:",error);
 
     if(error.code === "auth/email-already-in-use"){
-      message.innerText = "هذا البريد مسجّل مسبقًا. استخدمي زر تسجيل الدخول.";
+      message.innerText = "⚠️ هذا البريد مسجّل مسبقًا. ارجع إلى صفحة تسجيل الدخول.";
     }else if(error.code === "auth/invalid-email"){
-      message.innerText = "عنوان البريد الإلكتروني غير صحيح.";
+      message.innerText = "❌ البريد الإلكتروني غير صحيح.";
     }else if(error.code === "auth/weak-password"){
-      message.innerText = "اختاري كلمة مرور أقوى، من 6 أحرف على الأقل.";
+      message.innerText = "❌ اختَر كلمة مرور أقوى، من 6 أحرف على الأقل.";
+    }else if(error.code === "auth/too-many-requests"){
+      message.innerText = "⚠️ محاولات كثيرة. انتظر قليلاً وحاول مجددًا.";
+    }else if(error.code === "auth/network-request-failed"){
+      message.innerText = "❌ تعذّر الاتصال بالإنترنت. حاول مرة ثانية.";
     }else{
-      message.innerText = "❌ تعذّر إنشاء الحساب: " + error.message;
+      message.innerText = "❌ تعذّر إنشاء الحساب. حاول مرة ثانية.";
     }
   }
 }
@@ -642,7 +779,7 @@ async function emailLogin(){
   const message = document.getElementById("authMessage");
 
   if(!email || !password){
-    message.innerText = "⚠️ أدخلي البريد الإلكتروني وكلمة المرور.";
+    message.innerText = "⚠️ أدخل البريد الإلكتروني وكلمة المرور.";
     return;
   }
 
@@ -651,23 +788,25 @@ async function emailLogin(){
     await result.user.reload();
 
     if(!auth.currentUser.emailVerified){
-      message.innerText = "📩 بريدك غير مؤكّد. افتحي رسالة التأكيد، ثم عودي وسجّلي الدخول.";
+      message.innerText = "📩 بريدك غير مؤكّد. افتح رسالة التأكيد، ثم عُد وسجّل الدخول بعد تأكيده.";
       return;
     }
 
     message.innerText = "✅ تم تسجيل الدخول بنجاح.";
     setTimeout(closeAuth,800);
   }catch(error){
-    console.error(error);
+    console.error("Email login error:",error);
 
     if(
       error.code === "auth/user-not-found" ||
       error.code === "auth/wrong-password" ||
       error.code === "auth/invalid-credential"
     ){
-      message.innerText = "❌ البريد أو كلمة المرور غير صحيحة. إذا كنتِ جديدة، أنشئي حسابًا أولًا.";
+      message.innerText = "❌ البريد أو كلمة المرور غير صحيحة. إذا كنت جديدًا، أنشئ حسابًا أولًا.";
+    }else if(error.code === "auth/too-many-requests"){
+      message.innerText = "⚠️ محاولات كثيرة. انتظر قليلاً ثم حاول مجددًا.";
     }else{
-      message.innerText = "❌ تعذّر تسجيل الدخول: " + error.message;
+      message.innerText = "❌ تعذّر تسجيل الدخول. تحقق من الاتصال وحاول مجددًا.";
     }
   }
 }
@@ -680,15 +819,14 @@ async function resetPassword(){
   const email = emailInput.value.trim();
 
   if(!email){
-    message.innerText = "📧 اكتبي بريدك الإلكتروني أولاً، ثم اضغطي «نسيت كلمة السر؟».";
+    message.innerText = "📧 اكتب بريدك الإلكتروني أولاً، ثم اضغط «نسيت كلمة السر؟».";
     emailInput.focus();
     return;
   }
 
-  /* التحقق من شكل البريد قبل إرسال الطلب */
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if(!emailPattern.test(email)){
-    message.innerText = "❌ اكتبي بريدًا إلكترونيًا صحيحًا.";
+    message.innerText = "❌ اكتب بريدًا إلكترونيًا صحيحًا.";
     emailInput.focus();
     return;
   }
@@ -701,20 +839,20 @@ async function resetPassword(){
     await auth.sendPasswordResetEmail(email);
 
     message.innerText =
-      "✅ إذا كان هذا البريد مسجلاً، فستصلك رسالة فيها رابط لإعادة تعيين كلمة السر. تحققي من البريد الوارد ومجلد الرسائل غير المرغوب فيها.";
+      "✅ إذا كان هذا البريد مسجلاً، فستصلك رسالة فيها رابط لإعادة تعيين كلمة السر. تحقق من البريد الوارد ومجلد الرسائل غير المرغوب فيها.";
 
     document.getElementById("passwordInput").value = "";
   }catch(error){
     console.error("Password reset error:",error);
 
     if(error.code === "auth/invalid-email"){
-      message.innerText = "❌ البريد الإلكتروني غير صحيح. راجعيه وحاولي مرة ثانية.";
+      message.innerText = "❌ البريد الإلكتروني غير صحيح. راجعه وحاول مرة ثانية.";
     }else if(error.code === "auth/too-many-requests"){
-      message.innerText = "⚠️ جرت محاولات كثيرة. انتظري قليلاً ثم حاولي مجددًا.";
+      message.innerText = "⚠️ جرت محاولات كثيرة. انتظر قليلاً ثم حاول مجددًا.";
     }else if(error.code === "auth/network-request-failed"){
-      message.innerText = "❌ تعذّر الاتصال بالإنترنت. تحققي من الاتصال وحاولي مجددًا.";
+      message.innerText = "❌ تعذّر الاتصال بالإنترنت. تحقق من الاتصال وحاول مجددًا.";
     }else{
-      message.innerText = "❌ تعذّر إرسال رسالة استعادة كلمة السر. حاولي مرة ثانية بعد قليل.";
+      message.innerText = "❌ تعذّر إرسال رسالة استعادة كلمة السر. حاول مرة ثانية بعد قليل.";
     }
   }finally{
     button.disabled = false;
@@ -734,7 +872,7 @@ async function resendVerificationEmail(){
       const password = document.getElementById("passwordInput").value;
 
       if(!email || !password){
-        message.innerText = "أدخلي بريدك وكلمة المرور، ثم سجّلي الدخول لإعادة إرسال التأكيد.";
+        message.innerText = "أدخل بريدك وكلمة المرور، ثم سجّل الدخول لإعادة إرسال التأكيد.";
         return;
       }
 
@@ -751,13 +889,19 @@ async function resendVerificationEmail(){
     }
 
     await user.sendEmailVerification();
-    message.innerText = "📩 أرسلنا رسالة جديدة. تحقّقي من البريد الوارد ومجلد الرسائل غير المرغوب فيها.";
+    message.innerText = "📩 أرسلنا رسالة جديدة. تحقق من البريد الوارد ومجلد الرسائل غير المرغوب فيها.";
   }catch(error){
-    console.error(error);
-    message.innerText = "❌ تعذّر إرسال رسالة التأكيد. تأكدي من البريد وكلمة المرور. " + error.message;
+    console.error("Resend verification error:",error);
+
+    if(error.code === "auth/too-many-requests"){
+      message.innerText = "⚠️ أُجريت محاولات كثيرة. انتظر قليلاً ثم حاول مجددًا.";
+    }else{
+      message.innerText = "❌ تعذّر إرسال رسالة التأكيد. تأكد من البريد وكلمة المرور وحاول مجددًا.";
+    }
   }
 }
 
+/* تحديث صفحة الحساب */
 function updateAccount(){
   const box = document.getElementById("accountContent");
   if(!box) return;
@@ -805,10 +949,11 @@ async function logout(){
     showPage("home");
   }catch(error){
     console.error(error);
-    alert("تعذر تسجيل الخروج: " + error.message);
+    alert("تعذر تسجيل الخروج. حاول مرة ثانية.");
   }
 }
 
+/* فتح نموذج الطلب */
 function openOrder(){
   if(!currentUser){
     openAuth();
@@ -871,8 +1016,8 @@ async function sendOrder(){
     currentUser.providerData.some(provider => provider.providerId === "password") &&
     !currentUser.emailVerified
   ){
-    document.getElementById("orderMessage").innerText = "📩 أكّدي بريدك الإلكتروني قبل إرسال الطلب.";
-    document.getElementById("authModal").style.display = "block";
+    document.getElementById("orderMessage").innerText = "📩 أكّد بريدك الإلكتروني قبل إرسال الطلب.";
+    openAuth();
     document.getElementById("authMessage").innerText = "يجب تأكيد البريد الإلكتروني قبل إرسال الطلب.";
     return;
   }
@@ -981,10 +1126,11 @@ async function sendOrder(){
     },2500);
   }catch(error){
     console.error("خطأ في حفظ الطلب:",error);
-    orderMessage.innerText = "❌ حدث خطأ أثناء إرسال الطلب: " + error.message;
+    orderMessage.innerText = "❌ حدث خطأ أثناء إرسال الطلب. تحقق من الاتصال وحاول مجددًا.";
   }
 }
 
+/* التنقل بين صفحات الموقع */
 function showPage(page){
   document.querySelectorAll(".page").forEach(element => element.classList.remove("active"));
   document.querySelectorAll(".bottom button").forEach(element => element.classList.remove("active"));
@@ -1014,6 +1160,7 @@ function showPage(page){
   window.scrollTo(0,0);
 }
 
+/* تحميل طلبات الزبون */
 async function loadOrders(){
   const box = document.getElementById("ordersList");
   stopAllCustomerTracking();
@@ -1130,11 +1277,12 @@ async function loadOrders(){
       }
     });
   }catch(error){
-    console.error(error);
+    console.error("Load orders error:",error);
     box.innerHTML = '<div class="empty">تعذر تحميل الطلبات حالياً. تأكد من اتصال الإنترنت وصلاحيات Firestore.</div>';
   }
 }
 
+/* البحث */
 document.getElementById("searchInput").addEventListener("input",function(){
   const value = this.value.trim().toLowerCase();
   if(!value) return;
@@ -1154,16 +1302,22 @@ document.getElementById("searchInput").addEventListener("input",function(){
   if(type) openOrderWithCategory(type);
 });
 
+/* إتاحة الدوال للأزرار */
 window.openDrawer = openDrawer;
 window.closeDrawer = closeDrawer;
 window.getCustomerLocation = getCustomerLocation;
+
 window.openAuth = openAuth;
 window.closeAuth = closeAuth;
+window.showLoginScreen = showLoginScreen;
+window.showSignupScreen = showSignupScreen;
+
 window.googleLogin = googleLogin;
 window.emailLogin = emailLogin;
 window.createEmailAccount = createEmailAccount;
 window.resetPassword = resetPassword;
 window.resendVerificationEmail = resendVerificationEmail;
+
 window.logout = logout;
 window.openOrder = openOrder;
 window.openOrderWithCategory = openOrderWithCategory;
