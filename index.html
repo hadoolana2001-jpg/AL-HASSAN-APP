@@ -11,6 +11,50 @@
 body{margin:0;font-family:Arial,sans-serif;background:#f5f5f5;color:#222;padding-bottom:75px}
 button,input,textarea,select{font-family:inherit}
 button{cursor:pointer}
+
+/* الشريط العلوي الرفيع */
+.welcome-ticker{
+  height:31px;
+  width:100%;
+  overflow:hidden;
+  background:#fff;
+  color:#d90714;
+  border-bottom:1px solid #f0dfe0;
+  display:flex;
+  align-items:center;
+  position:relative;
+  z-index:5;
+}
+.welcome-ticker-track{
+  display:flex;
+  align-items:center;
+  width:max-content;
+  white-space:nowrap;
+  direction:ltr;
+  animation:welcomeMoveRight 26s linear infinite;
+  will-change:transform;
+}
+.welcome-ticker-text{
+  direction:rtl;
+  white-space:nowrap;
+  padding-left:55px;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:.15px;
+}
+@keyframes welcomeMoveRight{
+  from{transform:translateX(-50%)}
+  to{transform:translateX(0)}
+}
+.welcome-ticker:hover .welcome-ticker-track{
+  animation-play-state:paused;
+}
+@media(prefers-reduced-motion:reduce){
+  .welcome-ticker-track{animation:none}
+  .welcome-ticker{overflow-x:auto}
+}
+
+/* رأس الموقع */
 header{background:#e30613;color:white;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
 .logo{font-size:22px;font-weight:bold}
 .location{font-size:12px}
@@ -78,11 +122,47 @@ h2{margin:0 0 13px;font-size:20px}
 .drawer-link:hover{background:#fff0f0}
 .drawer-link span{margin-left:9px}
 .drawer-note{font-size:12px;color:#777;line-height:1.7;margin-top:18px}
-@media(max-width:380px){.categories{grid-template-columns:repeat(3,1fr)}.logo{font-size:19px}.location{font-size:11px}}
+
+/* معلومات الإدارة أسفل الصفحة وعلى جنب */
+.site-footer{
+  margin:8px 17px 22px;
+  padding:10px 0;
+  text-align:right;
+  color:#777;
+  font-size:12px;
+  line-height:1.9;
+}
+.site-footer .manager-name{
+  color:#555;
+  font-weight:bold;
+}
+.site-footer a{
+  color:#e30613;
+  text-decoration:none;
+  direction:ltr;
+  unicode-bidi:embed;
+  display:inline-block;
+  font-weight:bold;
+}
+@media(max-width:380px){
+  .categories{grid-template-columns:repeat(3,1fr)}
+  .logo{font-size:19px}
+  .location{font-size:11px}
+  .welcome-ticker-text{font-size:12px}
+}
 </style>
 </head>
 
 <body>
+
+<!-- شريط الترحيب المتحرك -->
+<div class="welcome-ticker" aria-label="رسالة ترحيبية من خدمة الحسن">
+  <div class="welcome-ticker-track">
+    <span class="welcome-ticker-text">مع خدمة الحسن 🛵 اطلب والباقي علينا 😉</span>
+    <span class="welcome-ticker-text" aria-hidden="true">مع خدمة الحسن 🛵 اطلب والباقي علينا 😉</span>
+  </div>
+</div>
+
 <header>
 <button class="menu-button" onclick="openDrawer()" aria-label="فتح القائمة">☰</button>
 <div class="logo">AL HASSAN 🛵</div>
@@ -166,6 +246,15 @@ h2{margin:0 0 13px;font-size:20px}
     </section>
   </div>
 </main>
+
+<!-- معلومات الإدارة في أسفل الصفحة وعلى الجانب -->
+<footer class="site-footer">
+  <div class="manager-name">بإدارة بشار النحاس</div>
+  <div>
+    للتواصل:
+    <a href="tel:+9630992536508" dir="ltr">+963 0992536508</a>
+  </div>
+</footer>
 
 <div id="orderModal" class="modal">
   <div class="modal-box">
