@@ -19,6 +19,9 @@ header{background:#e30613;color:white;padding:18px;display:flex;justify-content:
 input{width:100%;padding:13px;border:1px solid #ddd;border-radius:10px;font-size:15px;outline:none;margin-bottom:8px}
 .primary{background:#e30613;color:white;width:100%}
 .green,.accept{background:#168a35;color:white;width:100%}
+.secondary{background:#555;color:white;width:100%;margin-top:8px}
+.stop{background:#555;color:white;width:100%;margin-top:8px}
+.notification-button{background:#ff9800;color:white;width:100%;margin-top:8px}
 .order-top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
 .category{color:#e30613;font-weight:bold}
 .status{background:#eee;padding:6px 10px;border-radius:20px;font-size:12px}
@@ -28,28 +31,24 @@ input{width:100%;padding:13px;border:1px solid #ddd;border-radius:10px;font-size
 .error{color:#c00;font-weight:bold}
 .message{text-align:center;font-weight:bold;padding:10px;line-height:1.7}
 .empty{text-align:center;color:#777;padding:25px;line-height:1.7}
-.driver-info{background:#fff3f3;padding:12px;border-radius:10px;margin-top:10px;font-size:14px;line-height:1.8}
-.stop{background:#555;color:white;width:100%;margin-top:8px}
+.driver-info{background:#fff3f3;padding:12px;border-radius:10px;margin-top:10px;font-size:14px;line-height:1.8;overflow-wrap:anywhere}
 .map-link{display:block;text-align:center;background:#fff0f0;color:#c9000c;padding:12px;border-radius:10px;text-decoration:none;margin-top:8px;font-weight:bold;border:1px solid #ffd5d5}
 .coordinates{background:#eef7ff;padding:10px;border-radius:10px;margin-top:10px;font-size:13px;line-height:1.8;overflow-wrap:anywhere;white-space:pre-line}
 .notification-box{background:#fff8e6;padding:12px;border-radius:10px;margin-top:12px;font-size:14px;line-height:1.7;overflow-wrap:anywhere}
-.notification-button{background:#ff9800;color:white;width:100%;margin-top:8px}
-.secondary{background:#555;color:white;width:100%;margin-top:8px}
 .hidden{display:none!important}
-.muted{font-size:13px;color:#666;line-height:1.7}
+.muted{font-size:13px;color:#666;line-height:1.8}
 .map-shell{position:relative;overflow:hidden;border-radius:15px;border:1px solid #e5e5e5;background:#eee;margin-top:12px}
-#driverMap{height:175px;width:100%;z-index:1;background:#eee;transition:height .2s ease}
+#driverMap{height:175px;width:100%;z-index:1;background:#eee}
 .map-shell.expanded{position:fixed;z-index:9999;inset:10px;border-radius:16px;box-shadow:0 0 0 100vmax rgba(0,0,0,.65)}
 .map-shell.expanded #driverMap{height:calc(100dvh - 100px);min-height:300px}
 .map-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.map-control{background:#f2f2f2;color:#222;padding:11px 8px;font-size:13px;border-radius:10px}
-.map-caption{font-size:12px;color:#666;line-height:1.7;margin-top:8px}
+.map-control{background:#f2f2f2;color:#222;padding:11px 8px;font-size:13px}
+.map-caption,.route-status{font-size:12px;color:#666;line-height:1.7;margin-top:8px}
 .map-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:#444}
 .legend-item{display:flex;align-items:center;gap:5px}
 .legend-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
 .customer-dot{background:#e30613}
 .driver-dot{background:#168a35}
-.route-status{font-size:12px;color:#666;margin-top:8px;line-height:1.6}
 .leaflet-popup-content{font-family:Arial,sans-serif;line-height:1.7;text-align:right}
 .custom-map-icon{background:transparent;border:0}
 .map-pin{width:38px;height:38px;border-radius:50% 50% 50% 8px;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;border:3px solid #fff;box-shadow:0 2px 9px #0004}
@@ -63,45 +62,80 @@ input{width:100%;padding:13px;border:1px solid #ddd;border-radius:10px;font-size
   <div class="logo">AL HASSAN 🛵</div>
   <div>مندوب</div>
 </header>
-
 <div class="wrap">
   <div class="card" id="authCard">
     <div class="title">🔐 حساب المندوب</div>
-    <div id="authMessage" class="muted">سجّل حسابًا جديدًا أو ادخل إلى حسابك. الحساب الجديد يحتاج موافقة المدير.</div>
+    <div id="authMessage" class="muted">
+      سجّل حسابًا جديدًا أو ادخل إلى حسابك.
+      الحسابات الجديدة تحتاج تأكيد البريد وموافقة المدير.
+    </div>
     <div id="signupFields">
       <input id="fullName" placeholder="الاسم الكامل" autocomplete="name">
-      <input id="driverNumber" placeholder="رقم المندوب" inputmode="numeric">
-      <input id="phone" placeholder="رقم الهاتف" type="tel" autocomplete="tel">
+      <input id="phone" placeholder="رقم الهاتف مع رمز البلد" type="tel" autocomplete="tel">
+      <input id="age" placeholder="العمر" type="number" min="18" max="100">
+      <input id="region" placeholder="منطقة السكن">
     </div>
     <input id="email" type="email" placeholder="البريد الإلكتروني" autocomplete="email">
     <input id="password" type="password" placeholder="كلمة المرور (6 أحرف على الأقل)" autocomplete="current-password">
     <button id="signupButton" class="primary">إنشاء حساب مندوب</button>
+    <button id="googleButton" class="secondary">التسجيل بواسطة Google</button>
     <button id="loginButton" class="secondary">تسجيل الدخول</button>
+    <button id="resendVerificationButton" class="secondary hidden">
+      إعادة إرسال تأكيد البريد
+    </button>
+    <button id="refreshVerificationButton" class="secondary hidden">
+      تحققت من بريدي — تحديث الحالة
+    </button>
     <button id="logoutButton" class="secondary hidden">تسجيل الخروج</button>
   </div>
-
+  <div class="card hidden" id="verifyCard">
+    <div class="title">📧 أكّد بريدك الإلكتروني</div>
+    <p class="muted">
+      أرسلنا رسالة تأكيد إلى بريدك الإلكتروني.
+      افتح الرسالة واضغط على رابط التأكيد، ثم ارجع إلى هذه الصفحة
+      واضغط على زر تحديث الحالة.
+      افحص مجلد الرسائل غير المرغوب فيها إذا لم تجد الرسالة.
+    </p>
+    <div id="verifyInfo" class="driver-info"></div>
+  </div>
   <div class="card hidden" id="pendingCard">
     <div class="title">⏳ الحساب بانتظار موافقة المدير</div>
-    <p class="muted">تم تسجيل طلبك. لن تظهر لك الطلبات ولن تتمكن من استلامها حتى يوافق المدير على حسابك.</p>
+    <p class="muted">
+      وصل طلب تسجيلك. لن تستطيع استخدام لوحة المندوب أو استلام الطلبات
+      حتى يوافق المدير على حسابك.
+    </p>
     <div id="pendingInfo" class="driver-info"></div>
   </div>
-
+  <div class="card hidden" id="rejectedCard">
+    <div class="title">❌ لم تتم الموافقة على الحساب</div>
+    <p class="muted">
+      لم تتم الموافقة على طلبك. يرجى التواصل مع إدارة AL HASSAN.
+    </p>
+    <div id="rejectedInfo" class="driver-info"></div>
+  </div>
   <div class="card hidden" id="approvedInfoCard">
     <div class="title">👤 معلومات المندوب</div>
     <div id="driverInfo" class="driver-info"></div>
   </div>
-
   <div id="workArea" class="hidden">
     <div class="card">
       <div class="title">🔔 إشعارات الطلبات</div>
-      <div id="notificationStatus" class="notification-box">سجّل الدخول بحساب مندوب موافَق عليه لتفعيل الإشعارات.</div>
-      <button id="notificationButton" class="notification-button">🔔 تفعيل إشعارات الطلبات</button>
+      <div id="notificationStatus" class="notification-box">
+        اضغط لتفعيل إشعارات الطلبات.
+      </div>
+      <button id="notificationButton" class="notification-button">
+        🔔 تفعيل إشعارات الطلبات
+      </button>
     </div>
-
     <div class="card">
       <div class="title">🗺️ خريطة التوصيل</div>
-      <p class="muted">بعد استلام الطلب، ستظهر علامة موقع الزبون وموقعك الحالي والطريق بينكما عند توفر البيانات.</p>
-      <div id="mapShell" class="map-shell"><div id="driverMap"></div></div>
+      <p class="muted">
+        بعد استلام الطلب، ستظهر علامة موقع الزبون وموقعك الحالي
+        والطريق بينكما عند توفر البيانات.
+      </p>
+      <div id="mapShell" class="map-shell">
+        <div id="driverMap"></div>
+      </div>
       <div class="map-controls">
         <button id="expandMapButton" class="map-control">⛶ تكبير الخريطة</button>
         <button id="fitMapButton" class="map-control">📍 إظهار الموقعين</button>
@@ -110,29 +144,30 @@ input{width:100%;padding:13px;border:1px solid #ddd;border-radius:10px;font-size
         <span class="legend-item"><span class="legend-dot driver-dot"></span> موقع المندوب</span>
         <span class="legend-item"><span class="legend-dot customer-dot"></span> موقع الزبون</span>
       </div>
-      <div id="routeStatus" class="route-status">بانتظار استلام طلب لعرض الطريق.</div>
+      <div id="routeStatus" class="route-status">بانتظار استلام طلب.</div>
       <div id="coordinates" class="coordinates hidden"></div>
-      <button id="locationButton" class="green" style="margin-top:12px">📍 بدء مشاركة موقعي</button>
+      <button id="locationButton" class="green" style="margin-top:12px">
+        📍 بدء مشاركة موقعي
+      </button>
       <div id="locationStatus" class="location-status">الموقع غير مشارك حاليًا.</div>
       <button id="stopLocationButton" class="stop hidden">🛑 إيقاف مشاركة الموقع</button>
-      <p class="map-caption">الخريطة من OpenStreetMap. يمكن استخدام Google Maps للملاحة. يتطلب التتبع السماح للموقع والاتصال بالإنترنت.</p>
+      <p class="map-caption">
+        الخريطة من OpenStreetMap. يمكن استخدام Google Maps للملاحة.
+        يتطلب التتبع السماح للموقع والاتصال بالإنترنت.
+      </p>
     </div>
-
     <div id="message" class="message"></div>
-
     <div class="card">
       <div class="title">📦 الطلبات المتاحة</div>
       <div id="orders"><div class="empty">جارٍ تحميل الطلبات...</div></div>
       <button id="refreshButton" class="primary">🔄 تحديث الطلبات</button>
     </div>
-
     <div id="activeOrderBox" class="card hidden">
       <div class="title">🛵 طلبي الحالي</div>
       <div id="activeOrder"></div>
     </div>
   </div>
 </div>
-
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -142,13 +177,12 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {
   getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-  onAuthStateChanged, signOut
+  onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup,
+  sendEmailVerification, reload
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   getMessaging, getToken, onMessage, isSupported
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
-
-/* إعدادات Firebase: تم تصحيح apiKey */
 const firebaseConfig = {
   apiKey: "AIzaSyB5hMTyYH6I6Z_Ij4VYdVsvaWAaiLt9SRA",
   authDomain: "al-hassan-b39d6.firebaseapp.com",
@@ -158,13 +192,11 @@ const firebaseConfig = {
   appId: "1:239416840375:web:804d0308ce3d7afee97d32",
   measurementId: "G-6C86NGWQCS"
 };
-
 const VAPID_KEY = "BCISwqcccFaenHMCg9sfcvasZJvYqULgNa9jtxnpMLjb-iZ7_bs-wdw9l0LIz7trHwNakmUrwi03z2h3D0hTeO4";
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-
+const googleProvider = new GoogleAuthProvider();
 let messaging = null;
 let locationWatcher = null;
 let locationBusy = false;
@@ -174,56 +206,368 @@ let driverData = null;
 let activeOrderId = localStorage.getItem("alhassan_active_order") || "";
 let activeOrderUnsubscribe = null;
 let listeningOrderId = "";
-
+let accountCheckVersion = 0;
 const $ = id => document.getElementById(id);
-
 function setVisible(id, yes) {
   $(id).classList.toggle("hidden", !yes);
 }
-
 function showMessage(text, error = false) {
   const box = $("message");
   box.textContent = text;
   box.style.color = error ? "#c00" : "#168a35";
 }
-
 function setNotificationStatus(text, type = "normal") {
   const box = $("notificationStatus");
-  if (!box) return;
   box.textContent = text;
-  box.style.background = type === "success" ? "#e9f8ed" : type === "error" ? "#fff0f0" : "#fff8e6";
-  box.style.color = type === "success" ? "#168a35" : type === "error" ? "#c00" : "#555";
+  box.style.background =
+    type === "success" ? "#e9f8ed" :
+    type === "error" ? "#fff0f0" : "#fff8e6";
+  box.style.color =
+    type === "success" ? "#168a35" :
+    type === "error" ? "#c00" : "#555";
 }
-
-function supportMessage() {
-  const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
-    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  const standalone = window.matchMedia("(display-mode: standalone)").matches ||
-    navigator.standalone === true;
-
-  if (ios && !standalone) {
-    return "على iPhone: افتح الصفحة في Safari ثم مشاركة ← إضافة إلى الشاشة الرئيسية وافتحها من الأيقونة. إشعارات الويب تحتاج iOS 16.4 أو أحدث.";
-  }
-  if (ios) return "تأكد من iOS 16.4 أو أحدث ومن السماح بالإشعارات من إعدادات الجهاز.";
-  return "هذا المتصفح أو وضع التصفح الحالي لا يدعم إشعارات الويب المطلوبة.";
-}
-
 function withTimeout(promise, ms, msg) {
   let timer;
   return Promise.race([
     promise,
-    new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(msg)), ms); })
+    new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(msg)), ms);
+    })
   ]).finally(() => clearTimeout(timer));
 }
-
 function escapeHTML(value) {
   return String(value ?? "").replace(/[&<>"']/g, c => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   }[c]));
 }
-
+function authError(error) {
+  const codes = {
+    "auth/email-already-in-use": "هذا البريد مسجّل من قبل. جرّب تسجيل الدخول.",
+    "auth/invalid-email": "صيغة البريد الإلكتروني غير صحيحة.",
+    "auth/weak-password": "كلمة المرور قصيرة؛ استخدم 6 أحرف على الأقل.",
+    "auth/invalid-credential": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+    "auth/user-not-found": "لا يوجد حساب بهذا البريد.",
+    "auth/wrong-password": "كلمة المرور غير صحيحة.",
+    "auth/too-many-requests": "محاولات كثيرة. انتظر قليلًا ثم حاول مجددًا.",
+    "auth/network-request-failed": "تعذّر الاتصال بالإنترنت.",
+    "auth/popup-closed-by-user": "أغلقت نافذة Google قبل إكمال التسجيل.",
+    "auth/popup-blocked": "المتصفح منع نافذة Google. اسمح بالنوافذ المنبثقة ثم حاول مجددًا.",
+    "auth/unauthorized-domain": "عنوان الموقع غير مضاف إلى Authorized domains في Firebase.",
+    "auth/operation-not-allowed": "طريقة تسجيل الدخول غير مفعّلة في Firebase."
+  };
+  return codes[error.code] || error.message || "حدث خطأ غير معروف.";
+}
+function readProfile() {
+  const name = $("fullName").value.trim();
+  const phone = $("phone").value.trim();
+  const age = Number($("age").value);
+  const region = $("region").value.trim();
+  if (!name || !phone || !$("age").value || !region) {
+    throw new Error("يرجى تعبئة الاسم الكامل ورقم الهاتف والعمر ومنطقة السكن.");
+  }
+  if (!Number.isInteger(age) || age < 18 || age > 100) {
+    throw new Error("يجب إدخال عمر صحيح بين 18 و100 سنة.");
+  }
+  if (phone.length < 6) {
+    throw new Error("يرجى كتابة رقم هاتف صحيح.");
+  }
+  return { name, phone, age, region };
+}
+function fillProfile(profile) {
+  $("fullName").value = profile.name || "";
+  $("phone").value = profile.phone || "";
+  $("age").value = profile.age ?? "";
+  $("region").value = profile.region || "";
+}
+function hideAccountStates() {
+  [
+    "verifyCard", "pendingCard", "rejectedCard",
+    "approvedInfoCard", "workArea"
+  ].forEach(id => setVisible(id, false));
+}
 /* =========================
-   خريطة المندوب والزبون والطريق
+   إنشاء حساب بالبريد الإلكتروني
+========================= */
+$("signupButton").addEventListener("click", async () => {
+  let profile;
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  try {
+    profile = readProfile();
+    if (!email || !password) {
+      throw new Error("يرجى إدخال البريد الإلكتروني وكلمة المرور.");
+    }
+    if (password.length < 6) {
+      throw new Error("كلمة المرور يجب أن تكون 6 أحرف على الأقل.");
+    }
+  } catch (e) {
+    $("authMessage").textContent = e.message;
+    return;
+  }
+  $("signupButton").disabled = true;
+  try {
+    const credential = await createUserWithEmailAndPassword(auth, email, password);
+    try {
+      await sendEmailVerification(credential.user);
+    } catch (e) {
+      $("authMessage").textContent =
+        "تم إنشاء الحساب، لكن تعذر إرسال رسالة التأكيد. سجّل الدخول وحاول إعادة إرسالها. " +
+        authError(e);
+      setVisible("resendVerificationButton", true);
+      setVisible("refreshVerificationButton", true);
+      return;
+    }
+    await setDoc(doc(db, "driverApplications", credential.user.uid), {
+      uid: credential.user.uid,
+      name: profile.name,
+      phone: profile.phone,
+      age: profile.age,
+      region: profile.region,
+      email,
+      authProvider: "password",
+      status: "pending",
+      createdAt: serverTimestamp()
+    });
+    fillProfile(profile);
+    $("verifyInfo").textContent = "📧 " + email;
+    hideAccountStates();
+    setVisible("verifyCard", true);
+    setVisible("resendVerificationButton", true);
+    setVisible("refreshVerificationButton", true);
+    $("authMessage").textContent =
+      "تم إنشاء الحساب. أكّد بريدك الإلكتروني أولًا، ثم انتظر موافقة المدير.";
+  } catch (e) {
+    $("authMessage").textContent = "تعذّر إنشاء الحساب: " + authError(e);
+  } finally {
+    $("signupButton").disabled = false;
+  }
+});
+/* =========================
+   تسجيل الدخول بالبريد
+========================= */
+$("loginButton").addEventListener("click", async () => {
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  if (!email || !password) {
+    $("authMessage").textContent = "اكتب البريد الإلكتروني وكلمة المرور أولًا.";
+    return;
+  }
+  $("loginButton").disabled = true;
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (e) {
+    $("authMessage").textContent = "تعذّر تسجيل الدخول: " + authError(e);
+  } finally {
+    $("loginButton").disabled = false;
+  }
+});
+/* =========================
+   التسجيل بواسطة Google
+========================= */
+$("googleButton").addEventListener("click", async () => {
+  let profile;
+  try {
+    profile = readProfile();
+  } catch (e) {
+    $("authMessage").textContent = e.message;
+    return;
+  }
+  $("googleButton").disabled = true;
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
+    const driverRef = doc(db, "drivers", user.uid);
+    const appRef = doc(db, "driverApplications", user.uid);
+    const driverSnap = await getDoc(driverRef);
+    const appSnap = await getDoc(appRef);
+    if (driverSnap.exists() && driverSnap.data().status === "approved") {
+      await refreshAccount(user);
+      return;
+    }
+    if (!appSnap.exists()) {
+      await setDoc(appRef, {
+        uid: user.uid,
+        name: profile.name,
+        phone: profile.phone,
+        age: profile.age,
+        region: profile.region,
+        email: user.email || "",
+        authProvider: "google",
+        status: "pending",
+        createdAt: serverTimestamp()
+      });
+    }
+    await refreshAccount(user);
+  } catch (e) {
+    $("authMessage").textContent = "تعذّر التسجيل بواسطة Google: " + authError(e);
+  } finally {
+    $("googleButton").disabled = false;
+  }
+});
+/* =========================
+   إعادة إرسال تأكيد البريد
+========================= */
+$("resendVerificationButton").addEventListener("click", async () => {
+  const user = auth.currentUser;
+  if (!user) {
+    $("authMessage").textContent = "سجّل الدخول إلى حسابك أولًا.";
+    return;
+  }
+  try {
+    await reload(user);
+    if (auth.currentUser.emailVerified) {
+      await refreshAccount(auth.currentUser);
+      return;
+    }
+    await sendEmailVerification(auth.currentUser);
+    $("authMessage").textContent = "تم إرسال رسالة تأكيد جديدة. افحص بريدك الإلكتروني.";
+  } catch (e) {
+    $("authMessage").textContent = "تعذّر إرسال رسالة التأكيد: " + authError(e);
+  }
+});
+$("refreshVerificationButton").addEventListener("click", async () => {
+  const user = auth.currentUser;
+  if (!user) return;
+  try {
+    await reload(user);
+    if (auth.currentUser.emailVerified) {
+      await refreshAccount(auth.currentUser);
+    } else {
+      $("authMessage").textContent =
+        "لم يتم تأكيد البريد بعد. افتح رسالة التأكيد ثم حاول مجددًا.";
+    }
+  } catch (e) {
+    $("authMessage").textContent = "تعذّر تحديث الحالة: " + authError(e);
+  }
+});
+/* =========================
+   تسجيل الخروج
+========================= */
+$("logoutButton").addEventListener("click", async () => {
+  await stopLocation(false);
+  stopActiveOrderListener();
+  closeExpandedMap();
+  await signOut(auth);
+  activeOrderId = "";
+  localStorage.removeItem("alhassan_active_order");
+  $("authMessage").textContent = "تم تسجيل الخروج.";
+});
+/* =========================
+   فحص الحساب وموافقة المدير
+========================= */
+async function refreshAccount(user) {
+  const version = ++accountCheckVersion;
+  currentDriver = user;
+  driverData = null;
+  setVisible("authCard", true);
+  setVisible("logoutButton", !!user);
+  hideAccountStates();
+  if (!user) {
+    await stopLocation(false);
+    stopActiveOrderListener();
+    activeOrderId = "";
+    localStorage.removeItem("alhassan_active_order");
+    $("signupFields").classList.remove("hidden");
+    $("signupButton").classList.remove("hidden");
+    $("googleButton").classList.remove("hidden");
+    $("loginButton").classList.remove("hidden");
+    setVisible("resendVerificationButton", false);
+    setVisible("refreshVerificationButton", false);
+    $("authMessage").textContent =
+      "سجّل حسابًا جديدًا أو ادخل إلى حسابك. الحساب الجديد يحتاج تأكيد البريد وموافقة المدير.";
+    return;
+  }
+  $("signupFields").classList.add("hidden");
+  $("signupButton").classList.add("hidden");
+  $("googleButton").classList.add("hidden");
+  $("loginButton").classList.add("hidden");
+  $("authMessage").textContent = "جارٍ التحقق من حسابك...";
+  try {
+    const driverRef = doc(db, "drivers", user.uid);
+    const appRef = doc(db, "driverApplications", user.uid);
+    const [driverSnap, appSnap] = await Promise.all([
+      getDoc(driverRef),
+      getDoc(appRef)
+    ]);
+    if (version !== accountCheckVersion || auth.currentUser?.uid !== user.uid) return;
+    /*
+      لا نفعّل أي حساب جديد قبل تأكيد البريد.
+      Google يوفّر عادةً emailVerified=true بعد نجاح تسجيل الدخول.
+    */
+    if (!user.emailVerified) {
+      await stopLocation(false);
+      stopActiveOrderListener();
+      setVisible("verifyCard", true);
+      setVisible("resendVerificationButton", true);
+      setVisible("refreshVerificationButton", true);
+      $("verifyInfo").textContent = "📧 " + (user.email || "");
+      $("authMessage").textContent =
+        "يجب تأكيد بريدك الإلكتروني قبل مراجعة طلب التسجيل.";
+      return;
+    }
+    if (driverSnap.exists() && driverSnap.data().status === "approved") {
+      driverData = { ...driverSnap.data(), uid: user.uid };
+      setVisible("approvedInfoCard", true);
+      setVisible("workArea", true);
+      $("driverInfo").textContent =
+        "👤 الاسم: " + (driverData.name || "غير محدد") +
+        "\n📞 الهاتف: " + (driverData.phone || "غير محدد") +
+        "\n🎂 العمر: " + (driverData.age ?? "غير محدد") +
+        "\n📍 المنطقة: " + (driverData.region || "غير محددة");
+      $("authMessage").textContent = "تم تسجيل الدخول بنجاح.";
+      setVisible("resendVerificationButton", false);
+      setVisible("refreshVerificationButton", false);
+      initializeDriverMap();
+      await window.loadOrders();
+      await loadActiveOrder();
+      await checkNotificationSetup();
+      return;
+    }
+    await stopLocation(false);
+    stopActiveOrderListener();
+    activeOrderId = "";
+    localStorage.removeItem("alhassan_active_order");
+    setVisible("workArea", false);
+    if (!appSnap.exists()) {
+      $("authMessage").textContent =
+        "لا يوجد طلب تسجيل لهذا الحساب. سجّل حساب مندوب جديدًا أو تواصل مع المدير.";
+      $("signupFields").classList.remove("hidden");
+      $("googleButton").classList.remove("hidden");
+      $("signupButton").classList.remove("hidden");
+      $("loginButton").classList.remove("hidden");
+      return;
+    }
+    const a = appSnap.data();
+    if (a.status === "rejected") {
+      setVisible("rejectedCard", true);
+      $("rejectedInfo").textContent =
+        "👤 " + (a.name || "مندوب") +
+        "\n📞 " + (a.phone || "غير محدد") +
+        "\nحالة الحساب: مرفوض";
+      $("authMessage").textContent = "لم تتم الموافقة على طلبك.";
+      return;
+    }
+    setVisible("pendingCard", true);
+    $("pendingInfo").textContent =
+      "👤 الاسم: " + (a.name || "غير محدد") +
+      "\n📞 الهاتف: " + (a.phone || "غير محدد") +
+      "\n🎂 العمر: " + (a.age ?? "غير محدد") +
+      "\n📍 المنطقة: " + (a.region || "غير محددة") +
+      "\n📧 البريد: " + (a.email || user.email || "") +
+      "\nالحالة: بانتظار موافقة المدير";
+    $("authMessage").textContent =
+      "تم التحقق من البريد. طلبك الآن بانتظار موافقة المدير.";
+  } catch (e) {
+    console.error("Account check:", e);
+    $("authMessage").textContent =
+      "تعذّر التحقق من الحساب. راجع قواعد Firestore: " + e.message;
+  }
+}
+onAuthStateChanged(auth, user => {
+  refreshAccount(user);
+});
+/* =========================
+   الخريطة
 ========================= */
 let driverMap = null;
 let driverMarker = null;
@@ -235,82 +579,75 @@ let routeRefreshTimer = null;
 let routeRequestRunning = false;
 let routeRequestAgain = false;
 let lastRouteSignature = "";
-
 const driverIcon = L.divIcon({
   className: "custom-map-icon",
   html: '<div class="map-pin driver"><span>🛵</span></div>',
   iconSize: [42, 46], iconAnchor: [21, 42], popupAnchor: [0, -40]
 });
-
 const customerIcon = L.divIcon({
   className: "custom-map-icon",
   html: '<div class="map-pin customer"><span>📍</span></div>',
   iconSize: [42, 46], iconAnchor: [21, 42], popupAnchor: [0, -40]
 });
-
 function setRouteStatus(text) {
   $("routeStatus").textContent = text;
 }
-
 function initializeDriverMap() {
   const element = $("driverMap");
   if (!element || !window.L) return;
-
   if (!driverMap) {
-    driverMap = L.map(element, { zoomControl: true, scrollWheelZoom: true })
-      .setView([32.625, 36.105], 13);
-
+    driverMap = L.map(element, {
+      zoomControl: true,
+      scrollWheelZoom: true
+    }).setView([33.89, 35.50], 9);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
       attribution: "&copy; OpenStreetMap contributors"
     }).addTo(driverMap);
   }
-
   setTimeout(() => driverMap?.invalidateSize(), 250);
 }
-
 function resetMapForOrder(orderId) {
   if (orderId && currentMapOrderId === orderId) return;
   currentMapOrderId = orderId || "";
-
   if (driverMarker && driverMap) driverMap.removeLayer(driverMarker);
   if (customerMarker && driverMap) driverMap.removeLayer(customerMarker);
   if (routeLine && driverMap) driverMap.removeLayer(routeLine);
-
   driverMarker = null;
   customerMarker = null;
   routeLine = null;
   lastRouteSignature = "";
-
-  if (orderId) setRouteStatus("جارٍ تحميل موقع الزبون والطريق...");
-  else setRouteStatus("بانتظار استلام طلب لعرض الطريق.");
+  setRouteStatus(orderId
+    ? "جارٍ تحميل موقع الزبون والطريق..."
+    : "بانتظار استلام طلب لعرض الطريق.");
 }
-
 function keepMarkersVisible(forceFit = false) {
   if (!driverMap) return;
   const markers = [];
   if (customerMarker) markers.push(customerMarker);
   if (driverMarker) markers.push(driverMarker);
   if (!markers.length) return;
-
   if (markers.length === 1) {
     const pos = markers[0].getLatLng();
-    if (forceFit || !driverMap.getBounds().contains(pos)) driverMap.setView(pos, 16, { animate: true });
+    if (forceFit || !driverMap.getBounds().contains(pos)) {
+      driverMap.setView(pos, 16, { animate: true });
+    }
     return;
   }
-
-  const bounds = L.latLngBounds([customerMarker.getLatLng(), driverMarker.getLatLng()]);
+  const bounds = L.latLngBounds([
+    customerMarker.getLatLng(),
+    driverMarker.getLatLng()
+  ]);
   const visible = driverMap.getBounds().contains(customerMarker.getLatLng()) &&
     driverMap.getBounds().contains(driverMarker.getLatLng());
-
-  if (forceFit || !visible) driverMap.fitBounds(bounds.pad(0.2), { maxZoom: 16, animate: true });
+  if (forceFit || !visible) {
+    driverMap.fitBounds(bounds.pad(0.2), { maxZoom: 16, animate: true });
+  }
 }
-
 function updateDriverMapPosition(latitude, longitude) {
   if (typeof latitude !== "number" || typeof longitude !== "number") return;
   initializeDriverMap();
   if (!driverMap) return;
-
   const position = [latitude, longitude];
   if (!driverMarker) {
     driverMarker = L.marker(position, { icon: driverIcon })
@@ -318,22 +655,18 @@ function updateDriverMapPosition(latitude, longitude) {
   } else {
     driverMarker.setLatLng(position);
   }
-
   keepMarkersVisible(false);
   scheduleRouteUpdate();
 }
-
 function updateCustomerMarker(order, forceFit = false) {
   initializeDriverMap();
   if (!driverMap || !order) return;
   if (order.id) resetMapForOrder(order.id);
-
   if (typeof order.customerLatitude !== "number" ||
       typeof order.customerLongitude !== "number") {
-    setRouteStatus("لا توجد إحداثيات محفوظة لموقع الزبون في هذا الطلب.");
+    setRouteStatus("لا توجد إحداثيات محفوظة لموقع الزبون.");
     return;
   }
-
   const position = [order.customerLatitude, order.customerLongitude];
   if (!customerMarker) {
     customerMarker = L.marker(position, { icon: customerIcon })
@@ -341,18 +674,16 @@ function updateCustomerMarker(order, forceFit = false) {
   } else {
     customerMarker.setLatLng(position);
   }
-
   keepMarkersVisible(forceFit);
   scheduleRouteUpdate();
 }
-
 function scheduleRouteUpdate() {
   if (!driverMarker || !customerMarker) {
-    if (!customerMarker) setRouteStatus("بانتظار إحداثيات موقع الزبون.");
-    else setRouteStatus("بانتظار موقع المندوب لعرض الطريق.");
+    setRouteStatus(!customerMarker
+      ? "بانتظار إحداثيات موقع الزبون."
+      : "بانتظار موقع المندوب لعرض الطريق.");
     return;
   }
-
   if (routeRefreshTimer) return;
   const elapsed = Date.now() - lastRouteFetchAt;
   routeRefreshTimer = setTimeout(async () => {
@@ -360,58 +691,62 @@ function scheduleRouteUpdate() {
     await updateRoute();
   }, Math.max(0, 5000 - elapsed));
 }
-
 async function updateRoute() {
   if (!driverMarker || !customerMarker) return;
   if (routeRequestRunning) {
     routeRequestAgain = true;
     return;
   }
-
   const d = driverMarker.getLatLng();
   const c = customerMarker.getLatLng();
-  const signature = [d.lat.toFixed(4), d.lng.toFixed(4), c.lat.toFixed(4), c.lng.toFixed(4)].join(",");
+  const signature = [
+    d.lat.toFixed(4), d.lng.toFixed(4),
+    c.lat.toFixed(4), c.lng.toFixed(4)
+  ].join(",");
   if (signature === lastRouteSignature && routeLine) return;
-
   routeRequestRunning = true;
   lastRouteFetchAt = Date.now();
   setRouteStatus("🗺️ جارٍ تحديث الطريق إلى الزبون...");
-
   try {
     const url = "https://router.project-osrm.org/route/v1/driving/" +
       d.lng + "," + d.lat + ";" + c.lng + "," + c.lat +
       "?overview=full&geometries=geojson&steps=false";
-
     const response = await fetch(url);
     if (!response.ok) throw new Error("ROUTE_UNAVAILABLE");
     const result = await response.json();
-    if (result.code !== "Ok" || !result.routes?.length) throw new Error("ROUTE_NOT_FOUND");
+    if (result.code !== "Ok" || !result.routes?.length) {
+      throw new Error("ROUTE_NOT_FOUND");
+    }
     if (!driverMarker || !customerMarker) return;
-
     const latestDriver = driverMarker.getLatLng();
     const latestCustomer = customerMarker.getLatLng();
     const latestSignature = [
       latestDriver.lat.toFixed(4), latestDriver.lng.toFixed(4),
       latestCustomer.lat.toFixed(4), latestCustomer.lng.toFixed(4)
     ].join(",");
-
-    const coords = result.routes[0].geometry.coordinates.map(point => [point[1], point[0]]);
+    const coords = result.routes[0].geometry.coordinates
+      .map(point => [point[1], point[0]]);
     if (routeLine && driverMap) driverMap.removeLayer(routeLine);
-
     routeLine = L.polyline(coords, {
-      color: "#e30613", weight: 5, opacity: 0.85, lineCap: "round", lineJoin: "round"
+      color: "#e30613",
+      weight: 5,
+      opacity: 0.85,
+      lineCap: "round",
+      lineJoin: "round"
     }).addTo(driverMap);
-
     lastRouteSignature = latestSignature;
     const distanceKm = result.routes[0].distance / 1000;
     const durationMin = Math.max(1, Math.round(result.routes[0].duration / 60));
-
-    setRouteStatus("✅ الطريق ظاهر على الخريطة • المسافة التقريبية " +
-      distanceKm.toFixed(1) + " كم • وقت القيادة التقديري " +
-      durationMin + " دقيقة. قد يختلف الوقت الفعلي حسب حركة السير.");
-  } catch (error) {
-    console.warn("Route service:", error);
-    setRouteStatus("تعذر تحميل خط الطريق الآن. ما زالت علامات الموقع ظاهرة، ويمكنك فتح الاتجاهات في Google Maps.");
+    setRouteStatus(
+      "✅ الطريق ظاهر • المسافة التقريبية " + distanceKm.toFixed(1) +
+      " كم • وقت القيادة التقديري " + durationMin +
+      " دقيقة. قد يختلف الوقت الفعلي."
+    );
+  } catch (e) {
+    console.warn("Route service:", e);
+    setRouteStatus(
+      "تعذر تحميل خط الطريق الآن. يمكنك فتح الاتجاهات في Google Maps."
+    );
   } finally {
     routeRequestRunning = false;
     if (routeRequestAgain) {
@@ -420,34 +755,35 @@ async function updateRoute() {
     }
   }
 }
-
 function fitTrackingMap() {
   initializeDriverMap();
   if (!driverMap) return;
-
   if (driverMarker && customerMarker) {
-    driverMap.fitBounds(L.latLngBounds([driverMarker.getLatLng(), customerMarker.getLatLng()]).pad(0.2),
-      { maxZoom: 16, animate: true });
-  } else if (driverMarker) driverMap.setView(driverMarker.getLatLng(), 16);
-  else if (customerMarker) driverMap.setView(customerMarker.getLatLng(), 16);
-  else setRouteStatus("ستظهر المواقع هنا بعد استلام طلب وتوفر إحداثياته.");
-
+    driverMap.fitBounds(
+      L.latLngBounds([driverMarker.getLatLng(), customerMarker.getLatLng()]).pad(0.2),
+      { maxZoom: 16, animate: true }
+    );
+  } else if (driverMarker) {
+    driverMap.setView(driverMarker.getLatLng(), 16);
+  } else if (customerMarker) {
+    driverMap.setView(customerMarker.getLatLng(), 16);
+  } else {
+    setRouteStatus("ستظهر المواقع هنا بعد استلام طلب وتوفر إحداثياته.");
+  }
   setTimeout(() => driverMap?.invalidateSize(), 250);
 }
-
 $("expandMapButton").addEventListener("click", () => {
   const shell = $("mapShell");
   const expanded = shell.classList.toggle("expanded");
-  $("expandMapButton").textContent = expanded ? "✕ إغلاق الخريطة المكبّرة" : "⛶ تكبير الخريطة";
+  $("expandMapButton").textContent =
+    expanded ? "✕ إغلاق الخريطة المكبّرة" : "⛶ تكبير الخريطة";
   document.body.style.overflow = expanded ? "hidden" : "";
   setTimeout(() => {
     driverMap?.invalidateSize();
     fitTrackingMap();
   }, 250);
 });
-
 $("fitMapButton").addEventListener("click", fitTrackingMap);
-
 function closeExpandedMap() {
   if (!$("mapShell").classList.contains("expanded")) return;
   $("mapShell").classList.remove("expanded");
@@ -458,32 +794,28 @@ function closeExpandedMap() {
 document.addEventListener("keydown", event => {
   if (event.key === "Escape") closeExpandedMap();
 });
-
 /* =========================
-   مستمع الطلب الحالي
+   متابعة الطلب الحالي
 ========================= */
 function stopActiveOrderListener() {
-  if (typeof activeOrderUnsubscribe === "function") activeOrderUnsubscribe();
+  if (typeof activeOrderUnsubscribe === "function") {
+    activeOrderUnsubscribe();
+  }
   activeOrderUnsubscribe = null;
   listeningOrderId = "";
 }
-
 function startActiveOrderListener(orderId) {
   if (!orderId || !currentDriver || !driverData) return;
   if (listeningOrderId === orderId && activeOrderUnsubscribe) return;
-
   stopActiveOrderListener();
   listeningOrderId = orderId;
   resetMapForOrder(orderId);
-
   activeOrderUnsubscribe = onSnapshot(doc(db, "orders", orderId), snap => {
     if (!snap.exists()) {
       stopActiveOrderListener();
       return;
     }
-
     const order = { id: snap.id, ...snap.data() };
-
     if (order.driverId !== currentDriver?.uid) {
       stopActiveOrderListener();
       activeOrderId = "";
@@ -492,330 +824,55 @@ function startActiveOrderListener(orderId) {
       resetMapForOrder("");
       return;
     }
-
     updateCustomerMarker(order, false);
-
     if (typeof order.driverLatitude === "number" &&
         typeof order.driverLongitude === "number") {
       updateDriverMapPosition(order.driverLatitude, order.driverLongitude);
     }
-
     const details = $("activeOrder").querySelector(".details");
     if (details) {
-      details.textContent = "📦 " + (order.item || "طلب") +
+      details.textContent =
+        "📦 " + (order.item || "طلب") +
         "\n📍 " + (order.address || "العنوان غير محدد") +
         "\n📞 " + (order.phone || "غير محدد") +
         "\n📌 الحالة: " + (order.status || "غير محددة");
     }
-
     const mapLink = $("activeOrder").querySelector(".map-link");
     if (mapLink) {
       if (typeof order.customerLatitude === "number" &&
           typeof order.customerLongitude === "number") {
-        mapLink.href = "https://www.google.com/maps/dir/?api=1&destination=" +
+        mapLink.href =
+          "https://www.google.com/maps/dir/?api=1&destination=" +
           encodeURIComponent(order.customerLatitude + "," + order.customerLongitude);
         mapLink.textContent = "🗺️ الاتجاه إلى موقع الزبون";
       } else {
-        mapLink.href = "https://www.google.com/maps/search/?api=1&query=" +
+        mapLink.href =
+          "https://www.google.com/maps/search/?api=1&query=" +
           encodeURIComponent(order.address || "");
         mapLink.textContent = "🗺️ فتح عنوان الزبون";
       }
     }
-
     if (order.status === "delivered" || order.status === "cancelled") {
       stopLocation(false);
       stopActiveOrderListener();
       activeOrderId = "";
       localStorage.removeItem("alhassan_active_order");
       setVisible("activeOrderBox", false);
-      showMessage(order.status === "delivered" ? "✅ تم تسليم الطلب." : "تم إلغاء الطلب.");
+      showMessage(
+        order.status === "delivered" ? "✅ تم تسليم الطلب." : "تم إلغاء الطلب."
+      );
       setRouteStatus("انتهى الطلب. استلم طلبًا جديدًا لعرض خريطته.");
     }
   }, error => {
     console.error("Active order listener:", error);
-    showMessage("تعذر تحديث الخريطة مباشرة. تحقق من اتصال الإنترنت وقواعد Firestore.", true);
+    showMessage(
+      "تعذر تحديث الخريطة مباشرة. تحقق من اتصال الإنترنت وقواعد Firestore.",
+      true
+    );
   });
 }
-
 /* =========================
-   أخطاء تسجيل الدخول
-========================= */
-function authError(error) {
-  const codes = {
-    "auth/email-already-in-use": "هذا البريد مسجّل من قبل. جرّب تسجيل الدخول.",
-    "auth/invalid-email": "صيغة البريد الإلكتروني غير صحيحة.",
-    "auth/weak-password": "كلمة المرور قصيرة؛ استخدم 6 أحرف على الأقل.",
-    "auth/invalid-credential": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
-    "auth/user-not-found": "لا يوجد حساب بهذا البريد.",
-    "auth/wrong-password": "كلمة المرور غير صحيحة.",
-    "auth/too-many-requests": "محاولات كثيرة. انتظر قليلًا ثم حاول مجددًا.",
-    "auth/network-request-failed": "تعذّر الاتصال بالإنترنت."
-  };
-  return codes[error.code] || error.message || "حدث خطأ غير معروف.";
-}
-
-/* =========================
-   إنشاء حساب مندوب
-========================= */
-$("signupButton").addEventListener("click", async () => {
-  const name = $("fullName").value.trim();
-  const number = $("driverNumber").value.trim();
-  const phone = $("phone").value.trim();
-  const email = $("email").value.trim();
-  const password = $("password").value;
-
-  if (!name || !number || !phone || !email || !password) {
-    $("authMessage").textContent = "يرجى تعبئة الاسم ورقم المندوب والهاتف والبريد وكلمة المرور.";
-    return;
-  }
-  if (password.length < 6) {
-    $("authMessage").textContent = "كلمة المرور يجب أن تكون 6 أحرف على الأقل.";
-    return;
-  }
-
-  $("signupButton").disabled = true;
-  try {
-    const credential = await createUserWithEmailAndPassword(auth, email, password);
-    await setDoc(doc(db, "driverApplications", credential.user.uid), {
-      uid: credential.user.uid, name, driverNumber: number, phone, email,
-      status: "pending", createdAt: serverTimestamp()
-    });
-    await refreshAccount(credential.user);
-    $("authMessage").textContent = "تم إنشاء الحساب وإرسال طلب الموافقة. انتظر موافقة المدير.";
-  } catch (e) {
-    $("authMessage").textContent = "تعذّر إنشاء الحساب: " + authError(e);
-  } finally {
-    $("signupButton").disabled = false;
-  }
-});
-
-/* =========================
-   تسجيل الدخول والخروج
-========================= */
-$("loginButton").addEventListener("click", async () => {
-  const email = $("email").value.trim();
-  const password = $("password").value;
-  if (!email || !password) {
-    $("authMessage").textContent = "اكتب البريد الإلكتروني وكلمة المرور أولًا.";
-    return;
-  }
-
-  $("loginButton").disabled = true;
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-  } catch (e) {
-    $("authMessage").textContent = "تعذّر تسجيل الدخول: " + authError(e);
-  } finally {
-    $("loginButton").disabled = false;
-  }
-});
-
-$("logoutButton").addEventListener("click", async () => {
-  await stopLocation(false);
-  stopActiveOrderListener();
-  await signOut(auth);
-  activeOrderId = "";
-  localStorage.removeItem("alhassan_active_order");
-  closeExpandedMap();
-  $("authMessage").textContent = "تم تسجيل الخروج.";
-});
-
-/* =========================
-   التحقق من موافقة المدير
-========================= */
-async function refreshAccount(user) {
-  currentDriver = user;
-  driverData = null;
-
-  setVisible("authCard", true);
-  setVisible("logoutButton", !!user);
-
-  if (!user) {
-    await stopLocation(false);
-    stopActiveOrderListener();
-    activeOrderId = "";
-    localStorage.removeItem("alhassan_active_order");
-    setVisible("pendingCard", false);
-    setVisible("approvedInfoCard", false);
-    setVisible("workArea", false);
-    $("signupFields").classList.remove("hidden");
-    $("authMessage").textContent = "سجّل حسابًا جديدًا أو ادخل إلى حسابك. الحساب الجديد يحتاج موافقة المدير.";
-    $("signupButton").classList.remove("hidden");
-    $("loginButton").classList.remove("hidden");
-    return;
-  }
-
-  $("signupFields").classList.add("hidden");
-  $("authMessage").textContent = "جارٍ التحقق من حالة حسابك...";
-
-  try {
-    const approvedSnap = await getDoc(doc(db, "drivers", user.uid));
-
-    if (approvedSnap.exists() && approvedSnap.data().status === "approved") {
-      driverData = { ...approvedSnap.data(), uid: user.uid };
-
-      setVisible("pendingCard", false);
-      setVisible("approvedInfoCard", true);
-      setVisible("workArea", true);
-
-      $("driverInfo").textContent = "👤 " + (driverData.name || "مندوب") +
-        " | 🆔 " + (driverData.driverNumber || "غير محدد") +
-        " | 📞 " + (driverData.phone || "غير محدد");
-
-      $("authMessage").textContent = "تم تسجيل الدخول بنجاح.";
-      $("signupButton").classList.add("hidden");
-      $("loginButton").classList.add("hidden");
-      $("logoutButton").classList.remove("hidden");
-
-      initializeDriverMap();
-      await window.loadOrders();
-      await loadActiveOrder();
-      await checkNotificationSetup();
-      return;
-    }
-
-    await stopLocation(false);
-    stopActiveOrderListener();
-    setVisible("approvedInfoCard", false);
-    setVisible("workArea", false);
-    setVisible("pendingCard", true);
-    $("signupButton").classList.add("hidden");
-    $("loginButton").classList.add("hidden");
-
-    const appSnap = await getDoc(doc(db, "driverApplications", user.uid));
-    if (appSnap.exists()) {
-      const a = appSnap.data();
-      $("pendingInfo").textContent = "👤 " + (a.name || "مندوب") +
-        " | 🆔 " + (a.driverNumber || "غير محدد") +
-        " | الحالة: " + (a.status === "rejected" ? "مرفوض - تواصل مع الإدارة" : "بانتظار موافقة المدير");
-    } else {
-      $("pendingInfo").textContent = "لم نعثر على طلب موافقة لهذا الحساب. تواصل مع المدير.";
-    }
-
-    $("authMessage").textContent = "الحساب غير معتمد بعد. لن تظهر الطلبات قبل موافقة المدير.";
-  } catch (e) {
-    console.error("Account check:", e);
-    $("authMessage").textContent = "تعذّر التحقق من الحساب. تأكد من قواعد Firestore: " + e.message;
-  }
-}
-
-onAuthStateChanged(auth, user => {
-  refreshAccount(user);
-});
-
-/* =========================
-   إشعارات Firebase
-========================= */
-async function prepareMessaging() {
-  if (!("Notification" in window) || !("serviceWorker" in navigator)) {
-    throw new Error(supportMessage());
-  }
-
-  if (!await withTimeout(isSupported(), 10000, "استغرق فحص دعم الإشعارات وقتًا طويلًا.")) {
-    throw new Error(supportMessage());
-  }
-
-  if (!messaging) messaging = getMessaging(app);
-
-  if (!notificationListenerStarted) {
-    onMessage(messaging, payload => {
-      showMessage("🔔 " + (payload.notification?.title || "AL HASSAN") +
-        " - " + (payload.notification?.body || "لديك إشعار جديد"));
-      window.loadOrders();
-      loadActiveOrder();
-    });
-    notificationListenerStarted = true;
-  }
-}
-
-async function registerMessagingServiceWorker() {
-  const swUrl = new URL("./firebase-messaging-sw.js", window.location.href);
-  const scopeUrl = new URL("./", window.location.href);
-
-  await withTimeout(
-    navigator.serviceWorker.register(swUrl.href, { scope: scopeUrl.pathname }),
-    15000,
-    "تعذر تسجيل Service Worker. تأكد من وجود firebase-messaging-sw.js بجانب صفحة Driver."
-  );
-
-  return await withTimeout(navigator.serviceWorker.ready, 15000, "لم يصبح Service Worker جاهزًا.");
-}
-
-$("notificationButton").addEventListener("click", enableNotifications);
-
-async function enableNotifications() {
-  try {
-    if (!currentDriver || !driverData) {
-      setNotificationStatus("يجب أن يوافق المدير على حسابك أولًا.", "error");
-      return;
-    }
-
-    if (!("Notification" in window)) {
-      setNotificationStatus(supportMessage(), "error");
-      return;
-    }
-
-    if (location.protocol !== "https:" && location.hostname !== "localhost") {
-      setNotificationStatus("يجب فتح الصفحة عبر HTTPS.", "error");
-      return;
-    }
-
-    let permission = Notification.permission;
-    if (permission === "denied") {
-      setNotificationStatus("الإشعارات ممنوعة من إعدادات الجهاز أو المتصفح.", "error");
-      return;
-    }
-    if (permission === "default") permission = await Notification.requestPermission();
-    if (permission !== "granted") {
-      setNotificationStatus("لم يتم السماح بالإشعارات. اسمح بها ثم أعد المحاولة.", "error");
-      return;
-    }
-
-    setNotificationStatus("⏳ جارٍ تجهيز الإشعارات...");
-    await prepareMessaging();
-    const registration = await registerMessagingServiceWorker();
-
-    const token = await withTimeout(
-      getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration: registration }),
-      20000,
-      "تعذر الحصول على رمز الإشعارات. تحقق من إعداد VAPID."
-    );
-
-    if (!token) throw new Error("لم ينشئ Firebase رمز الإشعارات.");
-
-    await setDoc(doc(db, "notificationTokens", token), {
-      token,
-      role: "driver",
-      driverId: currentDriver.uid,
-      driverNumber: driverData.driverNumber || "",
-      driverName: driverData.name || "",
-      active: true,
-      updatedAt: serverTimestamp()
-    }, { merge: true });
-
-    localStorage.setItem("alhassan_fcm_token", token);
-    setNotificationStatus("✅ تم تسجيل جهازك للإشعارات بنجاح.", "success");
-  } catch (e) {
-    console.error(e);
-    setNotificationStatus("❌ " + (e.message || "تعذر تفعيل الإشعارات."), "error");
-  }
-}
-
-async function checkNotificationSetup() {
-  if (!currentDriver || !driverData) return;
-  if (!("Notification" in window)) {
-    setNotificationStatus(supportMessage(), "error");
-    return;
-  }
-  if (Notification.permission === "granted") {
-    await enableNotifications();
-    return;
-  }
-  setNotificationStatus("اضغط على زر تفعيل إشعارات الطلبات.");
-}
-
-/* =========================
-   تصنيفات الطلبات
+   تحميل الطلبات
 ========================= */
 const categoryNames = {
   food: "🍔 مطعم",
@@ -827,77 +884,65 @@ const categoryNames = {
   gifts: "🎁 هدايا",
   other: "🏪 محل آخر"
 };
-
-/* =========================
-   تحميل الطلبات المتاحة
-========================= */
 window.loadOrders = async function() {
   const box = $("orders");
-
   if (!currentDriver || !driverData) {
     box.innerHTML = '<div class="empty">سجّل الدخول وانتظر موافقة المدير.</div>';
     return;
   }
-
   box.innerHTML = '<div class="empty">⏳ جارٍ تحميل الطلبات...</div>';
-
   try {
-    const q = query(collection(db, "orders"),
+    const q = query(
+      collection(db, "orders"),
       where("status", "==", "new"),
-      where("driverId", "==", ""));
-
-    const snapshot = await withTimeout(getDocs(q), 15000, "انتهت مهلة تحميل الطلبات.");
+      where("driverId", "==", "")
+    );
+    const snapshot = await withTimeout(
+      getDocs(q), 15000, "انتهت مهلة تحميل الطلبات."
+    );
     const orders = [];
     snapshot.forEach(s => orders.push({ id: s.id, ...s.data() }));
     orders.reverse();
-
     if (!orders.length) {
       box.innerHTML = '<div class="empty">لا توجد طلبات متاحة حاليًا 📦</div>';
       return;
     }
-
     box.innerHTML = "";
     for (const order of orders) {
       const card = document.createElement("div");
       card.className = "order";
-
       const top = document.createElement("div");
       top.className = "order-top";
-
       const cat = document.createElement("div");
       cat.className = "category";
       cat.textContent = categoryNames[order.category] || "🛵 طلب";
-
       const status = document.createElement("div");
       status.className = "status";
       status.textContent = "🆕 جديد";
       top.append(cat, status);
-
       const details = document.createElement("div");
       details.className = "details";
-      details.textContent = (order.item || "طلب") +
+      details.textContent =
+        (order.item || "طلب") +
         "\n📍 العنوان: " + (order.address || "غير محدد") +
         "\n📞 الهاتف: " + (order.phone || "غير محدد") +
         (order.merchant ? "\n🏪 المحل: " + order.merchant : "") +
         (order.notes ? "\n📝 ملاحظات: " + order.notes : "");
-
       const accept = document.createElement("button");
       accept.className = "accept";
       accept.textContent = "🛵 أريد توصيل هذا الطلب";
       accept.onclick = () => window.acceptOrder(order.id);
-
       card.append(top, details, accept);
       box.appendChild(card);
     }
   } catch (e) {
     console.error(e);
-    box.innerHTML = '<div class="empty">❌ تعذر تحميل الطلبات: ' +
+    box.innerHTML =
+      '<div class="empty">❌ تعذر تحميل الطلبات: ' +
       escapeHTML(e.message || "تحقق من قواعد Firestore.") + '</div>';
   }
 };
-
 $("refreshButton").addEventListener("click", () => window.loadOrders());
-
 /* =========================
    استلام الطلب
 ========================= */
@@ -906,17 +951,14 @@ window.acceptOrder = async function(orderId) {
     showMessage("يجب تسجيل الدخول بحساب معتمد.", true);
     return;
   }
-
   try {
     const ref = doc(db, "orders", orderId);
     await runTransaction(db, async tx => {
       const snap = await tx.get(ref);
       if (!snap.exists()) throw new Error("ORDER_NOT_FOUND");
-
       const order = snap.data();
       if (order.driverId) throw new Error("ORDER_ALREADY_TAKEN");
       if (order.status !== "new") throw new Error("ORDER_NOT_AVAILABLE");
-
       tx.update(ref, {
         driverId: currentDriver.uid,
         driverName: driverData.name || "",
@@ -924,7 +966,6 @@ window.acceptOrder = async function(orderId) {
         status: "accepted"
       });
     });
-
     activeOrderId = orderId;
     localStorage.setItem("alhassan_active_order", activeOrderId);
     showMessage("✅ تم استلام الطلب باسمك.");
@@ -940,9 +981,8 @@ window.acceptOrder = async function(orderId) {
     );
   }
 };
-
 /* =========================
-   عرض الطلب الحالي
+   تحميل الطلب الحالي
 ========================= */
 async function loadActiveOrder() {
   if (!currentDriver || !driverData || !activeOrderId) {
@@ -951,11 +991,9 @@ async function loadActiveOrder() {
     initializeDriverMap();
     return;
   }
-
   try {
     const ref = doc(db, "orders", activeOrderId);
     const snap = await getDoc(ref);
-
     if (!snap.exists() || snap.data().driverId !== currentDriver.uid) {
       stopActiveOrderListener();
       activeOrderId = "";
@@ -963,7 +1001,6 @@ async function loadActiveOrder() {
       setVisible("activeOrderBox", false);
       return;
     }
-
     const found = { id: snap.id, ...snap.data() };
     if (found.status === "delivered" || found.status === "cancelled") {
       activeOrderId = "";
@@ -973,64 +1010,56 @@ async function loadActiveOrder() {
       setRouteStatus("انتهى الطلب. استلم طلبًا جديدًا لعرض خريطته.");
       return;
     }
-
     resetMapForOrder(found.id);
     setVisible("activeOrderBox", true);
-
     const box = $("activeOrder");
     box.innerHTML = "";
-
     const details = document.createElement("div");
     details.className = "details";
-    details.textContent = "📦 " + (found.item || "طلب") +
+    details.textContent =
+      "📦 " + (found.item || "طلب") +
       "\n📍 " + (found.address || "العنوان غير محدد") +
       "\n📞 " + (found.phone || "غير محدد") +
       "\n📌 الحالة: " + (found.status || "غير محددة");
-
     const loc = document.createElement("button");
     loc.className = "green";
     loc.textContent = "📍 مشاركة موقعي للزبون والإدارة";
     loc.onclick = startLocation;
-
     const map = document.createElement("a");
     map.className = "map-link";
     map.target = "_blank";
     map.rel = "noopener noreferrer";
-
     if (typeof found.customerLatitude === "number" &&
         typeof found.customerLongitude === "number") {
-      map.href = "https://www.google.com/maps/dir/?api=1&destination=" +
+      map.href =
+        "https://www.google.com/maps/dir/?api=1&destination=" +
         encodeURIComponent(found.customerLatitude + "," + found.customerLongitude);
       map.textContent = "🗺️ الاتجاه إلى موقع الزبون";
     } else {
-      map.href = "https://www.google.com/maps/search/?api=1&query=" +
+      map.href =
+        "https://www.google.com/maps/search/?api=1&query=" +
         encodeURIComponent(found.address || "");
       map.textContent = "🗺️ فتح عنوان الزبون";
     }
-
     box.append(details, loc, map);
     initializeDriverMap();
     updateCustomerMarker(found, true);
-
     if (typeof found.driverLatitude === "number" &&
         typeof found.driverLongitude === "number") {
       updateDriverMapPosition(found.driverLatitude, found.driverLongitude);
       keepMarkersVisible(true);
     }
-
     startActiveOrderListener(activeOrderId);
   } catch (e) {
     console.error("Active order:", e);
     showMessage("تعذر تحميل الطلب الحالي: " + e.message, true);
   }
 }
-
 /* =========================
-   مشاركة موقع المندوب مباشرة
+   مشاركة الموقع
 ========================= */
 $("locationButton").addEventListener("click", startLocation);
 $("stopLocationButton").addEventListener("click", () => stopLocation(true));
-
 function startLocation() {
   if (!currentDriver || !driverData) {
     showMessage("يجب تسجيل الدخول بحساب معتمد.", true);
@@ -1049,39 +1078,34 @@ function startLocation() {
     return;
   }
   if (location.protocol !== "https:" && location.hostname !== "localhost") {
-    $("locationStatus").textContent = "يجب فتح الصفحة عبر HTTPS حتى يعمل تحديد الموقع.";
+    $("locationStatus").textContent = "يجب فتح الصفحة عبر HTTPS حتى يعمل الموقع.";
     return;
   }
-
   initializeDriverMap();
   $("locationStatus").textContent = "📍 جارٍ طلب موقعك من الجهاز...";
-
   locationWatcher = navigator.geolocation.watchPosition(
     async pos => {
       if (locationBusy) return;
       locationBusy = true;
-
       const latitude = pos.coords.latitude;
       const longitude = pos.coords.longitude;
       const accuracy = pos.coords.accuracy;
-
       $("coordinates").classList.remove("hidden");
-      $("coordinates").textContent = "📍 Latitude: " + latitude.toFixed(6) +
+      $("coordinates").textContent =
+        "📍 Latitude: " + latitude.toFixed(6) +
         "\n📍 Longitude: " + longitude.toFixed(6) +
         "\n🎯 دقة GPS: " + Math.round(accuracy) + " متر";
-
       updateDriverMapPosition(latitude, longitude);
-
       try {
         const orderIdAtUpdate = activeOrderId;
         const driverIdAtUpdate = currentDriver?.uid;
-
         await runTransaction(db, async tx => {
           const ref = doc(db, "orders", orderIdAtUpdate);
           const snap = await tx.get(ref);
           if (!snap.exists()) throw new Error("ORDER_NOT_FOUND");
-          if (snap.data().driverId !== driverIdAtUpdate) throw new Error("NOT_DRIVER");
-
+          if (snap.data().driverId !== driverIdAtUpdate) {
+            throw new Error("NOT_DRIVER");
+          }
           tx.update(ref, {
             driverLatitude: latitude,
             driverLongitude: longitude,
@@ -1090,14 +1114,15 @@ function startLocation() {
             driverLocationActive: true
           });
         });
-
-        $("locationStatus").textContent = "✅ تم إرسال موقعك إلى Firebase ويتم تحديثه الآن.";
+        $("locationStatus").textContent =
+          "✅ تم إرسال موقعك إلى Firebase ويتم تحديثه الآن.";
         $("locationStatus").className = "location-status success";
         setVisible("stopLocationButton", true);
         $("locationButton").textContent = "📍 موقعك تتم مشاركته الآن";
       } catch (e) {
         console.error(e);
-        $("locationStatus").textContent = "تعذر إرسال الموقع إلى Firebase: " + e.message;
+        $("locationStatus").textContent =
+          "تعذر إرسال الموقع إلى Firebase: " + e.message;
         $("locationStatus").className = "location-status error";
         if (e.message === "NOT_DRIVER" || e.message === "ORDER_NOT_FOUND") {
           await stopLocation(false);
@@ -1120,30 +1145,22 @@ function startLocation() {
     { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 }
   );
 }
-
-/* =========================
-   إيقاف مشاركة موقع المندوب
-========================= */
 async function stopLocation(updateDatabase = true) {
   if (locationWatcher !== null) {
     navigator.geolocation.clearWatch(locationWatcher);
     locationWatcher = null;
   }
-
   setVisible("stopLocationButton", false);
   $("locationButton").textContent = "📍 بدء مشاركة موقعي";
-
   if ($("locationStatus")) {
     $("locationStatus").textContent = "تم إيقاف مشاركة الموقع.";
     $("locationStatus").className = "location-status";
   }
-
   if (updateDatabase && activeOrderId && currentDriver) {
     try {
       const orderIdAtStop = activeOrderId;
       const driverIdAtStop = currentDriver.uid;
       const ref = doc(db, "orders", orderIdAtStop);
-
       await runTransaction(db, async tx => {
         const snap = await tx.get(ref);
         if (snap.exists() && snap.data().driverId === driverIdAtStop) {
@@ -1155,7 +1172,126 @@ async function stopLocation(updateDatabase = true) {
     }
   }
 }
-
+/* =========================
+   إشعارات Firebase
+========================= */
+function supportMessage() {
+  const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const standalone =
+    window.matchMedia("(display-mode: standalone)").matches ||
+    navigator.standalone === true;
+  if (ios && !standalone) {
+    return "على iPhone: افتح الصفحة في Safari ثم مشاركة ← إضافة إلى الشاشة الرئيسية. إشعارات الويب تحتاج iOS 16.4 أو أحدث.";
+  }
+  if (ios) {
+    return "تأكد من iOS 16.4 أو أحدث ومن السماح بالإشعارات.";
+  }
+  return "هذا المتصفح أو وضع التصفح الحالي لا يدعم إشعارات الويب المطلوبة.";
+}
+async function prepareMessaging() {
+  if (!("Notification" in window) || !("serviceWorker" in navigator)) {
+    throw new Error(supportMessage());
+  }
+  if (!await withTimeout(isSupported(), 10000, "استغرق فحص دعم الإشعارات وقتًا طويلًا.")) {
+    throw new Error(supportMessage());
+  }
+  if (!messaging) messaging = getMessaging(app);
+  if (!notificationListenerStarted) {
+    onMessage(messaging, payload => {
+      showMessage(
+        "🔔 " + (payload.notification?.title || "AL HASSAN") +
+        " - " + (payload.notification?.body || "لديك إشعار جديد")
+      );
+      window.loadOrders();
+      loadActiveOrder();
+    });
+    notificationListenerStarted = true;
+  }
+}
+async function registerMessagingServiceWorker() {
+  const swUrl = new URL("./firebase-messaging-sw.js", window.location.href);
+  const scopeUrl = new URL("./", window.location.href);
+  await withTimeout(
+    navigator.serviceWorker.register(swUrl.href, { scope: scopeUrl.pathname }),
+    15000,
+    "تعذر تسجيل Service Worker. تأكد من وجود firebase-messaging-sw.js بجانب صفحة المندوب."
+  );
+  return await withTimeout(
+    navigator.serviceWorker.ready,
+    15000,
+    "لم يصبح Service Worker جاهزًا."
+  );
+}
+$("notificationButton").addEventListener("click", enableNotifications);
+async function enableNotifications() {
+  try {
+    if (!currentDriver || !driverData) {
+      setNotificationStatus("يجب أن يوافق المدير على حسابك أولًا.", "error");
+      return;
+    }
+    if (!("Notification" in window)) {
+      setNotificationStatus(supportMessage(), "error");
+      return;
+    }
+    if (location.protocol !== "https:" && location.hostname !== "localhost") {
+      setNotificationStatus("يجب فتح الصفحة عبر HTTPS.", "error");
+      return;
+    }
+    let permission = Notification.permission;
+    if (permission === "denied") {
+      setNotificationStatus("الإشعارات ممنوعة من إعدادات الجهاز أو المتصفح.", "error");
+      return;
+    }
+    if (permission === "default") {
+      permission = await Notification.requestPermission();
+    }
+    if (permission !== "granted") {
+      setNotificationStatus("لم يتم السماح بالإشعارات. اسمح بها ثم أعد المحاولة.", "error");
+      return;
+    }
+    setNotificationStatus("⏳ جارٍ تجهيز الإشعارات...");
+    await prepareMessaging();
+    const registration = await registerMessagingServiceWorker();
+    const token = await withTimeout(
+      getToken(messaging, {
+        vapidKey: VAPID_KEY,
+        serviceWorkerRegistration: registration
+      }),
+      20000,
+      "تعذر الحصول على رمز الإشعارات. تحقق من إعداد VAPID."
+    );
+    if (!token) throw new Error("لم ينشئ Firebase رمز الإشعارات.");
+    await setDoc(doc(db, "notificationTokens", token), {
+      token,
+      role: "driver",
+      driverId: currentDriver.uid,
+      driverName: driverData.name || "",
+      active: true,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+    localStorage.setItem("alhassan_fcm_token", token);
+    setNotificationStatus("✅ تم تسجيل جهازك للإشعارات بنجاح.", "success");
+  } catch (e) {
+    console.error(e);
+    setNotificationStatus(
+      "❌ " + (e.message || "تعذر تفعيل الإشعارات."),
+      "error"
+    );
+  }
+}
+async function checkNotificationSetup() {
+  if (!currentDriver || !driverData) return;
+  if (!("Notification" in window)) {
+    setNotificationStatus(supportMessage(), "error");
+    return;
+  }
+  if (Notification.permission === "granted") {
+    await enableNotifications();
+    return;
+  }
+  setNotificationStatus("اضغط على زر تفعيل إشعارات الطلبات.");
+}
 initializeDriverMap();
 </script>
 </body>
