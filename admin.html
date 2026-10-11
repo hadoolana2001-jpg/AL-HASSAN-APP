@@ -9,6 +9,7 @@
 body{margin:0;font-family:Arial,sans-serif;background:#f5f5f5;color:#222}
 button,input,select{font:inherit}
 button{border:0;border-radius:10px;padding:12px;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.55;cursor:not-allowed}
 input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:5px 0;font-size:15px;background:#fff}
 .primary{background:#e30613;color:#fff}
 .green{background:#168a35;color:#fff}
@@ -35,9 +36,9 @@ aside button.active,aside button:hover{background:#e30613}
 .details{line-height:1.9;overflow-wrap:anywhere;white-space:pre-line;margin:10px 0}
 .pill,.status{display:inline-block;background:#eee;border-radius:20px;padding:5px 9px;font-size:12px}
 .empty{text-align:center;color:#777;padding:22px}
-.driver-info{background:#fff3f3;padding:12px;border-radius:10px;margin-top:10px;font-size:14px}
+.driver-info{background:#fff3f3;padding:12px;border-radius:10px;margin-top:10px;font-size:14px;line-height:1.8;overflow-wrap:anywhere}
 .notification-box{background:#fff8e6;padding:12px;border-radius:10px;margin-top:12px;font-size:14px;line-height:1.7;overflow-wrap:anywhere}
-.location-status{font-size:14px;line-height:1.7;margin-top:10px;color:#666}
+.location-status{font-size:14px;line-height:1.7;margin-top:10px;color:#666;overflow-wrap:anywhere}
 .success{color:#168a35}
 .error{color:#c00}
 .coordinates{background:#eef7ff;padding:10px;border-radius:10px;margin-top:10px;font-size:13px;line-height:1.8;overflow-wrap:anywhere}
@@ -120,7 +121,27 @@ aside button{white-space:nowrap;width:auto;min-width:max-content;margin:0;text-a
           <div class="stat"><b id="activeCount">0</b>قيد التنفيذ</div>
         </div>
 
+        <!-- مشاركة موقع المدير -->
+        <div class="card">
+          <h2>📍 مشاركة موقع المدير مع الزبون</h2>
+          <p class="muted">
+            استلم طلبًا من لوحة الطلبات أولًا، ثم ابدأ مشاركة موقعك ليظهر للزبون على خريطة الطلب.
+          </p>
+          <div id="managerActiveOrder" class="driver-info">لم تستلم طلبًا بعد.</div>
+          <button id="managerLocationButton" class="green" style="width:100%;margin-top:8px">
+            📍 بدء مشاركة موقعي للزبون
+          </button>
+          <button id="managerStopLocationButton" class="dark hidden" style="width:100%;margin-top:8px">
+            🛑 إيقاف مشاركة الموقع
+          </button>
+          <div id="managerLocationStatus" class="location-status">
+            الموقع غير مشارك حاليًا.
+          </div>
+          <div id="managerCoordinates" class="coordinates hidden"></div>
+        </div>
+
         <div id="adminMessage" class="msg"></div>
+
         <div class="card">
           <h2>📦 آخر الطلبات</h2>
           <div id="recentOrders">جارٍ التحميل...</div>
@@ -272,7 +293,8 @@ let activeOrderId = localStorage.getItem("alhassan_active_order") || "";
 let applyingWithExistingAccount = false;
 
 function visible(id, yes) {
-  $(id).classList.toggle("hidden", !yes);
+  const el = $(id);
+  if (el) el.classList.toggle("hidden", !yes);
 }
 
 function safe(v) {
@@ -358,10 +380,6 @@ $("loginBtn").onclick = async () => {
   }
 };
 
-/*
-  التسجيل الجديد أو التقديم باستخدام حساب موجود.
-  إذا كان المستخدم مسجّلًا بالفعل بنفس البريد، لن ننشئ حسابًا جديدًا.
-*/
 $("signupBtn").onclick = async () => {
   const name = $("fullName").value.trim();
   const number = $("driverNumber").value.trim();
@@ -406,24 +424,12 @@ $("signupBtn").onclick = async () => {
 
     if (!user) {
       try {
-        const credential = await createUserWithEmailAndPassword(
-          auth, email, password
-        );
+        const credential = await createUserWithEmailAndPassword(auth, email, password);
         user = credential.user;
       } catch (error) {
-        if (error.code !== "auth/email-already-in-use") {
-          throw error;
-        }
+        if (error.code !== "auth/email-already-in-use") throw error;
 
-        /*
-          البريد موجود بالفعل:
-          نحاول الدخول إلى الحساب الموجود بدل إنشاء حساب ثانٍ.
-          إذا كان الحساب مرتبطًا بـ Google فقط، استخدم Google للدخول.
-        */
-        const credential = await signInWithEmailAndPassword(
-          auth, email, password
-        );
-        user = credential.user;
+        user = (await signInWithEmailAndPassword(auth, email, password)).user;
       }
     }
 
@@ -436,9 +442,7 @@ $("signupBtn").onclick = async () => {
     ]);
 
     if (driverSnapshot.exists()) {
-      const existingDriver = driverSnapshot.data();
-
-      if (existingDriver.status === "approved") {
+      if (driverSnapshot.data().status === "approved") {
         authMsg("هذا الحساب معتمد بالفعل كمندوب. يمكنك الدخول به.");
         await routeUser(user);
         return;
@@ -449,23 +453,17 @@ $("signupBtn").onclick = async () => {
     }
 
     if (applicationSnapshot.exists()) {
-      const existingApplication = applicationSnapshot.data();
-
-      if (existingApplication.status === "pending") {
-        authMsg("لديك طلب مندوب قيد المراجعة بالفعل. لا حاجة لتقديم طلب آخر.");
-      } else if (existingApplication.status === "rejected") {
-        authMsg("طلبك السابق مرفوض. تواصل مع الإدارة قبل إعادة التقديم.");
-      } else {
-        authMsg("يوجد طلب سابق لهذا الحساب. تواصل مع الإدارة للتحقق من حالته.");
-      }
-
+      const old = applicationSnapshot.data();
+      authMsg(old.status === "pending"
+        ? "لديك طلب مندوب قيد المراجعة بالفعل."
+        : old.status === "rejected"
+          ? "طلبك السابق مرفوض. تواصل مع الإدارة."
+          : "يوجد طلب سابق لهذا الحساب. تواصل مع الإدارة.");
       await routeUser(user);
       return;
     }
 
-    if (!user.emailVerified) {
-      await sendEmailVerification(user);
-    }
+    if (!user.emailVerified) await sendEmailVerification(user);
 
     const application = {
       uid: user.uid,
@@ -479,20 +477,15 @@ $("signupBtn").onclick = async () => {
       createdAt: serverTimestamp()
     };
 
-    if (number) {
-      application.driverNumber = number;
-    }
+    if (number) application.driverNumber = number;
 
     await setDoc(appRef, application);
 
-    authMsg(
-      user.emailVerified
-        ? "تم إرسال طلب المندوب بنجاح. انتظر موافقة المدير."
-        : "تم إرسال طلب المندوب. أرسلنا رسالة لتأكيد بريدك الإلكتروني؛ أكّده وانتظر موافقة المدير."
-    );
+    authMsg(user.emailVerified
+      ? "تم إرسال طلب المندوب بنجاح. انتظر موافقة المدير."
+      : "تم إرسال طلب المندوب. أرسلنا رسالة لتأكيد بريدك الإلكتروني؛ أكّده وانتظر موافقة المدير.");
 
     await routeUser(user);
-
   } catch (e) {
     console.error("Driver application error:", e);
     authMsg("تعذر تقديم طلب المندوب: " + authError(e));
@@ -501,11 +494,6 @@ $("signupBtn").onclick = async () => {
   }
 };
 
-/*
-  Google:
-  إذا كان الحساب موجودًا، نستخدم UID نفسه.
-  لا ننشئ حسابًا جديدًا ولا نكرر طلب المندوب.
-*/
 $("googleBtn").onclick = async () => {
   const name = $("fullName").value.trim();
   const number = $("driverNumber").value.trim();
@@ -545,21 +533,12 @@ $("googleBtn").onclick = async () => {
     }
 
     if (appSnap.exists()) {
-      const oldApplication = appSnap.data();
-
-      if (oldApplication.status === "pending") {
-        authMsg("طلبك موجود بالفعل وبانتظار موافقة المدير.");
-        await routeUser(user);
-        return;
-      }
-
-      if (oldApplication.status === "rejected") {
-        authMsg("طلبك السابق مرفوض. تواصل مع الإدارة.");
-        await routeUser(user);
-        return;
-      }
-
-      authMsg("يوجد طلب سابق لهذا الحساب. تواصل مع الإدارة.");
+      const old = appSnap.data();
+      authMsg(old.status === "pending"
+        ? "طلبك موجود بالفعل وبانتظار موافقة المدير."
+        : old.status === "rejected"
+          ? "طلبك السابق مرفوض. تواصل مع الإدارة."
+          : "يوجد طلب سابق لهذا الحساب. تواصل مع الإدارة.");
       await routeUser(user);
       return;
     }
@@ -582,15 +561,12 @@ $("googleBtn").onclick = async () => {
       createdAt: serverTimestamp()
     };
 
-    if (number) {
-      application.driverNumber = number;
-    }
+    if (number) application.driverNumber = number;
 
     await setDoc(appRef, application);
 
     authMsg("تم إرسال طلب المندوب باستخدام حساب Google نفسه. انتظر موافقة المدير.");
     await routeUser(user);
-
   } catch (e) {
     console.error("Google application error:", e);
     authMsg("تعذر تقديم الطلب عبر Google: " + authError(e));
@@ -695,6 +671,8 @@ async function routeUser(user) {
 
   if (adminSnapshot.exists() && adminSnapshot.data().role === "admin") {
     role = "admin";
+    driverData = null;
+
     visible("authScreen", false);
     visible("appScreen", true);
     visible("sidebar", true);
@@ -705,6 +683,7 @@ async function routeUser(user) {
     $("managerEmail").textContent = user.email || "المدير";
 
     await refreshAdmin();
+    await loadManagerActiveOrder();
     return;
   }
 
@@ -735,15 +714,8 @@ async function routeUser(user) {
     return;
   }
 
-  const applicationSnapshot = await getDoc(
-    doc(db, "driverApplications", user.uid)
-  );
+  const applicationSnapshot = await getDoc(doc(db, "driverApplications", user.uid));
 
-  /*
-    حساب مسجل وليس مديرًا ولا مندوبًا معتمدًا،
-    ولا يوجد له طلب مندوب:
-    نعرض نموذج التقديم باستخدام UID نفسه.
-  */
   if (!driver && !applicationSnapshot.exists()) {
     role = "customer-applicant";
     driverData = null;
@@ -755,7 +727,6 @@ async function routeUser(user) {
     visible("driverArea", false);
 
     setAuthMode("driver");
-
     applyingWithExistingAccount = true;
     $("email").value = user.email || "";
     $("email").disabled = true;
@@ -769,10 +740,7 @@ async function routeUser(user) {
 
     $("signupBtn").textContent = "تقديم طلب مندوب بهذا الحساب";
 
-    authMsg(
-      "أنت مسجّل الدخول بالفعل. أكمل بياناتك واضغط تقديم الطلب. سنستخدم حسابك الحالي ولن ننشئ حسابًا جديدًا."
-    );
-
+    authMsg("أنت مسجّل الدخول بالفعل. أكمل بياناتك واضغط تقديم الطلب. سنستخدم حسابك الحالي ولن ننشئ حسابًا جديدًا.");
     $("headerStatus").textContent = "التقديم لوظيفة مندوب";
     return;
   }
@@ -821,10 +789,8 @@ async function routeUser(user) {
     return;
   }
 
-  $("pendingCard").querySelector("h2").textContent =
-    "⏳ الحساب بانتظار موافقة المدير";
-  $("pendingCard").querySelector("p").textContent =
-    "لن تظهر الطلبات قبل موافقة المدير على حسابك.";
+  $("pendingCard").querySelector("h2").textContent = "⏳ الحساب بانتظار موافقة المدير";
+  $("pendingCard").querySelector("p").textContent = "لن تظهر الطلبات قبل موافقة المدير على حسابك.";
 
   $("pendingInfo").textContent = applicationSnapshot.exists()
     ? `👤 ${applicationSnapshot.data().name || "مندوب"} | 🆔 ${applicationSnapshot.data().driverNumber || "غير محدد"} | 🎂 ${applicationSnapshot.data().age || "—"} | 📍 ${applicationSnapshot.data().region || "—"} | الحالة: ${applicationSnapshot.data().status === "rejected" ? "مرفوض - تواصل مع الإدارة" : "بانتظار موافقة المدير"}`
@@ -870,7 +836,7 @@ async function loadApplications() {
           📍 منطقة السكن: ${safe(application.region || "—")}<br>
           ✉️ البريد: ${safe(application.email || "—")}<br>
           ✉️ تأكيد البريد: ${application.emailVerificationRequired === true ? "مطلوب عند تسجيل الدخول" : "غير مطلوب للحساب القديم"}<br>
-          🗓️ تاريخ التسجيل: ${safe(application.createdAt && application.createdAt.toDate ? application.createdAt.toDate().toLocaleString("ar") : "—")}
+          🗓️ تاريخ التسجيل: ${safe(application.createdAt?.toDate ? application.createdAt.toDate().toLocaleString("ar") : "—")}
         </div>
         <div class="row">
           <button class="green">موافقة</button>
@@ -908,9 +874,7 @@ async function decideApplication(uid, application, approved) {
         approvedBy: auth.currentUser.uid
       };
 
-      if (application.driverNumber) {
-        driverRecord.driverNumber = application.driverNumber;
-      }
+      if (application.driverNumber) driverRecord.driverNumber = application.driverNumber;
 
       await setDoc(doc(db, "drivers", uid), driverRecord, {merge: true});
 
@@ -938,18 +902,26 @@ async function decideApplication(uid, application, approved) {
 
 const statusNames = {
   new: "🆕 جديد",
-  accepted: "🛵 استلمه المندوب",
+  accepted: "🛵 تم استلامه",
   preparing: "🔄 قيد التنفيذ",
   purchased: "🛍️ تم الشراء",
   onway: "🚚 بالطريق",
-  delivered: "✅ تم التسليم"
+  delivered: "✅ تم التسليم",
+  cancelled: "❌ ملغي"
 };
 
 async function getOrders() {
   const snapshot = await getDocs(collection(db, "orders"));
   const orders = [];
   snapshot.forEach(item => orders.push({id: item.id, ...item.data()}));
-  return orders.reverse();
+
+  orders.sort((a, b) => {
+    const at = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+    const bt = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+    return bt - at;
+  });
+
+  return orders;
 }
 
 async function loadAdminOrders() {
@@ -960,13 +932,12 @@ async function loadAdminOrders() {
 
   try {
     const all = await getOrders();
-    const newOrders = all.filter(order => (order.status || "new") === "new").length;
-    const activeOrders = all.filter(order =>
-      ["accepted", "preparing", "purchased", "onway"].includes(order.status)
-    ).length;
 
-    $("newCount").textContent = newOrders;
-    $("activeCount").textContent = activeOrders;
+    $("newCount").textContent =
+      all.filter(order => (order.status || "new") === "new").length;
+
+    $("activeCount").textContent =
+      all.filter(order => ["accepted", "preparing", "purchased", "onway"].includes(order.status)).length;
 
     const filter = $("filter").value;
     const orders = filter === "all"
@@ -993,6 +964,13 @@ function renderAdminOrders(box, orders, editable = true) {
     const card = document.createElement("div");
     card.className = "order";
 
+    const assignedToManager = order.driverId === currentUser?.uid;
+    const canTake = editable &&
+      !["delivered", "cancelled"].includes(order.status) &&
+      !assignedToManager;
+
+    const history = Array.isArray(order.driverHistory) ? order.driverHistory : [];
+
     card.innerHTML = `
       <b>${safe(order.item || "طلب")}</b>
       <span class="pill">${safe(statusNames[order.status || "new"] || order.status || "جديد")}</span>
@@ -1000,27 +978,65 @@ function renderAdminOrders(box, orders, editable = true) {
         📍 ${safe(order.address || "")}<br>
         📞 ${safe(order.phone || "")}<br>
         🏪 ${safe(order.merchant || "—")}<br>
-        🧑‍✈️ المندوب: ${safe(order.driverName || "لم يُعيّن")}<br>
-        🗓️ ${order.createdAt?.toDate ? safe(order.createdAt.toDate().toLocaleString("ar")) : ""}
+        🧑‍✈️ المستلم الحالي: ${safe(order.driverName || "لم يُعيّن")}<br>
+        🗓️ ${safe(order.createdAt?.toDate ? order.createdAt.toDate().toLocaleString("ar") : "")}
       </div>
+
+      ${history.length ? `
+        <div class="driver-info">
+          <b>📝 سجل تحويل الطلب</b><br>
+          ${history.map(h => `
+            • ${safe(h.name || "مستلم سابق")}
+            ${h.changedAt ? " — " + safe(h.changedAt) : ""}
+          `).join("<br>")}
+        </div>` : ""}
+
+      ${canTake ? `
+        <button class="orange manager-take-order" style="width:100%;margin-top:8px">
+          ${order.driverId
+            ? "🔄 استلام الطلب من " + safe(order.driverName || "المندوب الحالي")
+            : "🛵 استلام الطلب باسم المدير"}
+        </button>` : ""}
+
+      ${assignedToManager && editable ? `
+        <div class="driver-info">✅ هذا الطلب مستلم من حساب المدير الحالي.</div>` : ""}
+
       ${editable ? `
-        <select>
+        <select class="status-select">
           ${Object.entries(statusNames).map(([key, value]) =>
             `<option value="${key}" ${key === (order.status || "new") ? "selected" : ""}>${safe(value)}</option>`
           ).join("")}
         </select>
-        <button class="primary" style="width:100%;margin-top:6px">حفظ حالة الطلب</button>
+        <button class="primary save-status" style="width:100%;margin-top:6px">حفظ حالة الطلب</button>
       ` : ""}`;
 
-    if (editable) {
-      const select = card.querySelector("select");
-      const button = card.querySelector("button");
+    const takeButton = card.querySelector(".manager-take-order");
+    if (takeButton) {
+      takeButton.onclick = () => takeOrderAsManager(order);
+    }
 
-      button.onclick = async () => {
+    if (editable) {
+      const select = card.querySelector(".status-select");
+      const saveButton = card.querySelector(".save-status");
+
+      saveButton.onclick = async () => {
         try {
-          await updateDoc(doc(db, "orders", order.id), {status: select.value});
+          await updateDoc(doc(db, "orders", order.id), {
+            status: select.value
+          });
+
+          if (select.value === "delivered" || select.value === "cancelled") {
+            if (activeOrderId === order.id && role === "admin") {
+              await stopLocation(true);
+              activeOrderId = "";
+              localStorage.removeItem("alhassan_active_order");
+              $("managerActiveOrder").textContent = "لا يوجد طلب نشط للمدير.";
+            }
+          }
+
           adminMsg("تم تحديث حالة الطلب.");
           await loadAdminOrders();
+          await loadManagerActiveOrder();
         } catch (e) {
           console.error(e);
           adminMsg("تعذر تحديث الطلب. تحقق من قواعد Firestore.", true);
@@ -1030,6 +1046,141 @@ function renderAdminOrders(box, orders, editable = true) {
 
     box.appendChild(card);
   });
+}
+
+/* استلام المدير للطلب أو تحويله من مندوب آخر */
+async function takeOrderAsManager(order) {
+  if (role !== "admin" || !currentUser) {
+    adminMsg("يجب تسجيل الدخول بحساب المدير.", true);
+    return;
+  }
+
+  if (order.driverId === currentUser.uid) {
+    activeOrderId = order.id;
+    localStorage.setItem("alhassan_active_order", order.id);
+    await loadManagerActiveOrder();
+    return;
+  }
+
+  if (order.driverId) {
+    const confirmed = confirm(
+      `الطلب مستلم حاليًا من ${order.driverName || "مندوب آخر"}.\nهل تريد تحويله إلى حساب المدير؟`
+    );
+    if (!confirmed) return;
+  }
+
+  const managerName = currentUser.displayName || currentUser.email || "مدير AL HASSAN";
+
+  try {
+    await runTransaction(db, async transaction => {
+      const ref = doc(db, "orders", order.id);
+      const snapshot = await transaction.get(ref);
+
+      if (!snapshot.exists()) throw Error("ORDER_NOT_FOUND");
+
+      const latest = snapshot.data();
+
+      if (latest.status === "delivered") throw Error("ORDER_DELIVERED");
+      if (latest.status === "cancelled") throw Error("ORDER_CANCELLED");
+
+      if (latest.driverId === currentUser.uid) return;
+
+      const history = Array.isArray(latest.driverHistory)
+        ? [...latest.driverHistory]
+        : [];
+
+      if (latest.driverId) {
+        history.push({
+          uid: latest.driverId,
+          name: latest.driverName || "مستلم سابق",
+          action: "تم تحويل الطلب إلى المدير",
+          changedAt: new Date().toISOString()
+        });
+      }
+
+      transaction.update(ref, {
+        driverId: currentUser.uid,
+        driverName: managerName,
+        acceptedAt: serverTimestamp(),
+        status: latest.status === "new" ? "accepted" : latest.status,
+        driverHistory: history,
+        driverLatitude: null,
+        driverLongitude: null,
+        driverAccuracy: null,
+        driverLocationActive: false
+      });
+    });
+
+    activeOrderId = order.id;
+    localStorage.setItem("alhassan_active_order", order.id);
+
+    $("managerActiveOrder").textContent =
+      `📦 الطلب الحالي: ${order.item || "طلب"} — ${managerName}`;
+
+    $("managerLocationStatus").textContent =
+      "تم استلام الطلب. اضغط بدء مشاركة الموقع ليظهر موقعك للزبون.";
+
+    $("managerLocationStatus").className = "location-status success";
+
+    adminMsg("تم استلام الطلب باسم المدير. يمكنك الآن مشاركة موقعك.");
+    await loadAdminOrders();
+    await loadManagerActiveOrder();
+  } catch (e) {
+    console.error("Manager takes order:", e);
+
+    adminMsg(
+      e.message === "ORDER_DELIVERED"
+        ? "لا يمكن استلام طلب تم تسليمه."
+        : e.message === "ORDER_CANCELLED"
+          ? "لا يمكن استلام طلب ملغي."
+          : "تعذر استلام الطلب. تحقق من قواعد Firestore.",
+      true
+    );
+  }
+}
+
+/* استرجاع الطلب الذي استلمه المدير */
+async function loadManagerActiveOrder() {
+  if (role !== "admin" || !currentUser) return;
+
+  if (!activeOrderId) {
+    $("managerActiveOrder").textContent = "لم تستلم طلبًا بعد.";
+    return;
+  }
+
+  try {
+    const snapshot = await getDoc(doc(db, "orders", activeOrderId));
+
+    if (!snapshot.exists()) {
+      activeOrderId = "";
+      localStorage.removeItem("alhassan_active_order");
+      $("managerActiveOrder").textContent = "لم يتم العثور على الطلب.";
+      return;
+    }
+
+    const order = snapshot.data();
+
+    if (order.driverId !== currentUser.uid ||
+        ["delivered", "cancelled"].includes(order.status)) {
+      activeOrderId = "";
+      localStorage.removeItem("alhassan_active_order");
+      $("managerActiveOrder").textContent = "لم تستلم طلبًا نشطًا حاليًا.";
+      $("managerLocationStatus").textContent = "الموقع غير مشارك حاليًا.";
+      return;
+    }
+
+    $("managerActiveOrder").textContent =
+      `📦 ${order.item || "طلب"}\n📍 ${order.address || "العنوان غير محدد"}\nالحالة: ${statusNames[order.status] || order.status || "جديد"}`;
+
+    if (order.driverLocationActive === true) {
+      $("managerLocationStatus").textContent = "✅ مشاركة الموقع مفعّلة لهذا الطلب.";
+      $("managerLocationStatus").className = "location-status success";
+      visible("managerStopLocationButton", true);
+    }
+  } catch (e) {
+    console.error("Load manager order:", e);
+    $("managerActiveOrder").textContent = "تعذر تحميل الطلب النشط.";
+  }
 }
 
 async function loadDrivers() {
@@ -1191,7 +1342,11 @@ async function acceptOrder(id) {
         driverId: currentUser.uid,
         driverName: driverData.name || "",
         acceptedAt: serverTimestamp(),
-        status: "accepted"
+        status: "accepted",
+        driverLatitude: null,
+        driverLongitude: null,
+        driverAccuracy: null,
+        driverLocationActive: false
       });
     });
 
@@ -1227,6 +1382,14 @@ async function loadActiveOrder() {
     }
 
     const order = {id: snapshot.id, ...snapshot.data()};
+
+    if (["delivered", "cancelled"].includes(order.status)) {
+      activeOrderId = "";
+      localStorage.removeItem("alhassan_active_order");
+      visible("activeOrderBox", false);
+      return;
+    }
+
     visible("activeOrderBox", true);
 
     const box = $("activeOrder");
@@ -1290,11 +1453,7 @@ async function prepareMessaging() {
     throw Error(supportMessage());
   }
 
-  if (!await withTimeout(
-    isSupported(),
-    10000,
-    "استغرق فحص دعم الإشعارات وقتًا طويلًا."
-  )) {
+  if (!await withTimeout(isSupported(), 10000, "استغرق فحص دعم الإشعارات وقتًا طويلًا.")) {
     throw Error(supportMessage());
   }
 
@@ -1360,9 +1519,7 @@ async function enableNotifications() {
       return;
     }
 
-    if (permission === "default") {
-      permission = await Notification.requestPermission();
-    }
+    if (permission === "default") permission = await Notification.requestPermission();
 
     if (permission !== "granted") {
       setNotificationStatus("لم يتم السماح بالإشعارات. اسمح بها ثم أعد المحاولة.", "error");
@@ -1419,51 +1576,84 @@ async function checkNotificationSetup() {
   setNotificationStatus("اضغط على زر تفعيل إشعارات الطلبات.");
 }
 
+/* مشاركة الموقع للمدير والمندوب */
 $("locationButton").onclick = startLocation;
 $("stopLocationButton").onclick = () => stopLocation(true);
+$("managerLocationButton").onclick = startLocation;
+$("managerStopLocationButton").onclick = () => stopLocation(true);
 
-function startLocation() {
-  if (role !== "driver" || !driverData) {
-    driverMsg("يجب تسجيل الدخول بحساب معتمد.", true);
+function setLocationStatus(message, type = "normal") {
+  const statusIds = role === "admin"
+    ? ["managerLocationStatus"]
+    : ["locationStatus"];
+
+  statusIds.forEach(id => {
+    if ($(id)) {
+      $(id).textContent = message;
+      $(id).className = "location-status" +
+        (type === "success" ? " success" : type === "error" ? " error" : "");
+    }
+  });
+}
+
+function showLocationCoordinates(latitude, longitude, accuracy) {
+  const target = role === "admin" ? "managerCoordinates" : "coordinates";
+  visible(target, true);
+
+  $(target).textContent =
+    `📍 Latitude: ${latitude.toFixed(6)}\n📍 Longitude: ${longitude.toFixed(6)}\n🎯 دقة GPS: ${Math.round(accuracy)} متر`;
+}
+
+function showLocationControls(sharing) {
+  if (role === "admin") {
+    visible("managerStopLocationButton", sharing);
+    $("managerLocationButton").textContent =
+      sharing ? "📍 موقع المدير تتم مشاركته الآن" : "📍 بدء مشاركة موقعي للزبون";
+  } else {
+    visible("stopLocationButton", sharing);
+    $("locationButton").textContent =
+      sharing ? "📍 موقعك تتم مشاركته الآن" : "📍 بدء مشاركة موقعي";
+  }
+}
+
+async function startLocation() {
+  if (!currentUser || !["admin", "driver"].includes(role)) {
+    setLocationStatus("يجب تسجيل الدخول بحساب مدير أو مندوب معتمد.", "error");
     return;
   }
 
   if (!activeOrderId) {
-    driverMsg("استلم طلبًا أولًا حتى تشارك موقعك.", true);
+    setLocationStatus("استلم طلبًا أولًا حتى تشارك موقعك.", "error");
     return;
   }
 
   if (!navigator.geolocation) {
-    $("locationStatus").textContent = "جهازك أو متصفحك لا يدعم تحديد الموقع.";
+    setLocationStatus("جهازك أو متصفحك لا يدعم تحديد الموقع.", "error");
     return;
   }
 
   if (locationWatcher !== null) {
-    driverMsg("موقعك تتم مشاركته حاليًا.");
+    setLocationStatus("موقعك تتم مشاركته حاليًا.", "success");
     return;
   }
 
   if (location.protocol !== "https:" && location.hostname !== "localhost") {
-    $("locationStatus").textContent = "يجب فتح الصفحة عبر HTTPS حتى يعمل تحديد الموقع.";
+    setLocationStatus("يجب فتح الصفحة عبر HTTPS حتى يعمل تحديد الموقع.", "error");
     return;
   }
 
-  $("locationStatus").textContent = "📍 جارٍ طلب موقعك من الجهاز...";
+  setLocationStatus("📍 جارٍ طلب موقعك من الجهاز...");
 
   locationWatcher = navigator.geolocation.watchPosition(
     async position => {
       if (locationBusy) return;
-
       locationBusy = true;
 
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
       const accuracy = position.coords.accuracy;
 
-      visible("coordinates", true);
-
-      $("coordinates").textContent =
-        `📍 Latitude: ${latitude.toFixed(6)}\n📍 Longitude: ${longitude.toFixed(6)}\n🎯 دقة GPS: ${Math.round(accuracy)} متر`;
+      showLocationCoordinates(latitude, longitude, accuracy);
 
       try {
         await runTransaction(db, async transaction => {
@@ -1471,7 +1661,16 @@ function startLocation() {
           const snapshot = await transaction.get(ref);
 
           if (!snapshot.exists()) throw Error("ORDER_NOT_FOUND");
-          if (snapshot.data().driverId !== currentUser.uid) throw Error("NOT_DRIVER");
+
+          const order = snapshot.data();
+
+          if (order.driverId !== currentUser.uid) {
+            throw Error("NOT_ASSIGNED_TO_YOU");
+          }
+
+          if (["delivered", "cancelled"].includes(order.status)) {
+            throw Error("ORDER_CLOSED");
+          }
 
           transaction.update(ref, {
             driverLatitude: latitude,
@@ -1482,16 +1681,23 @@ function startLocation() {
           });
         });
 
-        $("locationStatus").textContent = "✅ تم إرسال موقعك إلى Firebase ويتم تحديثه الآن.";
-        $("locationStatus").className = "location-status success";
-        visible("stopLocationButton", true);
-        $("locationButton").textContent = "📍 موقعك تتم مشاركته الآن";
+        setLocationStatus("✅ موقعك يُرسل إلى الطلب الآن، ويمكن للزبون رؤيته على الخريطة.", "success");
+        showLocationControls(true);
       } catch (e) {
-        console.error(e);
-        $("locationStatus").textContent = "تعذر إرسال الموقع إلى Firebase: " + e.message;
-        $("locationStatus").className = "location-status error";
+        console.error("Send location:", e);
 
-        if (e.message === "NOT_DRIVER") stopLocation(false);
+        setLocationStatus(
+          e.message === "NOT_ASSIGNED_TO_YOU"
+            ? "هذا الطلب لم يعد معيّنًا لحسابك. أوقفنا محاولة مشاركة الموقع."
+            : e.message === "ORDER_CLOSED"
+              ? "الطلب مغلق، لا يمكن مشاركة الموقع له."
+              : "تعذر إرسال الموقع إلى Firebase: " + e.message,
+          "error"
+        );
+
+        if (["NOT_ASSIGNED_TO_YOU", "ORDER_CLOSED"].includes(e.message)) {
+          await stopLocation(false);
+        }
       } finally {
         locationBusy = false;
       }
@@ -1502,13 +1708,16 @@ function startLocation() {
         locationWatcher = null;
       }
 
-      $("locationStatus").className = "location-status error";
+      showLocationControls(false);
 
-      $("locationStatus").textContent = error.code === 1
-        ? "صلاحية الموقع مرفوضة. اسمح للمتصفح باستخدام موقعك."
-        : error.code === 2
-          ? "تعذر تحديد الموقع. تأكد من تشغيل خدمات الموقع."
-          : "انتهى وقت تحديد الموقع. حاول مجددًا.";
+      setLocationStatus(
+        error.code === 1
+          ? "صلاحية الموقع مرفوضة. اسمح للمتصفح باستخدام موقعك."
+          : error.code === 2
+            ? "تعذر تحديد الموقع. تأكد من تشغيل خدمات الموقع."
+            : "انتهى وقت تحديد الموقع. حاول مجددًا.",
+        "error"
+      );
     },
     {
       enableHighAccuracy: true,
@@ -1524,29 +1733,28 @@ async function stopLocation(updateDatabase = true) {
     locationWatcher = null;
   }
 
-  visible("stopLocationButton", false);
+  showLocationControls(false);
 
-  if ($("locationButton")) {
-    $("locationButton").textContent = "📍 بدء مشاركة موقعي";
-  }
+  setLocationStatus("تم إيقاف مشاركة الموقع.");
 
-  if ($("locationStatus")) {
-    $("locationStatus").textContent = "تم إيقاف مشاركة الموقع.";
-    $("locationStatus").className = "location-status";
-  }
-
-  if (updateDatabase && activeOrderId && currentUser && role === "driver") {
+  if (updateDatabase && activeOrderId && currentUser &&
+      ["driver", "admin"].includes(role)) {
     try {
       await runTransaction(db, async transaction => {
         const ref = doc(db, "orders", activeOrderId);
         const snapshot = await transaction.get(ref);
 
-        if (snapshot.exists() && snapshot.data().driverId === currentUser.uid) {
-          transaction.update(ref, {driverLocationActive: false});
+        if (snapshot.exists() &&
+            snapshot.data().driverId === currentUser.uid) {
+          transaction.update(ref, {
+            driverLocationActive: false,
+            driverLocationUpdatedAt: serverTimestamp()
+          });
         }
       });
     } catch (e) {
       console.error("Stop location:", e);
+      setLocationStatus("توقّف GPS على هذا الجهاز، لكن تعذّر تحديث حالة المشاركة في Firebase.", "error");
     }
   }
 }
