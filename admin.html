@@ -70,15 +70,17 @@ aside button{white-space:nowrap;width:auto;min-width:max-content;margin:0;text-a
 <div id="authScreen" class="wrap" style="padding:16px">
   <div class="card">
     <h2>🔐 الدخول إلى AL HASSAN</h2>
+
     <div class="auth-tabs">
       <button id="adminTab" class="active">دخول المدير</button>
       <button id="driverTab">دخول المندوب</button>
     </div>
+
     <p id="authMessage" class="muted">سجّل الدخول بحسابك.</p>
 
     <div id="driverSignupFields" class="hidden">
       <input id="fullName" placeholder="الاسم الكامل" autocomplete="name">
-      <input id="driverNumber" placeholder="رقم المندوب (اختياري للمسجلين الجدد)" inputmode="numeric">
+      <input id="driverNumber" placeholder="رقم المندوب (اختياري)" inputmode="numeric">
       <input id="phone" placeholder="رقم الهاتف" type="tel" autocomplete="tel">
       <input id="age" type="number" min="18" max="100" placeholder="العمر">
       <input id="region" placeholder="منطقة السكن" autocomplete="address-level2">
@@ -267,6 +269,7 @@ let notificationListenerStarted = false;
 let locationWatcher = null;
 let locationBusy = false;
 let activeOrderId = localStorage.getItem("alhassan_active_order") || "";
+let applyingWithExistingAccount = false;
 
 function visible(id, yes) {
   $(id).classList.toggle("hidden", !yes);
@@ -304,18 +307,32 @@ function withTimeout(p, ms, msg) {
   ]).finally(() => clearTimeout(timer));
 }
 
+function resetAuthForm() {
+  applyingWithExistingAccount = false;
+  $("email").disabled = false;
+  $("password").classList.remove("hidden");
+  visible("loginBtn", true);
+  visible("googleBtn", authMode === "driver");
+  $("signupBtn").textContent = "إنشاء حساب مندوب بالبريد";
+}
+
 function setAuthMode(mode) {
   authMode = mode;
   $("adminTab").classList.toggle("active", mode === "admin");
   $("driverTab").classList.toggle("active", mode === "driver");
+
+  resetAuthForm();
+
   visible("driverSignupFields", mode === "driver");
   visible("signupBtn", mode === "driver");
   visible("googleBtn", mode === "driver");
-  $("loginBtn").textContent = mode === "admin" ? "تسجيل دخول المدير" : "تسجيل دخول المندوب";
+
+  $("loginBtn").textContent =
+    mode === "admin" ? "تسجيل دخول المدير" : "تسجيل دخول المندوب";
 
   authMsg(mode === "admin"
     ? "سجّل الدخول بحساب المدير الموجود في Firebase."
-    : "للتسجيل الجديد عبّئ الاسم والهاتف والعمر ومنطقة السكن. يمكنك التسجيل بالبريد مع تأكيده أو باستخدام Google، ثم انتظار موافقة المدير.");
+    : "إذا كان لديك حساب زبون، سجّل الدخول به أولًا، ثم يمكنك التقديم كمندوب بنفس الحساب. وللتسجيل الجديد عبّئ البيانات المطلوبة.");
 }
 
 $("adminTab").onclick = () => setAuthMode("admin");
@@ -331,6 +348,7 @@ $("loginBtn").onclick = async () => {
   }
 
   $("loginBtn").disabled = true;
+
   try {
     await signInWithEmailAndPassword(auth, email, password);
   } catch (e) {
@@ -340,26 +358,43 @@ $("loginBtn").onclick = async () => {
   }
 };
 
+/*
+  التسجيل الجديد أو التقديم باستخدام حساب موجود.
+  إذا كان المستخدم مسجّلًا بالفعل بنفس البريد، لن ننشئ حسابًا جديدًا.
+*/
 $("signupBtn").onclick = async () => {
   const name = $("fullName").value.trim();
   const number = $("driverNumber").value.trim();
   const phone = $("phone").value.trim();
-  const age = Number($("age").value);
+  const ageValue = $("age").value;
+  const age = Number(ageValue);
   const region = $("region").value.trim();
   const email = $("email").value.trim();
   const password = $("password").value;
 
-  if (!name || !phone || !$("age").value || !region || !email || !password) {
-    authMsg("يرجى تعبئة الاسم والهاتف والعمر ومنطقة السكن والبريد وكلمة المرور.");
+  const signedInUser = auth.currentUser;
+  const usingCurrentAccount = Boolean(
+    signedInUser &&
+    signedInUser.email &&
+    signedInUser.email.toLowerCase() === email.toLowerCase()
+  );
+
+  if (!name || !phone || !ageValue || !region || !email) {
+    authMsg("يرجى تعبئة الاسم والهاتف والعمر ومنطقة السكن والبريد الإلكتروني.");
     return;
   }
 
-  if (age < 18 || age > 100) {
-    authMsg("يجب أن يكون عمر المندوب 18 سنة أو أكثر.");
+  if (!Number.isInteger(age) || age < 18 || age > 100) {
+    authMsg("يجب أن يكون عمر المندوب عددًا صحيحًا بين 18 و100 سنة.");
     return;
   }
 
-  if (password.length < 6) {
+  if (!usingCurrentAccount && !password) {
+    authMsg("أدخل كلمة المرور لحسابك، أو سجّل الدخول بحسابك الموجود أولًا.");
+    return;
+  }
+
+  if (!usingCurrentAccount && password.length < 6) {
     authMsg("كلمة المرور يجب أن تكون 6 أحرف على الأقل.");
     return;
   }
@@ -367,84 +402,198 @@ $("signupBtn").onclick = async () => {
   $("signupBtn").disabled = true;
 
   try {
-    const cred = await createUserWithEmailAndPassword(auth, email, password);
-    await sendEmailVerification(cred.user);
+    let user = usingCurrentAccount ? signedInUser : null;
+
+    if (!user) {
+      try {
+        const credential = await createUserWithEmailAndPassword(
+          auth, email, password
+        );
+        user = credential.user;
+      } catch (error) {
+        if (error.code !== "auth/email-already-in-use") {
+          throw error;
+        }
+
+        /*
+          البريد موجود بالفعل:
+          نحاول الدخول إلى الحساب الموجود بدل إنشاء حساب ثانٍ.
+          إذا كان الحساب مرتبطًا بـ Google فقط، استخدم Google للدخول.
+        */
+        const credential = await signInWithEmailAndPassword(
+          auth, email, password
+        );
+        user = credential.user;
+      }
+    }
+
+    const appRef = doc(db, "driverApplications", user.uid);
+    const driverRef = doc(db, "drivers", user.uid);
+
+    const [applicationSnapshot, driverSnapshot] = await Promise.all([
+      getDoc(appRef),
+      getDoc(driverRef)
+    ]);
+
+    if (driverSnapshot.exists()) {
+      const existingDriver = driverSnapshot.data();
+
+      if (existingDriver.status === "approved") {
+        authMsg("هذا الحساب معتمد بالفعل كمندوب. يمكنك الدخول به.");
+        await routeUser(user);
+        return;
+      }
+
+      authMsg("هذا الحساب موجود في سجل المندوبين، لكن حالته غير مفعّلة. تواصل مع الإدارة.");
+      return;
+    }
+
+    if (applicationSnapshot.exists()) {
+      const existingApplication = applicationSnapshot.data();
+
+      if (existingApplication.status === "pending") {
+        authMsg("لديك طلب مندوب قيد المراجعة بالفعل. لا حاجة لتقديم طلب آخر.");
+      } else if (existingApplication.status === "rejected") {
+        authMsg("طلبك السابق مرفوض. تواصل مع الإدارة قبل إعادة التقديم.");
+      } else {
+        authMsg("يوجد طلب سابق لهذا الحساب. تواصل مع الإدارة للتحقق من حالته.");
+      }
+
+      await routeUser(user);
+      return;
+    }
+
+    if (!user.emailVerified) {
+      await sendEmailVerification(user);
+    }
 
     const application = {
-      uid: cred.user.uid,
+      uid: user.uid,
       name,
       phone,
       age,
       region,
-      email,
+      email: user.email || email,
       status: "pending",
       emailVerificationRequired: true,
       createdAt: serverTimestamp()
     };
 
-    if (number) application.driverNumber = number;
+    if (number) {
+      application.driverNumber = number;
+    }
 
-    await setDoc(doc(db, "driverApplications", cred.user.uid), application);
+    await setDoc(appRef, application);
 
-    authMsg("تم إنشاء الحساب وإرسال رسالة تأكيد إلى بريدك. أكّد البريد ثم انتظر موافقة المدير.");
-    await routeUser(cred.user);
+    authMsg(
+      user.emailVerified
+        ? "تم إرسال طلب المندوب بنجاح. انتظر موافقة المدير."
+        : "تم إرسال طلب المندوب. أرسلنا رسالة لتأكيد بريدك الإلكتروني؛ أكّده وانتظر موافقة المدير."
+    );
+
+    await routeUser(user);
+
   } catch (e) {
-    authMsg("تعذر إنشاء الحساب: " + authError(e));
+    console.error("Driver application error:", e);
+    authMsg("تعذر تقديم طلب المندوب: " + authError(e));
   } finally {
     $("signupBtn").disabled = false;
   }
 };
 
+/*
+  Google:
+  إذا كان الحساب موجودًا، نستخدم UID نفسه.
+  لا ننشئ حسابًا جديدًا ولا نكرر طلب المندوب.
+*/
 $("googleBtn").onclick = async () => {
   const name = $("fullName").value.trim();
   const number = $("driverNumber").value.trim();
   const phone = $("phone").value.trim();
-  const age = Number($("age").value);
+  const ageValue = $("age").value;
+  const age = Number(ageValue);
   const region = $("region").value.trim();
 
-  if (!name || !phone || !$("age").value || !region) {
-    authMsg("قبل المتابعة عبر Google، عبّئ الاسم والهاتف والعمر ومنطقة السكن.");
+  if (!name || !phone || !ageValue || !region) {
+    authMsg("عبّئ الاسم والهاتف والعمر ومنطقة السكن قبل المتابعة عبر Google.");
     return;
   }
 
-  if (age < 18 || age > 100) {
-    authMsg("يجب أن يكون عمر المندوب 18 سنة أو أكثر.");
+  if (!Number.isInteger(age) || age < 18 || age > 100) {
+    authMsg("يجب أن يكون عمر المندوب عددًا صحيحًا بين 18 و100 سنة.");
     return;
   }
 
   $("googleBtn").disabled = true;
 
   try {
-    const cred = await signInWithPopup(auth, new GoogleAuthProvider());
-    const appRef = doc(db, "driverApplications", cred.user.uid);
-    const appSnap = await getDoc(appRef);
-    const driverSnap = await getDoc(doc(db, "drivers", cred.user.uid));
+    const credential = await signInWithPopup(auth, new GoogleAuthProvider());
+    const user = credential.user;
 
-    if (!driverSnap.exists() && !appSnap.exists()) {
-      const application = {
-        uid: cred.user.uid,
-        name,
-        phone,
-        age,
-        region,
-        email: cred.user.email || "",
-        status: "pending",
-        emailVerificationRequired: true,
-        createdAt: serverTimestamp()
-      };
+    const appRef = doc(db, "driverApplications", user.uid);
+    const driverRef = doc(db, "drivers", user.uid);
 
-      if (number) application.driverNumber = number;
+    const [appSnap, driverSnap] = await Promise.all([
+      getDoc(appRef),
+      getDoc(driverRef)
+    ]);
 
-      await setDoc(appRef, application);
-    } else if (appSnap.exists() && appSnap.data().status === "rejected") {
-      authMsg("طلبك مرفوض. تواصل مع الإدارة قبل إعادة التسجيل.");
+    if (driverSnap.exists() && driverSnap.data().status === "approved") {
+      authMsg("هذا الحساب معتمد بالفعل كمندوب.");
+      await routeUser(user);
       return;
     }
 
-    await routeUser(auth.currentUser);
-    authMsg("تم تسجيل الدخول عبر Google. إذا كان هذا حسابًا جديدًا فانتظر موافقة المدير.");
+    if (appSnap.exists()) {
+      const oldApplication = appSnap.data();
+
+      if (oldApplication.status === "pending") {
+        authMsg("طلبك موجود بالفعل وبانتظار موافقة المدير.");
+        await routeUser(user);
+        return;
+      }
+
+      if (oldApplication.status === "rejected") {
+        authMsg("طلبك السابق مرفوض. تواصل مع الإدارة.");
+        await routeUser(user);
+        return;
+      }
+
+      authMsg("يوجد طلب سابق لهذا الحساب. تواصل مع الإدارة.");
+      await routeUser(user);
+      return;
+    }
+
+    if (driverSnap.exists()) {
+      authMsg("يوجد سجل لهذا الحساب لدى الإدارة. تواصل مع المدير.");
+      await routeUser(user);
+      return;
+    }
+
+    const application = {
+      uid: user.uid,
+      name,
+      phone,
+      age,
+      region,
+      email: user.email || "",
+      status: "pending",
+      emailVerificationRequired: true,
+      createdAt: serverTimestamp()
+    };
+
+    if (number) {
+      application.driverNumber = number;
+    }
+
+    await setDoc(appRef, application);
+
+    authMsg("تم إرسال طلب المندوب باستخدام حساب Google نفسه. انتظر موافقة المدير.");
+    await routeUser(user);
+
   } catch (e) {
-    authMsg("تعذر التسجيل عبر Google: " + authError(e));
+    console.error("Google application error:", e);
+    authMsg("تعذر تقديم الطلب عبر Google: " + authError(e));
   } finally {
     $("googleBtn").disabled = false;
   }
@@ -452,10 +601,10 @@ $("googleBtn").onclick = async () => {
 
 function authError(e) {
   const messages = {
-    "auth/email-already-in-use": "هذا البريد مسجّل من قبل.",
+    "auth/email-already-in-use": "هذا البريد مسجّل من قبل. سجّل الدخول بالحساب الموجود.",
     "auth/invalid-email": "صيغة البريد الإلكتروني غير صحيحة.",
     "auth/weak-password": "كلمة المرور يجب أن تكون 6 أحرف على الأقل.",
-    "auth/invalid-credential": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+    "auth/invalid-credential": "البريد أو كلمة المرور غير صحيحة. إذا كان حسابك مرتبطًا بـ Google، استخدم Google للدخول.",
     "auth/user-not-found": "لا يوجد حساب بهذا البريد.",
     "auth/wrong-password": "كلمة المرور غير صحيحة.",
     "auth/too-many-requests": "محاولات كثيرة؛ انتظر قليلًا.",
@@ -464,6 +613,11 @@ function authError(e) {
     "auth/unauthorized-domain": "نطاق الموقع غير مسموح به في إعدادات Firebase.",
     "auth/account-exists-with-different-credential": "هذا البريد مرتبط بطريقة دخول أخرى."
   };
+
+  if (e.code === "permission-denied" ||
+      e.code === "firestore/permission-denied") {
+    return "Firebase رفض العملية بسبب صلاحيات Firestore. تحقق من القواعد المنشورة.";
+  }
 
   return messages[e.code] || e.message || "حدث خطأ غير معروف.";
 }
@@ -485,6 +639,7 @@ async function logout() {
   visible("adminArea", false);
   visible("driverArea", false);
 
+  resetAuthForm();
   $("headerStatus").textContent = "الإدارة والمندوبون";
   setAuthMode(authMode);
 }
@@ -527,6 +682,7 @@ async function routeUser(user) {
   currentUser = user;
 
   if (!user) {
+    resetAuthForm();
     visible("authScreen", true);
     visible("appScreen", false);
     visible("sidebar", false);
@@ -535,18 +691,19 @@ async function routeUser(user) {
     return;
   }
 
-  visible("authScreen", false);
-  visible("appScreen", true);
-  $("headerStatus").textContent = user.email || "حساب مسجل";
-
   const adminSnapshot = await getDoc(doc(db, "admins", user.uid));
 
   if (adminSnapshot.exists() && adminSnapshot.data().role === "admin") {
     role = "admin";
+    visible("authScreen", false);
+    visible("appScreen", true);
     visible("sidebar", true);
     visible("adminArea", true);
     visible("driverArea", false);
+
+    $("headerStatus").textContent = user.email || "المدير";
     $("managerEmail").textContent = user.email || "المدير";
+
     await refreshAdmin();
     return;
   }
@@ -559,11 +716,15 @@ async function routeUser(user) {
     role = "driver";
     driverData = {...driver, uid: user.uid};
 
+    visible("authScreen", false);
+    visible("appScreen", true);
     visible("sidebar", false);
     visible("adminArea", false);
     visible("driverArea", true);
     visible("pendingCard", false);
     visible("driverWorkArea", true);
+
+    $("headerStatus").textContent = user.email || "حساب المندوب";
 
     $("driverInfo").textContent =
       `👤 ${driverData.name || "مندوب"} | 🆔 ${driverData.driverNumber || "غير محدد"} | 📞 ${driverData.phone || "غير محدد"} | 🎂 ${driverData.age || "—"} | 📍 ${driverData.region || "—"}`;
@@ -574,16 +735,60 @@ async function routeUser(user) {
     return;
   }
 
+  const applicationSnapshot = await getDoc(
+    doc(db, "driverApplications", user.uid)
+  );
+
+  /*
+    حساب مسجل وليس مديرًا ولا مندوبًا معتمدًا،
+    ولا يوجد له طلب مندوب:
+    نعرض نموذج التقديم باستخدام UID نفسه.
+  */
+  if (!driver && !applicationSnapshot.exists()) {
+    role = "customer-applicant";
+    driverData = null;
+
+    visible("appScreen", false);
+    visible("authScreen", true);
+    visible("sidebar", false);
+    visible("adminArea", false);
+    visible("driverArea", false);
+
+    setAuthMode("driver");
+
+    applyingWithExistingAccount = true;
+    $("email").value = user.email || "";
+    $("email").disabled = true;
+    $("password").value = "";
+    $("password").classList.add("hidden");
+
+    visible("loginBtn", false);
+    visible("googleBtn", false);
+    visible("driverSignupFields", true);
+    visible("signupBtn", true);
+
+    $("signupBtn").textContent = "تقديم طلب مندوب بهذا الحساب";
+
+    authMsg(
+      "أنت مسجّل الدخول بالفعل. أكمل بياناتك واضغط تقديم الطلب. سنستخدم حسابك الحالي ولن ننشئ حسابًا جديدًا."
+    );
+
+    $("headerStatus").textContent = "التقديم لوظيفة مندوب";
+    return;
+  }
+
   role = "pending";
   driverData = null;
 
+  visible("authScreen", false);
+  visible("appScreen", true);
   visible("sidebar", false);
   visible("adminArea", false);
   visible("driverArea", true);
   visible("pendingCard", true);
   visible("driverWorkArea", false);
 
-  const applicationSnapshot = await getDoc(doc(db, "driverApplications", user.uid));
+  $("headerStatus").textContent = user.email || "حساب مسجل";
 
   if (driver && driver.status === "approved" &&
       driver.emailVerificationRequired === true && !user.emailVerified) {
@@ -616,8 +821,10 @@ async function routeUser(user) {
     return;
   }
 
-  $("pendingCard").querySelector("h2").textContent = "⏳ الحساب بانتظار موافقة المدير";
-  $("pendingCard").querySelector("p").textContent = "لن تظهر الطلبات قبل موافقة المدير على حسابك.";
+  $("pendingCard").querySelector("h2").textContent =
+    "⏳ الحساب بانتظار موافقة المدير";
+  $("pendingCard").querySelector("p").textContent =
+    "لن تظهر الطلبات قبل موافقة المدير على حسابك.";
 
   $("pendingInfo").textContent = applicationSnapshot.exists()
     ? `👤 ${applicationSnapshot.data().name || "مندوب"} | 🆔 ${applicationSnapshot.data().driverNumber || "غير محدد"} | 🎂 ${applicationSnapshot.data().age || "—"} | 📍 ${applicationSnapshot.data().region || "—"} | الحالة: ${applicationSnapshot.data().status === "rejected" ? "مرفوض - تواصل مع الإدارة" : "بانتظار موافقة المدير"}`
