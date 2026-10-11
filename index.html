@@ -11,29 +11,12 @@
 body{margin:0;font-family:Arial,sans-serif;background:#f5f5f5;color:#222;padding-bottom:75px}
 button,input,textarea,select{font-family:inherit}
 button{cursor:pointer}
-
-/* الشريط العلوي */
-.welcome-ticker{
-  height:31px;width:100%;overflow:hidden;background:#fff;color:#d90714;
-  border-bottom:1px solid #f0dfe0;display:flex;align-items:center;
-  position:relative;z-index:5;
-}
-.welcome-ticker-track{
-  display:flex;align-items:center;width:max-content;white-space:nowrap;
-  direction:ltr;animation:welcomeMoveRight 26s linear infinite;will-change:transform;
-}
-.welcome-ticker-text{
-  direction:rtl;white-space:nowrap;padding-left:55px;font-size:13px;
-  font-weight:600;letter-spacing:.15px;
-}
+.welcome-ticker{height:31px;width:100%;overflow:hidden;background:#fff;color:#d90714;border-bottom:1px solid #f0dfe0;display:flex;align-items:center;position:relative;z-index:5}
+.welcome-ticker-track{display:flex;align-items:center;width:max-content;white-space:nowrap;direction:ltr;animation:welcomeMoveRight 26s linear infinite;will-change:transform}
+.welcome-ticker-text{direction:rtl;white-space:nowrap;padding-left:55px;font-size:13px;font-weight:600;letter-spacing:.15px}
 @keyframes welcomeMoveRight{from{transform:translateX(-50%)}to{transform:translateX(0)}}
 .welcome-ticker:hover .welcome-ticker-track{animation-play-state:paused}
-@media(prefers-reduced-motion:reduce){
-  .welcome-ticker-track{animation:none}
-  .welcome-ticker{overflow-x:auto}
-}
-
-/* رأس الموقع */
+@media(prefers-reduced-motion:reduce){.welcome-ticker-track{animation:none}.welcome-ticker{overflow-x:auto}}
 header{background:#e30613;color:white;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
 .logo{font-size:22px;font-weight:bold}
 .location{font-size:12px}
@@ -75,66 +58,18 @@ h2{margin:0 0 13px;font-size:20px}
 .form-title{background:#fff3f3;padding:12px;border-radius:10px;margin-bottom:8px;font-weight:bold;color:#e30613}
 .back-button{background:#eee;color:#222}
 .auth-button{width:100%;padding:13px;border:0;border-radius:10px;margin-top:8px;font-size:15px;font-weight:bold}
-
-/* تصميم تسجيل الدخول وGoogle */
-.google{
-  background:#fff!important;
-  border:1px solid #ddd!important;
-  color:#222!important;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-}
-.google-mark{
-  font-size:22px;
-  font-weight:bold;
-  color:#4285f4;
-}
+.google{background:#fff!important;border:1px solid #ddd!important;color:#222!important;display:flex;align-items:center;justify-content:center;gap:10px}
+.google-mark{font-size:22px;font-weight:bold;color:#4285f4}
 .auth-screen{display:none}
 .auth-screen.active{display:block}
 .auth-heading{text-align:center;margin:4px 0 8px}
 .auth-subtitle{text-align:center;color:#777;font-size:13px;line-height:1.8;margin:0 0 18px}
-.auth-divider{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  color:#888;
-  font-size:12px;
-  margin:18px 0 10px;
-}
-.auth-divider::before,.auth-divider::after{
-  content:"";
-  flex:1;
-  height:1px;
-  background:#e5e5e5;
-}
-.auth-switch{
-  display:block;
-  width:100%;
-  border:0!important;
-  background:transparent!important;
-  color:#d90714;
-  font-weight:bold;
-  padding:13px 5px;
-  margin-top:8px;
-}
-.auth-screen input{
-  width:100%;
-  padding:13px;
-  margin:7px 0;
-  border:1px solid #ddd;
-  border-radius:10px;
-  font-size:15px;
-  outline-color:#e30613;
-}
+.auth-divider{display:flex;align-items:center;gap:10px;color:#888;font-size:12px;margin:18px 0 10px}
+.auth-divider::before,.auth-divider::after{content:"";flex:1;height:1px;background:#e5e5e5}
+.auth-switch{display:block;width:100%;border:0!important;background:transparent!important;color:#d90714;font-weight:bold;padding:13px 5px;margin-top:8px}
+.auth-screen input{width:100%;padding:13px;margin:7px 0;border:1px solid #ddd;border-radius:10px;font-size:15px;outline-color:#e30613}
 .auth-screen input:focus{border-color:#e30613}
-.auth-message{
-  font-size:13px;
-  line-height:1.8;
-  overflow-wrap:anywhere;
-  white-space:normal;
-}
+.auth-message{font-size:13px;line-height:1.8;overflow-wrap:anywhere;white-space:normal}
 .auth-back{background:#f4f4f4;color:#333}
 .logout{background:#eee;color:#222}
 .user-box{background:#fff3f3;padding:15px;border-radius:12px;margin-bottom:15px}
@@ -161,32 +96,16 @@ h2{margin:0 0 13px;font-size:20px}
 .drawer-link:hover{background:#fff0f0}
 .drawer-link span{margin-left:9px}
 .drawer-note{font-size:12px;color:#777;line-height:1.7;margin-top:18px}
-
-/* معلومات الإدارة */
 .site-footer{margin:8px 17px 22px;padding:10px 0;text-align:right;color:#777;font-size:12px;line-height:1.9}
 .site-footer .manager-name{color:#555;font-weight:bold}
 .site-footer a{color:#e30613;text-decoration:none;direction:ltr;unicode-bidi:embed;display:inline-block;font-weight:bold}
-
-/* استعادة كلمة السر */
-.reset-password-button{
-  background:#fff3f3;
-  color:#e30613;
-  border:1px solid #f2d5d5!important;
-}
+.reset-password-button{background:#fff3f3;color:#e30613;border:1px solid #f2d5d5!important}
 .reset-password-button:disabled{opacity:.65;cursor:wait}
-
-@media(max-width:380px){
-  .categories{grid-template-columns:repeat(3,1fr)}
-  .logo{font-size:19px}
-  .location{font-size:11px}
-  .welcome-ticker-text{font-size:12px}
-}
+@media(max-width:380px){.categories{grid-template-columns:repeat(3,1fr)}.logo{font-size:19px}.location{font-size:11px}.welcome-ticker-text{font-size:12px}}
 </style>
 </head>
 
 <body>
-
-<!-- شريط الترحيب المتحرك -->
 <div class="welcome-ticker" aria-label="رسالة ترحيبية من خدمة الحسن">
   <div class="welcome-ticker-track">
     <span class="welcome-ticker-text">مع خدمة الحسن 🛵 اطلب والباقي علينا 😉</span>
@@ -221,7 +140,6 @@ h2{margin:0 0 13px;font-size:20px}
       <p>من أي محل أو مكان في عتمان ودرعا 🛵</p>
       <div class="search">🔎 <input id="searchInput" placeholder="ابحث..."></div>
     </div>
-
     <section>
       <h2>شو بدك تطلب؟</h2>
       <div class="categories">
@@ -235,7 +153,6 @@ h2{margin:0 0 13px;font-size:20px}
         <button class="category" onclick="openOrderWithCategory('other')"><span>🏪</span>محل آخر</button>
       </div>
     </section>
-
     <section>
       <div class="special">
         <h3>🛵 جيبلي هالشي</h3>
@@ -243,7 +160,6 @@ h2{margin:0 0 13px;font-size:20px}
         <button onclick="openOrder()">اطلب أي شيء</button>
       </div>
     </section>
-
     <section>
       <h2>خدمات AL HASSAN</h2>
       <div class="service"><div class="service-icon">🛍️</div><div><b>شراء من المحلات</b><p>اطلب أي غرض من أي محل.</p></div></div>
@@ -280,13 +196,9 @@ h2{margin:0 0 13px;font-size:20px}
 
 <footer class="site-footer">
   <div class="manager-name">بإدارة بشار النحاس</div>
-  <div>
-    للتواصل:
-    <a href="tel:+9630992536508" dir="ltr">+963 0992536508</a>
-  </div>
+  <div>للتواصل: <a href="tel:+9630992536508" dir="ltr">+963 0992536508</a></div>
 </footer>
 
-<!-- نافذة الطلبات -->
 <div id="orderModal" class="modal">
   <div class="modal-box">
     <h2>🛵 اطلب أي شيء</h2>
@@ -325,63 +237,36 @@ h2{margin:0 0 13px;font-size:20px}
   </div>
 </div>
 
-<!-- نافذة المصادقة: تسجيل الدخول وإنشاء الحساب كشاشتين منفصلتين -->
 <div id="authModal" class="modal">
   <div class="modal-box">
-
-    <!-- الشاشة الأولى: تسجيل الدخول -->
     <div id="loginScreen" class="auth-screen active">
       <h2 class="auth-heading">👤 أهلاً بك في AL HASSAN</h2>
       <p class="auth-subtitle">سجّل دخولك حتى تطلب وتتابع طلباتك بسهولة 🛵</p>
-
-      <button class="auth-button google" onclick="googleLogin()">
-        <span class="google-mark">G</span>
-        المتابعة باستخدام Google
-      </button>
-
+      <button class="auth-button google" onclick="googleLogin()"><span class="google-mark">G</span>المتابعة باستخدام Google</button>
       <div class="auth-divider">أو باستخدام البريد الإلكتروني</div>
-
       <input id="emailInput" type="email" placeholder="📧 البريد الإلكتروني" autocomplete="email">
       <input id="passwordInput" type="password" placeholder="🔒 كلمة المرور" autocomplete="current-password">
-
       <button class="auth-button primary" onclick="emailLogin()">🔐 تسجيل الدخول</button>
-
-      <button id="resetPasswordButton" type="button" class="auth-button reset-password-button" onclick="resetPassword()">
-        🔑 نسيت كلمة السر؟
-      </button>
-
+      <button id="resetPasswordButton" type="button" class="auth-button reset-password-button" onclick="resetPassword()">🔑 نسيت كلمة السر؟</button>
       <button class="auth-button secondary" onclick="resendVerificationEmail()">📩 إعادة إرسال رسالة التأكيد</button>
-
       <p id="authMessage" class="auth-message" role="status" aria-live="polite"></p>
-
       <div class="auth-divider">مستخدم جديد؟</div>
-
       <button class="auth-switch" onclick="showSignupScreen()">✨ إنشاء حساب جديد</button>
       <button class="auth-button secondary" onclick="closeAuth()">إغلاق</button>
     </div>
 
-    <!-- الشاشة الثانية: إنشاء حساب جديد -->
     <div id="signupScreen" class="auth-screen">
       <h2 class="auth-heading">✨ إنشاء حساب جديد</h2>
       <p class="auth-subtitle">أنشئ حسابك لتبدأ باستخدام خدمات AL HASSAN</p>
-
       <input id="signupEmailInput" type="email" placeholder="📧 البريد الإلكتروني" autocomplete="email">
       <input id="signupPasswordInput" type="password" placeholder="🔒 كلمة المرور (6 أحرف على الأقل)" autocomplete="new-password">
       <input id="signupPasswordConfirm" type="password" placeholder="🔒 أعد كتابة كلمة المرور" autocomplete="new-password">
-
       <button class="auth-button primary" onclick="createEmailAccount()">✨ إنشاء الحساب</button>
-
       <p id="signupMessage" class="auth-message" role="status" aria-live="polite"></p>
-
-      <button class="auth-button google" onclick="googleLogin()">
-        <span class="google-mark">G</span>
-        المتابعة باستخدام Google
-      </button>
-
+      <button class="auth-button google" onclick="googleLogin()"><span class="google-mark">G</span>المتابعة باستخدام Google</button>
       <button class="auth-switch" onclick="showLoginScreen()">🔙 عندك حساب بالفعل؟ تسجيل الدخول</button>
       <button class="auth-button auth-back" onclick="closeAuth()">إغلاق</button>
     </div>
-
   </div>
 </div>
 
@@ -468,22 +353,31 @@ function stopAllCustomerTracking(){
   }
 }
 
+/* تتبّع مباشر للمدير أو المندوب */
 function startCustomerTracking(orderId,mapElement,statusElement){
   if(!window.L){
     statusElement.textContent = "تعذّر تحميل الخريطة. تأكد من اتصال الإنترنت.";
     return;
   }
+
   if(!orderId || !mapElement || !statusElement) return;
 
   stopCustomerTracking(orderId);
 
   const map = L.map(mapElement,{scrollWheelZoom:false}).setView([32.625,36.105],13);
+
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
     maxZoom:19,
     attribution:"&copy; OpenStreetMap contributors"
   }).addTo(map);
 
-  const tracking = {map,marker:null,customerMarker:null,hasInitialView:false};
+  const tracking = {
+    map,
+    marker:null,
+    customerMarker:null,
+    hasInitialView:false
+  };
+
   customerTrackingMaps.set(orderId,tracking);
 
   const unsubscribe = db.collection("orders").doc(orderId).onSnapshot(
@@ -505,6 +399,7 @@ function startCustomerTracking(orderId,mapElement,statusElement){
         statusElement.textContent = "✅ تم توصيل الطلب.";
         return;
       }
+
       if(order.status === "cancelled"){
         statusElement.textContent = "تم إلغاء الطلب.";
         return;
@@ -512,83 +407,142 @@ function startCustomerTracking(orderId,mapElement,statusElement){
 
       const customerLat = order.customerLatitude;
       const customerLng = order.customerLongitude;
+
       const hasCustomerPosition =
-        typeof customerLat === "number" && typeof customerLng === "number";
+        typeof customerLat === "number" &&
+        typeof customerLng === "number";
 
       if(hasCustomerPosition){
-        const position = [customerLat,customerLng];
+        const customerPosition = [customerLat,customerLng];
+
         if(!tracking.customerMarker){
-          tracking.customerMarker = L.marker(position).addTo(map).bindPopup("📍 موقع التوصيل");
+          tracking.customerMarker = L.marker(customerPosition)
+            .addTo(map)
+            .bindPopup("📍 موقع التوصيل");
         }else{
-          tracking.customerMarker.setLatLng(position);
+          tracking.customerMarker.setLatLng(customerPosition);
         }
       }
 
       const latitude = order.driverLatitude;
       const longitude = order.driverLongitude;
-      const hasDriverPosition =
-        typeof latitude === "number" && typeof longitude === "number";
 
-      if(!hasDriverPosition){
+      const hasDriverPosition =
+        typeof latitude === "number" &&
+        typeof longitude === "number";
+
+      const personName =
+        typeof order.driverName === "string" && order.driverName.trim()
+          ? order.driverName.trim()
+          : "مندوب AL HASSAN";
+
+      const markerLabel = "📍 " + personName;
+
+      if(!order.driverId){
+        statusElement.textContent =
+          "⏳ بانتظار استلام الطلب من المدير أو أحد المندوبين.";
+
         if(hasCustomerPosition && !tracking.hasInitialView){
           map.setView([customerLat,customerLng],15);
           tracking.hasInitialView = true;
         }
 
-        statusElement.textContent = order.driverId
-          ? "⏳ تم استلام الطلب. بانتظار مشاركة المندوب لموقعه..."
-          : "⏳ بانتظار استلام الطلب من أحد المندوبين...";
-
         setTimeout(function(){
-          if(customerTrackingMaps.get(orderId) === tracking) map.invalidateSize();
+          if(customerTrackingMaps.get(orderId) === tracking){
+            map.invalidateSize();
+          }
         },100);
+
         return;
       }
 
-      const driverPosition = [latitude,longitude];
+      if(!hasDriverPosition){
+        statusElement.textContent =
+          "⏳ استلم الطلب: " + personName +
+          ". بانتظار بدء مشاركة الموقع المباشر.";
+
+        if(hasCustomerPosition && !tracking.hasInitialView){
+          map.setView([customerLat,customerLng],15);
+          tracking.hasInitialView = true;
+        }
+
+        setTimeout(function(){
+          if(customerTrackingMaps.get(orderId) === tracking){
+            map.invalidateSize();
+          }
+        },100);
+
+        return;
+      }
+
+      const personPosition = [latitude,longitude];
+
       if(!tracking.marker){
-        tracking.marker = L.marker(driverPosition).addTo(map).bindPopup("🛵 مندوب AL HASSAN");
+        tracking.marker = L.marker(personPosition)
+          .addTo(map)
+          .bindPopup(markerLabel);
       }else{
-        tracking.marker.setLatLng(driverPosition);
+        tracking.marker.setLatLng(personPosition);
+        tracking.marker.setPopupContent(markerLabel);
       }
 
       if(!tracking.hasInitialView){
         if(hasCustomerPosition){
           map.fitBounds(
-            L.latLngBounds([driverPosition,[customerLat,customerLng]]),
+            L.latLngBounds([
+              personPosition,
+              [customerLat,customerLng]
+            ]),
             {padding:[20,20],maxZoom:15}
           );
         }else{
-          map.setView(driverPosition,15);
+          map.setView(personPosition,15);
         }
+
         tracking.hasInitialView = true;
-      }else if(!map.getBounds().contains(driverPosition)){
-        map.panTo(driverPosition,{animate:true,duration:0.4});
+      }else if(!map.getBounds().contains(personPosition)){
+        map.panTo(personPosition,{
+          animate:true,
+          duration:0.4
+        });
       }
 
-      statusElement.textContent = order.driverLocationActive === false
-        ? "📍 آخر موقع محفوظ للمندوب — مشاركة الموقع متوقفة حالياً."
-        : "🟢 موقع المندوب يتحدّث مباشرةً عند وصول تحديث جديد.";
+      if(order.driverLocationActive === false){
+        statusElement.textContent =
+          "📍 آخر موقع محفوظ لـ " + personName +
+          " — مشاركة الموقع متوقفة حالياً.";
+      }else{
+        statusElement.textContent =
+          "🟢 موقع " + personName +
+          " يظهر على الخريطة ويتحدّث عند وصول تحديث جديد.";
+      }
 
       setTimeout(function(){
-        if(customerTrackingMaps.get(orderId) === tracking) map.invalidateSize();
+        if(customerTrackingMaps.get(orderId) === tracking){
+          map.invalidateSize();
+        }
       },100);
     },
     function(error){
       console.error("Customer tracking error:",error);
-      statusElement.textContent = "❌ تعذّر تحميل موقع المندوب. تحقق من اتصال الإنترنت وصلاحيات Firestore.";
+      statusElement.textContent =
+        "❌ تعذّر تحميل الموقع. تحقق من اتصال الإنترنت وصلاحيات Firestore.";
     }
   );
 
   customerTrackingListeners.set(orderId,unsubscribe);
+
   setTimeout(function(){
-    if(customerTrackingMaps.get(orderId) === tracking) map.invalidateSize();
+    if(customerTrackingMaps.get(orderId) === tracking){
+      map.invalidateSize();
+    }
   },300);
 }
 
 function toggleTrackingMap(mapElement,button){
   const expanded = mapElement.classList.toggle("expanded");
   button.textContent = expanded ? "↙️ تصغير الخريطة" : "⛶ تكبير الخريطة";
+
   setTimeout(function(){
     const tracking = customerTrackingMaps.get(mapElement.dataset.orderId);
     if(tracking) tracking.map.invalidateSize();
@@ -633,8 +587,12 @@ const orderTypes = {
 auth.onAuthStateChanged(function(user){
   currentUser = user;
   updateAccount();
+
   if(!user) stopAllCustomerTracking();
-  if(document.getElementById("ordersPage").classList.contains("active")) loadOrders();
+
+  if(document.getElementById("ordersPage").classList.contains("active")){
+    loadOrders();
+  }
 });
 
 /* تحديد موقع الزبون */
@@ -666,7 +624,6 @@ function getCustomerLocation(){
   },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
 }
 
-/* فتح نافذة الدخول على شاشة تسجيل الدخول */
 function openAuth(){
   showLoginScreen();
   document.getElementById("authModal").style.display = "block";
@@ -690,13 +647,11 @@ function showSignupScreen(){
   document.getElementById("signupMessage").innerText = "";
 }
 
-/* اختيار مكان عرض رسالة المصادقة */
 function getAuthMessage(){
   const signupIsActive = document.getElementById("signupScreen").classList.contains("active");
   return document.getElementById(signupIsActive ? "signupMessage" : "authMessage");
 }
 
-/* تسجيل الدخول باستخدام Google */
 async function googleLogin(){
   const message = getAuthMessage();
   message.innerText = "⏳ جارٍ تسجيل الدخول باستخدام Google...";
@@ -719,7 +674,6 @@ async function googleLogin(){
   }
 }
 
-/* إنشاء حساب جديد من الشاشة المنفصلة */
 async function createEmailAccount(){
   const email = document.getElementById("signupEmailInput").value.trim();
   const password = document.getElementById("signupPasswordInput").value;
@@ -745,7 +699,6 @@ async function createEmailAccount(){
 
   try{
     const result = await auth.createUserWithEmailAndPassword(email,password);
-
     await result.user.sendEmailVerification();
 
     message.innerText =
@@ -772,7 +725,6 @@ async function createEmailAccount(){
   }
 }
 
-/* تسجيل الدخول بالبريد وكلمة المرور */
 async function emailLogin(){
   const email = document.getElementById("emailInput").value.trim();
   const password = document.getElementById("passwordInput").value;
@@ -797,11 +749,7 @@ async function emailLogin(){
   }catch(error){
     console.error("Email login error:",error);
 
-    if(
-      error.code === "auth/user-not-found" ||
-      error.code === "auth/wrong-password" ||
-      error.code === "auth/invalid-credential"
-    ){
+    if(error.code === "auth/user-not-found" || error.code === "auth/wrong-password" || error.code === "auth/invalid-credential"){
       message.innerText = "❌ البريد أو كلمة المرور غير صحيحة. إذا كنت جديدًا، أنشئ حسابًا أولًا.";
     }else if(error.code === "auth/too-many-requests"){
       message.innerText = "⚠️ محاولات كثيرة. انتظر قليلاً ثم حاول مجددًا.";
@@ -811,7 +759,6 @@ async function emailLogin(){
   }
 }
 
-/* استعادة كلمة السر عبر البريد الإلكتروني */
 async function resetPassword(){
   const emailInput = document.getElementById("emailInput");
   const message = document.getElementById("authMessage");
@@ -825,6 +772,7 @@ async function resetPassword(){
   }
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   if(!emailPattern.test(email)){
     message.innerText = "❌ اكتب بريدًا إلكترونيًا صحيحًا.";
     emailInput.focus();
@@ -860,7 +808,6 @@ async function resetPassword(){
   }
 }
 
-/* إعادة إرسال رسالة تأكيد البريد */
 async function resendVerificationEmail(){
   const message = document.getElementById("authMessage");
 
@@ -901,7 +848,6 @@ async function resendVerificationEmail(){
   }
 }
 
-/* تحديث صفحة الحساب */
 function updateAccount(){
   const box = document.getElementById("accountContent");
   if(!box) return;
@@ -953,7 +899,6 @@ async function logout(){
   }
 }
 
-/* فتح نموذج الطلب */
 function openOrder(){
   if(!currentUser){
     openAuth();
@@ -997,7 +942,7 @@ function backToTypes(){
   selectedOrderType = "";
 }
 
-/* إرسال الطلب مع اشتراط تأكيد البريد لحسابات البريد وكلمة المرور */
+/* إرسال الطلب */
 async function sendOrder(){
   if(!currentUser){
     document.getElementById("orderMessage").innerText = "⚠️ سجّل الدخول أولاً.";
@@ -1130,7 +1075,6 @@ async function sendOrder(){
   }
 }
 
-/* التنقل بين صفحات الموقع */
 function showPage(page){
   document.querySelectorAll(".page").forEach(element => element.classList.remove("active"));
   document.querySelectorAll(".bottom button").forEach(element => element.classList.remove("active"));
@@ -1160,7 +1104,7 @@ function showPage(page){
   window.scrollTo(0,0);
 }
 
-/* تحميل طلبات الزبون */
+/* تحميل طلبات الزبون مع خريطة تتبّع المدير أو المندوب */
 async function loadOrders(){
   const box = document.getElementById("ordersList");
   stopAllCustomerTracking();
@@ -1174,6 +1118,7 @@ async function loadOrders(){
 
   try{
     const userAtLoad = currentUser;
+
     const snapshot = await db.collection("orders")
       .where("userId","==",userAtLoad.uid)
       .get();
@@ -1243,7 +1188,7 @@ async function loadOrders(){
 
         const heading = document.createElement("b");
         heading.className = "customer-tracking-title";
-        heading.textContent = "🛵 تتبّع المندوب مباشرةً";
+        heading.textContent = "📍 تتبّع المدير أو المندوب مباشرةً";
 
         const trackingStatus = document.createElement("p");
         trackingStatus.className = "customer-tracking-status";
@@ -1264,7 +1209,8 @@ async function loadOrders(){
 
         const note = document.createElement("p");
         note.className = "customer-tracking-note";
-        note.textContent = "يتحدّث موقع المندوب عند وصول تحديث جديد من جهازه. يلزم أن يشارك المندوب موقعه وأن يكون الاتصال متاحًا.";
+        note.textContent =
+          "يمكنك متابعة موقع الشخص الذي استلم طلبك، سواء كان المدير أو المندوب، عند تفعيل مشاركة الموقع المباشر.";
 
         trackingSection.appendChild(heading);
         trackingSection.appendChild(trackingStatus);
@@ -1282,7 +1228,6 @@ async function loadOrders(){
   }
 }
 
-/* البحث */
 document.getElementById("searchInput").addEventListener("input",function(){
   const value = this.value.trim().toLowerCase();
   if(!value) return;
@@ -1302,22 +1247,18 @@ document.getElementById("searchInput").addEventListener("input",function(){
   if(type) openOrderWithCategory(type);
 });
 
-/* إتاحة الدوال للأزرار */
 window.openDrawer = openDrawer;
 window.closeDrawer = closeDrawer;
 window.getCustomerLocation = getCustomerLocation;
-
 window.openAuth = openAuth;
 window.closeAuth = closeAuth;
 window.showLoginScreen = showLoginScreen;
 window.showSignupScreen = showSignupScreen;
-
 window.googleLogin = googleLogin;
 window.emailLogin = emailLogin;
 window.createEmailAccount = createEmailAccount;
 window.resetPassword = resetPassword;
 window.resendVerificationEmail = resendVerificationEmail;
-
 window.logout = logout;
 window.openOrder = openOrder;
 window.openOrderWithCategory = openOrderWithCategory;
